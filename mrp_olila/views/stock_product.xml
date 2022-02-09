@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+         <record id="mrp_production_form_inherit_olila" model="ir.ui.view">
+            <field name="name">mrp.production.form.inherit</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='bom_id']" position="after">
+                        <field name="average_weight" attrs="{'readonly': [('state','!=','draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="after">
+                       <field name="total_weight" attrs="{'readonly': [('state','!=','draft')]}"/>
+                    <field name="shift" attrs="{'readonly': [('state','!=','draft')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="mrp_production_tree_inherit_olila" model="ir.ui.view">
+            <field name="name">mrp.production.tree.inherit</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="before">
+                    <field name="shift"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
+    
