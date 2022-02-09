@@ -8,11 +8,14 @@
             <field name="inherit_id" ref="product.product_product_tree_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='uom_id']" position="before">
-                    <field name="outgoing_qty" attrs="{'invisible':[('type', '!=', 'product')]}" optional="show"/>
+                    <field name="outgoing_qty" attrs="{'invisible':[('type', '!=', 'product')]}" optional="show" string="Pending Qty"/>
                     <field name="net_stock"/>
                 </xpath>
                 <xpath expr="//field[@name='lst_price']" position="after">
                     <field name="sales_price_total"/>
+                </xpath>
+                <xpath expr="//field[@name='lst_price']" position="attributes">
+                    <attribute name="string">Unit Price</attribute>
                 </xpath>
             </field>
         </record>
