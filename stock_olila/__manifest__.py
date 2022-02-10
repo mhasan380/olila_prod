@@ -8,6 +8,7 @@
     'version': '14.0',
     'depends': ['sale_management','stock', 'sale_stock', 'fleet', 'hr'],
     'data': [
-        'views/stock_product.xml',       
+        'views/stock_product.xml',
+        'views/stock_picking.xml',
     ],
 }
