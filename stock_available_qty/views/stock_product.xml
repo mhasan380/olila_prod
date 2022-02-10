@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="stock_transfer_view_form_inherit_olila" model="ir.ui.view">
+            <field name="name">stock.transfer.view.form.olila</field>
+            <field name="model">stock.transfer</field>
+            <field name="inherit_id" ref="inter_warehouse_transfer.stock_transfer_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='qty']" position="before">
+                    <field name="available_qty"/>
+
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
+    

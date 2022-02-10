@@ -32,12 +32,12 @@ class ProductTemplate(models.Model):
 
     def _search_net_stock(self, operator, value):
         # TDE FIXME: should probably clean the search methods
-        return self._search_product_quantity(operator, value, 'net_stock')
+        return self._search_product_total_quantity(operator, value, 'net_stock')
     def _search_sales_price_total(self, operator, value):
         # TDE FIXME: should probably clean the search methods
-        return self._search_product_quantity(operator, value, 'sales_price_total')
+        return self._search_product_total_quantity(operator, value, 'sales_price_total')
 
-    def _search_product_quantity(self, operator, value, field):
+    def _search_product_total_quantity(self, operator, value, field):
         # TDE FIXME: should probably clean the search methods
         # to prevent sql injections
         if field not in ('net_stock','sales_price_total'):
