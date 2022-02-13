@@ -18,6 +18,7 @@ class ProductTemplate(models.Model):
     net_stock = fields.Float(compute="_compute_net_qty",string='Net Stock', search='_search_net_stock' )
     sales_price_total = fields.Float(compute="_compute_sale_price_total", string='Total Sales Price',search='_search_sales_price_total')
     goods_type = fields.Selection([('finish', 'Finished Goods'), ('spare', 'Spare Parts'), ('raw', 'Raw Materials')],string='Goods Type')
+    rack_id = fields.Many2one('stock.rack', string='Rack')
 
 
     @api.depends('qty_available','outgoing_qty')
@@ -83,9 +84,12 @@ class ProductTemplate(models.Model):
         return res
 
 
+class StoreRack(models.Model):
+    _name = 'stock.rack'
+    _inherit = ['format.address.mixin', 'mail.thread', 'mail.activity.mixin']
+    _description = 'Rack'
 
-
-
+    name = fields.Char('Rack Number')
     
 
-                
+

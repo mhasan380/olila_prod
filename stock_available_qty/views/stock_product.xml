@@ -10,6 +10,29 @@
                     <field name="available_qty"/>
 
                 </xpath>
+               <xpath expr="//field[@name='department_id']" position="after">
+                    <field name="qc_transfer"/>
+                    <field name="shift" attrs="{'invisible':[('qc_transfer', '=', False)], 'readonly': [('state','!=','draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']" position="attributes">
+                   <attribute name="required">1</attribute>
+
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="stock_transfer_view_tree_inherit_olila" model="ir.ui.view">
+            <field name="name">stock.transfer.view.tree.olila</field>
+            <field name="model">stock.transfer</field>
+            <field name="inherit_id" ref="inter_warehouse_transfer.stock_transfer_tree_view"/>
+            <field name="arch" type="xml">
+
+               <xpath expr="//field[@name='location_dest_id']" position="after">
+                    <field name="shift"/>
+                    <field name="state"/>
+                </xpath>
+
             </field>
         </record>
 

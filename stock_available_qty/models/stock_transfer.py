@@ -18,6 +18,11 @@ class StockTransferLine(models.Model):
 
 
 
+class StockTransfer(models.Model):
+    _inherit = 'stock.transfer'
+
+    qc_transfer = fields.Boolean('QC Transfer')
+    shift = fields.Selection([('a', 'A Shift'), ('b', 'B Shift'), ('c', 'C Shift')], string='Shift')
 
 
 

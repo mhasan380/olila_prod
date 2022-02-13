@@ -8,7 +8,9 @@
     'version': '14.0',
     'depends': ['sale_management','stock', 'sale_stock', 'fleet', 'hr'],
     'data': [
+        'security/ir.model.access.csv',
         'views/stock_product.xml',
         'views/stock_picking.xml',
+        'views/store_rack.xml',
     ],
 }
