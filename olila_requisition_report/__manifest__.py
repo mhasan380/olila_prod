@@ -9,6 +9,7 @@
     'depends': ['purchase_request'],
     'data': [
         'views/report.xml',
+        'views/purchase_request.xml',
 
 
     ],
