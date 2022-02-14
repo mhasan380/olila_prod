@@ -90,6 +90,11 @@ class StoreRack(models.Model):
     _description = 'Rack'
 
     name = fields.Char('Rack Number')
+
+    _sql_constraints = [
+        ('unique_name',
+         'unique(name)',
+         'A Rack already exists with this name .Rack name must be unique!')]
     
 
 
