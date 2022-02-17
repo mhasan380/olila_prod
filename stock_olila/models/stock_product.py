@@ -98,7 +98,7 @@ class ProductTemplate(models.Model):
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
         res = super(ProductTemplate, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby,
                                                  lazy=lazy)
-        if 'qty_available' or 'net_stock' or 'outgoing_qty' or 'sales_price_total' in fields:
+        if 'qty_available' or 'net_stock' or 'outgoing_qty' or 'sales_price_total' or 'mctn_qty' or 'undelivered_mctn' in fields:
             for line in res:
                 if '__domain' in line:
                     lines = self.search(line['__domain'])
@@ -106,16 +106,22 @@ class ProductTemplate(models.Model):
                     total_net_qty = 0.0
                     total_out_qty = 0.0
                     total_sale_price = 0.0
+                    total_mctn_qty = 0.0
+                    total_undelivered_mctn = 0.0
                     for record in lines:
                         total_product_qty += record.qty_available
                         total_net_qty += record.net_stock
                         total_out_qty += record.outgoing_qty
                         total_sale_price += record.sales_price_total
+                        total_mctn_qty += record.mctn_qty
+                        total_undelivered_mctn += record.undelivered_mctn
 
                     line['qty_available'] = total_product_qty
                     line['net_stock'] = total_net_qty
                     line['outgoing_qty'] = total_out_qty
                     line['sales_price_total'] = total_sale_price
+                    line['mctn_qty'] = total_mctn_qty
+                    line['undelivered_mctn'] = total_undelivered_mctn
 
         return res
 
