@@ -19,12 +19,45 @@ class ProductTemplate(models.Model):
     sales_price_total = fields.Float(compute="_compute_sale_price_total", string='Total Sales Price',search='_search_sales_price_total')
     goods_type = fields.Selection([('finish', 'Finished Goods'), ('spare', 'Spare Parts'), ('raw', 'Raw Materials')],string='Goods Type')
     rack_id = fields.Many2one('stock.rack', string='Rack')
+    fs_type = fields.Selection([('pcs', 'PCS'), ('inner', 'Inner'), ('master', 'Master')],string='FS Goods Type')
+    mctn_qty = fields.Float(compute="_compute_mctn_qty",string='Master Carton Qty', search='_search_mctn_qty')
+    undelivered_mctn = fields.Float(compute="_compute_undelivered_mctn",string='Undelivered MCTN', search='_search_undelivered_mctn')
 
+    @api.depends('outgoing_qty', 'fs_type')
+    def _compute_undelivered_mctn(self):
+        for product in self:
+            if product.fs_type == 'pcs':
+                product.undelivered_mctn = product.outgoing_qty / 72
+            elif product.fs_type == 'inner':
+                product.undelivered_mctn = product.outgoing_qty /12
+            elif product.fs_type == 'master':
+                product.undelivered_mctn = product.outgoing_qty
+            else:
+                product.undelivered_mctn = 0
 
-    @api.depends('qty_available','outgoing_qty')
+    @api.depends('qty_available', 'fs_type')
+    def _compute_mctn_qty(self):
+        for product in self:
+            if product.fs_type == 'pcs':
+                product.mctn_qty = product.qty_available / 72
+            elif product.fs_type == 'inner':
+                product.mctn_qty = product.qty_available / 12
+            elif product.fs_type == 'master':
+                product.mctn_qty = product.qty_available
+            else:
+                product.mctn_qty = 0
+
+    @api.depends('qty_available','outgoing_qty','fs_type')
     def _compute_net_qty(self):
         for product in self:
-            product.net_stock = product.qty_available - product.outgoing_qty
+            if product.fs_type == 'master':
+                product.net_stock = product.qty_available - product.outgoing_qty
+            elif product.fs_type == 'pcs':
+                product.net_stock = product.mctn_qty - (product.outgoing_qty / 72 )
+            elif product.fs_type == 'inner':
+                product.net_stock = product.mctn_qty - (product.outgoing_qty / 12 )
+            else:
+                product.net_stock = 0
 
     @api.depends('qty_available', 'lst_price')
     def _compute_sale_price_total(self):
@@ -37,11 +70,14 @@ class ProductTemplate(models.Model):
     def _search_sales_price_total(self, operator, value):
         # TDE FIXME: should probably clean the search methods
         return self._search_product_total_quantity(operator, value, 'sales_price_total')
+    def _search_mctn_qty(self, operator, value):
+        # TDE FIXME: should probably clean the search methods
+        return self._search_product_total_quantity(operator, value, 'mctn_qty')
 
     def _search_product_total_quantity(self, operator, value, field):
         # TDE FIXME: should probably clean the search methods
         # to prevent sql injections
-        if field not in ('net_stock','sales_price_total'):
+        if field not in ('net_stock','sales_price_total','mctn_qty','undelivered_mctn'):
             raise UserError(_('Invalid domain left operand %s', field))
         if operator not in ('<', '>', '=', '!=', '<=', '>='):
             raise UserError(_('Invalid domain operator %s', operator))
