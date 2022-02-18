@@ -1,0 +1,30 @@
+<odoo>
+    <record model="ir.ui.view" id="depot_stock_report_wizard_view">
+        <field name="name">Depot Stock Report</field>
+        <field name="model">depot.stock.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Depot Stock Report">
+                <group>
+                    <group>
+                        <field name="warehouse_id"/>
+                    </group>
+
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="action_depot_stock_report_wizard"
+                name="Depot Stock Report"
+                res_model="depot.stock.report.wizard"
+                view_mode="form"
+                target="new"/>
+    <menuitem action="action_depot_stock_report_wizard"
+              id="menu_depot_stock_report_wizard"
+              parent="stock.menu_warehouse_report"
+              name="Depot Stock Report" />
+</odoo>

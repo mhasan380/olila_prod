@@ -1,0 +1,81 @@
+<odoo>
+    <data>
+        <report id="depot_stock_report" menu="False" model="depot.stock.report.wizard" name="stock_olila.depot_stock_report_template"  report_type="qweb-pdf" string="Depot Stock Report"/>
+        <template id="depot_stock_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <div class="page" style="padding-top:30px;">
+
+                        <div class="text-center">
+
+                         <h4>Depot Wise Stock Report</h4>
+
+                        </div>
+
+                        <table  class="table table-condensed">
+                <thead><tr>
+                    <th class="text-left" >Depot Name</th>
+                    <th class="text-left">Gross Stock</th>
+                    <th class="text-left">Retail Undelivery</th>
+                    <th class="text-left">Corporate undelivery</th>
+                    <th class="text-left">Total undelivery</th>
+                    <th class="text-left">Net Stock</th>
+                     <th class="text-left">Value</th>
+                </tr></thead>
+                <tbody>
+                 <t t-set="stock_subtotal" t-value="0"/>
+                 <t t-set="ret_und_subtotal" t-value="0"/>
+                 <t t-set="cor_und_subtotal" t-value="0"/>
+                 <t t-set="total_und_subtotal" t-value="0"/>
+                 <t t-set="net_stock_subtotal" t-value="0"/>
+                 <t t-set="value_subtotal" t-value="0"/>
+                <tr t-foreach='warehouse_dict' t-as='depot'>
+
+
+
+                    <td><t t-esc="depot['depot_name']" /></td>
+                    <td><t t-esc="depot['total_stock']"/></td>
+                    <td><t t-esc="depot['retail_undelivery']" t-options='{"widget": "float", "precision": 2}'/></td>
+                    <td><t t-esc="depot['corporate_undelivery']" t-options='{"widget": "float", "precision": 2}' /></td>
+                    <td><t t-esc="depot['total_undelivery']" t-options='{"widget": "float", "precision": 2}' /></td>
+                     <td><t t-esc="depot['net_stock']" t-options='{"widget": "float", "precision": 2}'/></td>
+                     <td><t t-esc="depot['total_sale_price']" t-options="{'widget': 'float', 'precision': currency_precision}" /></td>
+
+                 <t t-set="stock_subtotal" t-value="stock_subtotal + depot['total_stock']"/>
+                 <t t-set="ret_und_subtotal" t-value="ret_und_subtotal + depot['retail_undelivery']"/>
+                 <t t-set="cor_und_subtotal" t-value="cor_und_subtotal + depot['corporate_undelivery']"/>
+                 <t t-set="total_und_subtotal" t-value="total_und_subtotal + depot['total_undelivery']"/>
+                 <t t-set="net_stock_subtotal" t-value="net_stock_subtotal + depot['net_stock']"/>
+                 <t t-set="value_subtotal" t-value="value_subtotal + depot['total_sale_price']"/>
+
+                </tr>
+
+                 <tr style="font-weight: bold; color: blue;">
+                     <td > <b>Total </b></td>
+                     <td> <span t-esc="stock_subtotal" t-options='{"widget": "float", "precision": 2}'/> </td>
+                     <td> <span t-esc="ret_und_subtotal" t-options='{"widget": "float", "precision": 2}'/> </td>
+                     <td> <span t-esc="cor_und_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+                     <td> <span t-esc="total_und_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+                     <td> <span t-esc="net_stock_subtotal" t-options='{"widget": "float", "precision": 2}'/></td>
+                     <td> <span t-esc="value_subtotal" t-options="{'widget': 'float', 'precision': currency_precision}"/></td>
+
+                 </tr>
+
+                </tbody>
+                <style>
+                        td {border: 1px solid #000; }
+                        th { color: white;
+                            background-color: black;
+                            text-align: center;
+                         }
+
+                        </style>
+
+            </table>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
