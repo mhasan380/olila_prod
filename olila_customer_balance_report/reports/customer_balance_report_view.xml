@@ -1,0 +1,85 @@
+<odoo>
+    <data>
+        <report id="customer_balance_report" menu="False" model="customer.balance.report.wizard" name="olila_customer_balance_report.balance_report_template"  report_type="qweb-pdf" string="Customer Balance Report"/>
+        <template id="balance_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <div class="page" style="padding-top:30px;">
+
+                        <div class="text-center">
+
+                         <h4>Customer Balance Report</h4>
+
+                        </div>
+
+                        <table  class="table table-condensed">
+                <thead><tr>
+                    <th class="text-left" >SO Number</th>
+                    <th class="text-left">SO Date</th>
+                    <th class="text-left">SO Amount</th>
+                    <th class="text-left">Advance Payment</th>
+                    <th class="text-left">Delivery Amount</th>
+                    <th class="text-left">Pending Amount</th>
+                    <th class="text-left">Closed Amount</th>
+                     <th class="text-left">Balance</th>
+                </tr></thead>
+                <tbody>
+<!--                 <t t-set="stock_subtotal" t-value="0"/>-->
+<!--                 <t t-set="ret_und_subtotal" t-value="0"/>-->
+<!--                 <t t-set="cor_und_subtotal" t-value="0"/>-->
+<!--                 <t t-set="total_und_subtotal" t-value="0"/>-->
+<!--                 <t t-set="net_stock_subtotal" t-value="0"/>-->
+<!--                 <t t-set="value_subtotal" t-value="0"/>-->
+                <tr t-foreach='customer_balance_dict' t-as='order'>
+
+
+
+                    <td><t t-esc="order['order_nunmber']" /></td>
+                    <td><t t-esc="order['order_date']"/></td>
+                    <td><t t-esc="order['order_amount']" t-options='{"widget": "float", "precision": currency_precision}'/></td>
+                    <td><t t-esc="order['payment_amount']" t-options='{"widget": "float", "precision": currency_precision}'/></td>
+                    <td><t t-esc="order['delivery_amount']" t-options='{"widget": "float", "precision": currency_precision}' /></td>
+                    <td><t t-esc="order['pending_amount']" t-options='{"widget": "float", "precision": currency_precision}' /></td>
+                     <td><t t-esc="order['cancel_do_amount']" t-options='{"widget": "float", "precision": currency_precision}' /></td>
+                     <td><t t-esc="order['so_balance']" t-options='{"widget": "float", "precision": currency_precision}'/></td>
+
+
+<!--                 <t t-set="stock_subtotal" t-value="stock_subtotal + depot['total_stock']"/>-->
+<!--                 <t t-set="ret_und_subtotal" t-value="ret_und_subtotal + depot['retail_undelivery']"/>-->
+<!--                 <t t-set="cor_und_subtotal" t-value="cor_und_subtotal + depot['corporate_undelivery']"/>-->
+<!--                 <t t-set="total_und_subtotal" t-value="total_und_subtotal + depot['total_undelivery']"/>-->
+<!--                 <t t-set="net_stock_subtotal" t-value="net_stock_subtotal + depot['net_stock']"/>-->
+<!--                 <t t-set="value_subtotal" t-value="value_subtotal + depot['total_sale_price']"/>-->
+
+                </tr>
+
+                 <tr style="font-weight: bold; color: blue;">
+                     <td > <b>Total </b></td>
+                     <td>  </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> </td>
+                     <td> <span t-esc="customer_balance" t-options="{'widget': 'float', 'precision': currency_precision}"/></td>
+
+                 </tr>
+
+                </tbody>
+                <style>
+                        td {border: 1px solid #000; }
+                        th { color: white;
+                            background-color: black;
+                            text-align: center;
+                         }
+
+                        </style>
+
+            </table>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

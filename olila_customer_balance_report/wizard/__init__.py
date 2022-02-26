@@ -3,5 +3,4 @@
 
 
 
-from . import depot_stock_report_wizard
-from . import raw_material_stock_report_wizard
+from . import customer_balance_report_wizard

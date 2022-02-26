@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_olila_report_purchase_requisition" model="ir.actions.report">
+            <field name="name">Requisition</field>
+            <field name="model">purchase.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">olila_requisition_report.olila_report_purchase_requisition</field>
+            <field name="report_file">olila_requisition_report.olila_report_purchase_requisition</field>
+            <field name="print_report_name">'REQ - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="purchase_request.model_purchase_request"/>
+            <field name="binding_type">report</field>
+        </record>
+        <template id="olila_report_purchase_requisition">
+            <t t-call="web.html_container">
+                <t t-as="doc" t-foreach="docs">
+                    <t t-call="web.external_layout">
+                        <div style="text-align: center; margin-bottom: 5px; margin-top: 5px; text-decoration: underline;">
+                            <h3>
+                                <b>Purchase Requisition </b>
+                            </h3>
+                        </div>
+                        <!-- <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)" />-->
+                        <div class="customer_info">
+                            <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                <b>PR number : </b>
+                                <span t-field="doc.name"/>
+                                <br/>
+                                <b>Date : </b>
+                                <span t-field="doc.schedule_date"/>
+                                <br/>
+                                <b>User : </b>
+                                <span t-field="doc.user_id"/>
+                                <br/>
+                                <b>Requisition Month: </b>
+                                <span t-field="doc.requisition_month"/>
+                            </div>
+                            <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                <b>Department : </b>
+                                <span t-field="doc.department_id"/>
+                                <br/>
+                                <b>Purchase From : </b>
+                                <span t-field="doc.purchase_from"/>
+                                <br/>
+                                <b>Purchase Category: </b>
+                                <span t-field="doc.purcahse_category"/>
+                                <br/>
+                                <b>Demand Type: </b>
+                                <span t-field="doc.demand_type"/>
+                            </div>
+                        </div>
+                        <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <div class="row mt32 mb32" id="informations">
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="doc.remark">
+                                    <strong>Reference:</strong>
+                                    <p class="m-0" t-field="doc.remark"/>
+                                </div>
+                            </div>
+                            <table class="table table-sm o_main_table">
+                                <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" name="th_sl">
+                                            <b>S/N </b>
+                                        </th>
+                                        <th class="text-left" name="th_product">
+                                            <b>Product</b>
+                                        </th>
+                                        <th class="text-left" name="th_description">
+                                            <b>Description </b>
+                                        </th>
+                                        <th class="text-right" name="th_quantity">
+                                            <b>Quantity</b>
+                                        </th>
+                                        <th class="text-right" name="th_uom">
+                                            <b>UoM</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-set="current_subtotal" t-value="0"/>
+                                    <t t-set="i" t-value="1"/>
+                                    <t t-set="product_qty" t-value="0"/>
+                                    <t t-as="line" t-foreach="doc.request_lines_ids">
+                                        <tr>
+                                            <td name="th_sl">
+                                                <span t-esc="i"/>
+                                            </td>
+                                            <td name="th_product">
+                                                <span t-esc="line.product_id.display_name"/>
+                                            </td>
+                                            <td name="td_name">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                            <td name="th_quantity">
+                                                <span t-field="line.quantity"/>
+                                            </td>
+                                            <td class="text-right" name="th_uom">
+                                                <span t-field="line.product_uom"/>
+                                            </td>
+                                            <t t-set="i" t-value="i+1"/>
+                                            <t t-set="product_qty" t-value="product_qty + line.quantity"/>
+                                        </tr>
+                                    </t>
+                                    <!--                                    <tr>-->
+                                    <!--                                        <td></td>-->
+                                    <!--                                        <td></td>-->
+                                    <!--                                        <td><strong>Total Qty:  </strong></td>-->
+                                    <!--                                        <td class="text-right">-->
+                                    <!--                                            <span t-esc="product_qty"/>-->
+                                    <!--                                        </td>-->
+                                    <!--                                        <td >-->
+                                    <!--                                        </td>-->
+                                    <!--                                    </tr>-->
+                                </tbody>
+                                <style>td ,th {border: 1px solid #000;
+                                font-size: 14px;
+
+                        }
+                        </style>
+                            </table>
+                            <table class="table table-sm mt48" style="margin-top: 120px">
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align: center;">
+                                            <strong>Prepared By </strong>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <strong>Asst. Manager Store </strong>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <strong> Manager (HR/Admin) </strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -13,6 +13,8 @@
         'views/stock_picking.xml',
         'views/store_rack.xml',
         'reports/depot_stock_report_view.xml',
+        'reports/raw_stock_report_view.xml',
         'wizard/depot_stock_report_wizard_view.xml',
+        'wizard/raw_material_report_wizard.xml',
     ],
 }

@@ -1,0 +1,30 @@
+<odoo>
+    <record model="ir.ui.view" id="raw_stock_report_wizard_view">
+        <field name="name">Raw Material Stock Report</field>
+        <field name="model">raw.stock.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Raw Material Stock Report">
+                <group>
+                    <group>
+                        <field name="consumtion"/>
+                    </group>
+
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="action_raw_stock_report_wizard"
+                name="Raw Material Stock Report"
+                res_model="raw.stock.report.wizard"
+                view_mode="form"
+                target="new"/>
+    <menuitem action="action_raw_stock_report_wizard"
+              id="menu_raw_stock_report_wizard"
+              parent="stock.menu_warehouse_report"
+              name="Raw Material Stock Report" />
+</odoo>

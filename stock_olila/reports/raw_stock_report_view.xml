@@ -1,0 +1,71 @@
+<odoo>
+    <data>
+        <report id="raw_stock_report" menu="False" model="raw.stock.report.wizard" name="stock_olila.raw_stock_report_template"  report_type="qweb-pdf" string="Raw Material Stock Report"/>
+        <template id="raw_stock_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <div class="page" style="padding-top:30px;">
+
+                        <div class="text-center">
+
+                         <h4>Raw Material Stock Report</h4>
+
+                        </div>
+
+                        <table  class="table table-condensed">
+                <thead><tr>
+                    <th class="text-left" > Code</th>
+                    <th class="text-left">Product Name</th>
+                    <th class="text-left">Stock Quantity</th>
+                    <th class="text-left">Daily Consumption</th>
+                    <th class="text-left">Stock Days</th>
+
+                </tr></thead>
+                <tbody>
+
+                 <t t-set="total_stock" t-value="0"/>
+                    <t t-set="total_consumption" t-value="0"/>
+                <tr t-foreach='stock_dict' t-as='item'>
+
+
+
+                    <td><t t-esc="item['code']" /></td>
+                    <td><t t-esc="item['product_name']"/></td>
+                    <td><t t-esc="item['quantity']" t-options='{"widget": "float", "precision": 2}'/></td>
+                    <td><t t-esc="item['daily_consumtion']" t-options='{"widget": "float", "precision": 2}' /></td>
+                    <td><t t-esc="item['stock_days']" t-options='{"widget": "float", "precision": 0}' /></td>
+
+
+                 <t t-set="total_stock" t-value="total_stock + item['quantity']"/>
+                 <t t-set="total_consumption" t-value="total_consumption + item['daily_consumtion']"/>
+
+                </tr>
+
+                 <tr style="font-weight: bold; color: blue;">
+                     <td > <b>Total </b></td>
+                     <td> <span t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}'/> </td>
+                     <td> <span t-esc="total_stock" t-options='{"widget": "float", "precision": 2}'/> </td>
+                     <td> </td>
+                     <td> </td>
+
+
+                 </tr>
+
+                </tbody>
+                <style>
+                        td {border: 1px solid #000; }
+                        th { color: white;
+                            background-color: black;
+                            text-align: center;
+                         }
+
+                        </style>
+
+            </table>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
