@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_olila_corporate_sale_orde_report" model="ir.actions.report">
+            <field name="name">Corporate DO Report</field>
+            <field name="model">sale.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">olila_customer_balance_report.olila_corporate_saleorder_report</field>
+            <field name="report_file">olila_customer_balance_report.olila_corporate_saleorder_report</field>
+            <field name="print_report_name">'SO - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_type">report</field>
+        </record>
+        <template id="olila_corporate_saleorder_report">
+            <t t-call="web.html_container">
+                <t t-as="doc" t-foreach="docs">
+                    <t t-call="web.external_layout">
+                        <div style="text-align: center; margin-bottom: 5px; margin-top: 5px; text-decoration: underline;">
+                            <h3>
+                                <b>Delivery Order </b>
+                            </h3>
+                        </div>
+                        <!-- <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)" />-->
+                        <div class="customer_info">
+                            <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                <h4>
+                                    <span t-field="doc.partner_id.name"/>
+                                </h4>
+                                <b>
+                                    <span t-field="doc.dealer_code"/>
+                                    <br/>
+                                </b>
+                                <b>Address : </b>
+                                <span t-field="doc.partner_id.street"/>
+                                <br/>
+                                <span t-field="doc.partner_id.street2"/>
+                                <br/>
+                                <b>Mobile : </b>
+                                <span t-field="doc.partner_id.mobile"/>
+                            </div>
+                            <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                <h4>
+                                    <b>DO No : </b>
+                                    <span t-field="doc.name"/>
+                                </h4>
+                                <h4>
+                                    <p>
+                                        <b>DO Date : </b>
+                                        <span t-field="doc.date_order" t-field-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                    </p>
+                                </h4>
+                            </div>
+                        </div>
+                        <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                        <!--<t t-set="address"><h3><b>Delivery Address: </b></h3><div t-field="doc.partner_id"
+                t-options='{"widget": "contact", "fields": ["address", "name","mobile"], "no_marker": True}' /><p t-if="doc.partner_id.vat"><t t-esc="doc.company_id.country_id.vat_label or 'Tax ID'"/>: <span t-field="doc.partner_id.vat"/></p></t><t t-if="doc.partner_shipping_id == doc.partner_invoice_id
+                             and doc.partner_invoice_id != doc.partner_id
+                             or doc.partner_shipping_id != doc.partner_invoice_id"><t t-set="information_block"><strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoicing and Shipping Address:</strong><strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoicing Address:</strong><div t-field="doc.partner_invoice_id"
+                t-options='{"widget": "contact", "fields": ["address", "name", "phone","mobile"], "no_marker": True, "phone_icons": True}'/><t t-if="doc.partner_shipping_id != doc.partner_invoice_id"><strong>Shipping Address:</strong><div t-field="doc.partner_shipping_id"
+                        t-options='{"widget": "contact", "fields": ["address", "name", "phone","mobile"], "no_marker": True, "phone_icons": True}'/></t></t></t>-->
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <!--<h2 class="mt16"><t t-if="not (env.context.get('proforma', False) or is_pro_forma)"><span >DO # </span></t><t t-if="env.context.get('proforma', False) or is_pro_forma"><span>Pro-Forma Invoice # </span></t><span t-field="doc.name"/></h2>-->
+                            <div class="row mt32 mb32" id="informations">
+                                <div>
+                                    <strong>Order Date:</strong>
+                                    <p class="m-0" t-field="doc.date_order"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="doc.client_order_ref">
+                                    <strong>Your Reference:</strong>
+                                    <p class="m-0" t-field="doc.client_order_ref"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Depot Name:</strong>
+                                    <p class="m-0" t-field="doc.warehouse_id"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Contact Person:</strong>
+                                    <p class="m-0" t-field="doc.partner_id.proprietor_name"/>
+                                    <p class="m-0" t-field="doc.partner_id.proprietor_contact"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Salesperson:</strong>
+                                    <p class="m-0" t-field="doc.responsible"/>
+                                </div>
+                            </div>
+                            <!-- Is there a discount on at least one line? -->
+                            <t t-set="display_discount" t-value="any(l.discount for l in doc.order_line)"/>
+                            <table class="table table-sm o_main_table">
+                                <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" name="th_sl">
+                                            <b>S/N </b>
+                                        </th>
+                                        <th class="text-left" name="th_code">
+                                            <b>Item Code </b>
+                                        </th>
+                                        <th class="text-left" name="th_description">
+                                            <b>Item Description </b>
+                                        </th>
+                                        <th class="text-right" name="th_uom">
+                                            <b>UoM</b>
+                                        </th>
+                                        <th class="text-right" name="th_pcs_quantity">
+                                            <b>PCS Qty.</b>
+                                        </th>
+                                        <th class="text-right" name="th_inner_quantity">
+                                            <b>Inner Qty.</b>
+                                        </th>
+                                        <th class="text-right" name="th_mctn_quantity">
+                                            <b>MCTN Qty.</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-set="current_subtotal" t-value="0"/>
+                                    <t t-set="i" t-value="1"/>
+                                    <t t-set="pcs_qty" t-value="0"/>
+                                    <t t-set="inner_qty" t-value="0"/>
+                                    <t t-set="mctn_qty" t-value="0"/>
+                                    <t t-as="line" t-foreach="doc.order_line">
+                                        <t groups="account.group_show_line_subtotals_tax_excluded" t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
+                                        <t groups="account.group_show_line_subtotals_tax_included" t-set="current_subtotal" t-value="current_subtotal + line.price_total"/>
+                                        <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                            <t t-if="not line.display_type">
+                                                <td name="th_sl">
+                                                    <span t-esc="i"/>
+                                                </td>
+                                                <td name="th_code">
+                                                    <span t-esc="line.product_id.default_code"/>
+                                                </td>
+                                                <td name="td_name">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                                <td name="th_uom">
+                                                    <span t-field="line.product_uom"/>
+                                                </td>
+                                                <td class="text-right" name="td_pcs_quantity">
+                                                  <t t-if="line.product_id.fs_type=='pcs'">
+                                                      <span t-field="line.product_uom_qty"/> </t>
+                                                </td>
+                                                <td class="text-right" name="td_inner_quantity">
+                                                  <t t-if="line.product_id.fs_type=='inner'">
+                                                      <span t-field="line.product_uom_qty"/> </t>
+                                                </td>
+                                                <td class="text-right" name="td_mctn_quantity">
+                                                  <t t-if="line.product_id.fs_type=='master'">
+                                                      <span t-field="line.product_uom_qty"/> </t>
+                                                </td>
+                                            </t>
+                                            <t t-if="line.display_type == 'line_section'">
+                                                <td colspan="99" name="td_section_line">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                                <t t-set="current_section" t-value="line"/>
+                                                <t t-set="current_subtotal" t-value="0"/>
+                                            </t>
+                                            <t t-if="line.display_type == 'line_note'">
+                                                <td colspan="99" name="td_note_line">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                            </t>
+                                            <t t-set="i" t-value="i+1"/>
+                                            <t t-if="line.product_id.fs_type=='pcs'">
+                                            <t t-set="pcs_qty" t-value="pcs_qty + line.product_uom_qty"/> </t>
+                                            <t t-if="line.product_id.fs_type=='inner'">
+                                            <t t-set="inner_qty" t-value="inner_qty + line.product_uom_qty"/> </t>
+                                            <t t-if="line.product_id.fs_type=='master'">
+                                            <t t-set="mctn_qty" t-value="mctn_qty + line.product_uom_qty"/> </t>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <strong>Total:  </strong>
+                                            <span t-esc="pcs_qty"/>
+                                        </td>
+                                        <td >
+                                            <strong>Total:  </strong>
+                                            <span t-esc="inner_qty"/>
+                                        </td>
+                                        <td >
+                                            <strong>Total:  </strong>
+                                            <span t-esc="mctn_qty"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <style>td ,th {border: 1px solid #000;
+                                font-size: 14px;
+
+                        }
+                        </style>
+                            </table>
+                            <div class="customer_signature" text-align="center">
+                                <div class="customer" style="float:right;">
+                                    <p>---------------------------------   </p>
+                                    <P>
+                                        <b>Authorized By </b>
+                                    </P>
+                                </div>
+                                <div class="seller" style="float:left;">
+                                    <p>---------------------------------   </p>
+                                    <P>
+                                        <b>Prepared By </b>
+                                    </P>
+                                </div>
+                                <style>.customer_signature{ text-align: center;
+                                              padding-top: 120px;
+                                              margin-bottom: 10px;
+
+                         }
+
+                       </style>
+                            </div>
+                            <div class="oe_structure"/>
+                            <p id="fiscal_position_remark" t-if="doc.fiscal_position_id and doc.fiscal_position_id.sudo().note">
+                                <strong>Fiscal Position Remark:</strong>
+                                <span t-field="doc.fiscal_position_id.sudo().note"/>
+                            </p>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

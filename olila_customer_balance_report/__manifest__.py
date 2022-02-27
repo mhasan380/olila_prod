@@ -10,6 +10,7 @@
     'data': [
         'security/ir.model.access.csv',
         'reports/customer_balance_report_view.xml',
+        'reports/corporate_do_report.xml',
         'wizard/customer_balance_report_wizard_view.xml',
 
 
