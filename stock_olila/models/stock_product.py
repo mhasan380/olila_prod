@@ -132,6 +132,7 @@ class StoreRack(models.Model):
     _description = 'Rack'
 
     name = fields.Char('Rack Number')
+    description = fields.Char('Description')
 
     _sql_constraints = [
         ('unique_name',

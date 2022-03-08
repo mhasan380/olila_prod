@@ -65,6 +65,7 @@ class DepotStockReport(models.AbstractModel):
                                                      'retail_undelivery': retail_undelivery,
                                                       'corporate_undelivery': corprate_undelivry,
                                                       'total_undelivery': total_undelivery,
+                                                      'retail_net_stock': total_stock - retail_undelivery,
                                                       'net_stock': total_stock - total_undelivery,
                                                       'total_sale_price': total_sale_price
                                                       })
