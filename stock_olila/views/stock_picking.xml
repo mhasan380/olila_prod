@@ -25,6 +25,30 @@
         </record>
 
   </data>
+<template id="delivery_report_inherit_olila2" inherit_id="stock.report_delivery_document">
 
+              <xpath expr="//div[@class='page']/h2" position="replace">
+                      <div style="float: left; padding-left: 5px; padding-top: 5px; padding-bottom: 5px; ">
+                            <h4> <span t-field="o.name"/> </h4>
+                                <b>Vehicle Type : </b>
+                                <span t-field="o.vehicle_type"/>
+                                <br/>
+                                <b>Transportar Name: </b>
+                                <span t-field="o.transporter_name"/>
+                                <br/>
+                                <b>Vehicle Number : </b>
+                                <span t-field="o.vehicle_no"/>
+                                <br/>
+                                <b>Driver Name : </b>
+                                <span t-field="o.driver_name"/>
+                                <br/>
+                                <b>Driver Number : </b>
+                                <span t-field="o.driver_mobile"/>
+                                <br/>
+
+                      </div>
+                  </xpath>
+
+</template>
 
 </odoo>
