@@ -1,0 +1,14 @@
+<odoo>
+  <data>
+    <record id="vehicle_distribution_form_inherit_olila" model="ir.ui.view">
+            <field name="name">vehicle.distribution.form.inherit.olila</field>
+            <field name="model">vehicle.distribution</field>
+            <field name="inherit_id" ref="olila_distribution.vehicle_distribution_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_line_ids']/tree" position="attributes">
+                    <attribute name="limit">99999</attribute>
+                </xpath>
+            </field>
+        </record>
+  </data>
+</odoo>

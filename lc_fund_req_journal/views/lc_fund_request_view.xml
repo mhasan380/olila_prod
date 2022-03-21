@@ -1,0 +1,30 @@
+<odoo>
+  <data>
+    <record id="lc_fund_requisition_form_inherit_olila" model="ir.ui.view">
+            <field name="name">lc.opening.fund.requisition.form.inherit</field>
+            <field name="model">lc.opening.fund.requisition</field>
+            <field name="inherit_id" ref="lc_opening_fund_requisition.lc_opening_fund_requisition_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@id='extra_info']" position="before">
+                         <page string="Account_info" id="account_info">
+                                <group>
+                                    <group>
+                                        <field name="lc_opening_bank"/>
+                                        <field name="lc_margin_account"/>
+                                        <field name="lc_com_account"/>
+                                        <field name="lc_fund_taxes"/>
+                                        <field name="lc_lcfr_other_charges"/>
+                                    </group>
+                                </group>
+                            </page>
+                    </xpath>
+                <xpath expr="//button[@name='open_picking']" position="after">
+                <button name="view_journal_entry" type="object" class="oe_stat_button" icon="fa-id-card" attrs="{'invisible': [('move_count', '=', 0)]}">
+                                <field name="move_count" widget="statinfo" string="Joural Entries"/>
+                            </button>
+
+                </xpath>
+            </field>
+        </record>
+  </data>
+</odoo>
