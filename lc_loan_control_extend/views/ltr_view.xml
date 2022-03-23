@@ -1,0 +1,33 @@
+<odoo>
+  <data>
+
+    <record id="ltr_control_list_inherit" model="ir.ui.view">
+            <field name="name">ltr.control.list.inherit</field>
+            <field name="model">ltr.control</field>
+            <field name="inherit_id" ref="lc_loan_control.ltr_control_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='number']" position="before">
+                      <field name="lc_num"/>
+                    </xpath>
+              <xpath expr="//field[@name='lc_number']" position="attributes">
+                      <attribute name="invisible">1</attribute>
+                    </xpath>
+            </field>
+        </record>
+
+      <record id="ltr_control_form_inherit" model="ir.ui.view">
+            <field name="name">ltr.control.form.inherit</field>
+            <field name="model">ltr.control</field>
+            <field name="inherit_id" ref="lc_loan_control.ltr_control_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='number']" position="before">
+                      <field name="lc_num"/>
+                    </xpath>
+              <xpath expr="//field[@name='lc_number']" position="attributes">
+                      <attribute name="string">ID</attribute>
+                    </xpath>
+            </field>
+        </record>
+
+  </data>
+</odoo>

@@ -7,7 +7,7 @@ class MrpProduction(models.Model):
     total_weight = fields.Float('Total Weight')
     shift = fields.Selection([('a', 'A Shift'), ('b', 'B Shift'), ('c', 'C Shift')],string='Shift')
 
-    @api.onchange('average_weight')
+    @api.onchange('average_weight','product_qty')
     def onchange_average_weight(self):
         for mo in self:
             if mo.average_weight:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "lc_loan_control_extend",
+    'name': "lc_insurence_journal",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,12 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['lc_loan_control'],
+    'depends': ['lc_fund_insurance','account','lc_ammenment'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/ltr_view.xml',
+        'views/lc_fund_request_view.xml',
+        'views/account_move.xml',
 
     ],
     # only loaded in demonstration mode

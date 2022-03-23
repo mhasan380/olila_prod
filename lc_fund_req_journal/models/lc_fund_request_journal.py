@@ -36,7 +36,7 @@ class LCOpeningFundRequisition(models.Model):
         move_line_dict = []
         amount = 0.0
         move_line_dict.append({
-            'account_id': self.lc_opening_bank.suspense_account_id.id or False,
+            'account_id': self.lc_opening_bank.payment_credit_account_id.id or False,
             'credit': self.margin,
             # 'date_maturity': self.move_date,
             # 'date' : self.move_date,

@@ -11,6 +11,20 @@ class LtrControl(models.Model):
         for record in self:
             record.overdue_status = 'run'
 
+    lc_num = fields.Char('LC Number')
+
+    @api.onchange('lc_number')
+    def onchange_lc_number(self):
+        for ltr in self:
+            if ltr.lc_number:
+                ltr.lc_num = ltr.lc_number.lc_no
+
+    # @api.model
+    # def create(self, vals):
+    #     if vals.get('lc_num'):
+    #         lc = self.env['lc.opening'].search([('lc_no', '=', vals['lc_num'])])
+    #         vals.update({'lc_number': lc.id})
+
 
 
 
