@@ -10,8 +10,13 @@
                 <xpath expr="//field[@name='schedule_date']" position="after">
                     <field name="requisition_month"/>
                 </xpath>
+                 <xpath expr="//field[@name='request_lines_ids']/tree/field[@name='name']" position="after">
+                    <field name="department"/>
+                </xpath>
+
             </field>
         </record>
+
 
     </data>
 

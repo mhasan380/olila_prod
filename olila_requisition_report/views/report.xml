@@ -74,6 +74,9 @@
                                         <th class="text-left" name="th_description">
                                             <b>Description </b>
                                         </th>
+                                        <th class="text-left" name="th_department">
+                                            <b>Department </b>
+                                        </th>
                                         <th class="text-right" name="th_quantity">
                                             <b>Quantity</b>
                                         </th>
@@ -96,6 +99,9 @@
                                             </td>
                                             <td name="td_name">
                                                 <span t-field="line.name"/>
+                                            </td>
+                                            <td name="td_department">
+                                                <span t-field="line.department"/>
                                             </td>
                                             <td name="th_quantity">
                                                 <span t-field="line.quantity"/>
