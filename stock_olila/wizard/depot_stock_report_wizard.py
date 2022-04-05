@@ -3,6 +3,7 @@
 from odoo import models,fields,api
 from odoo.tools import date_utils
 
+
 class DepotStockReportWizard(models.TransientModel):
     _name = 'depot.stock.report.wizard'
 
