@@ -68,6 +68,23 @@ class UndeliveryStockReport(models.AbstractModel):
                     depot_stock_dict.setdefault(key, 0.0)
                     depot_stock_dict[key] += line.product_uom_qty
 
+            return {
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+
+                'warehouse_name': warehouse_name,
+                'sale_type': sale_type,
+                'date': date,
+                'report_type': report_type,
+                'depot_stock_dict': sorted([{
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'code': product.default_code,
+                    'quantity': qty,
+                    'uom': product.uom_id.name
+                } for (product), qty in depot_stock_dict.items()], key=lambda l: l['product_name']),
+             }
+
         elif report_type == 'product':
             depots = self.env['stock.warehouse'].search([('is_depot', '=', True)])
             for depot in depots:
@@ -85,21 +102,62 @@ class UndeliveryStockReport(models.AbstractModel):
                         depot_stock_dict.setdefault(key, 0.0)
                         depot_stock_dict[key] += line.product_uom_qty
 
+            return {
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
 
-        return {
-            'doc_ids': data.get('ids'),
-            'doc_model': data.get('model'),
+                'warehouse_name': warehouse_name,
+                'sale_type': sale_type,
+                'date': date,
+                'report_type': report_type,
+                'depot_stock_dict': sorted([{
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'code': product.default_code,
+                    'quantity': qty,
+                    'uom': product.uom_id.name
+                } for (product), qty in depot_stock_dict.items()], key=lambda l: l['product_name']),
+              }
 
-            'warehouse_name' : warehouse_name,
-            'sale_type': sale_type,
-            'date': date,
-            'report_type':report_type,
-            'depot_stock_dict': sorted([{
-                'product_id': product.id,
-                'product_name': product.name,
-                'code': product.default_code,
-                'quantity': qty,
-                'uom': product.uom_id.name
-            } for (product), qty in depot_stock_dict.items()], key=lambda l: l['product_name']),
-            }
+        elif report_type == 'customer':
+            if warehouse_id:
+                depots = self.env['stock.warehouse'].search([('is_depot', '=', True),('lot_stock_id', '=', location_id)])
+            else:
+                depots = self.env['stock.warehouse'].search([('is_depot', '=', True)])
+            for depot in depots:
+                if sale_type:
+                    delivery_orders = self.env['stock.picking'].search(
+                        [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'),
+                         ('sale_type', '=', sale_type), ('state', 'in', ('confirmed', 'assigned'))])
+                else:
+                    delivery_orders = self.env['stock.picking'].search(
+                        [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'),
+                         ('state', 'in', ('confirmed', 'assigned'))])
+                if partner_id:
+                    delivery_orders = delivery_orders.search([('partner_id','=',partner_id)])
+                for order in delivery_orders:
+                    for line in order.move_ids_without_package:
+                        key = (order.partner_id, line.product_id)
+                        depot_stock_dict.setdefault(key, 0.0)
+                        depot_stock_dict[key] += line.product_uom_qty
+
+
+            return {
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+
+                'warehouse_name' : warehouse_name,
+                'sale_type': sale_type,
+                'date': date,
+                'report_type':report_type,
+                'depot_stock_dict': sorted([{
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'code': product.default_code,
+                    'quantity': qty,
+                    'uom': product.uom_id.name,
+                    'customer_name':customer.name,
+                    'customer_code' : customer.code,
+                } for (customer,product), qty in depot_stock_dict.items()], key=lambda l: l['customer_name']),
+                }
 

@@ -13,7 +13,7 @@
                     </group>
 
                     <group>
-                        <field name="warehouse_id" attrs="{'invisible':[('report_type', '!=', 'depot')], 'required': [('report_type', '=', 'depot')]}"/>
+                        <field name="warehouse_id" attrs="{'invisible':[('report_type', '=', 'product')], 'required': [('report_type', '=', 'depot')]}"/>
                         <field name="partner_id" attrs="{'invisible':[('report_type', '!=', 'customer')]}"/>
                     </group>
 

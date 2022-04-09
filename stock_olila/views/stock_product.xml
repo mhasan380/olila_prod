@@ -52,6 +52,7 @@
                     <field name="mctn_qty"/>
                     <field name="undelivered_mctn"/>
                     <field name="net_stock"/>
+                    <field name="total_weight"/>
                     <field name="categ_id" optional="hide"/>
                     <field name="price" invisible="not context.get('pricelist',False)"/>
                     <field name="product_tmpl_id" invisible="1" readonly="1"/>
