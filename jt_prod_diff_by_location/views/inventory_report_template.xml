@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="partner_external_footer">
+        <div class="footer">
+            <table width="100%" style="font-size:12px;">
+                <tr class="list-inline" style="text-align:center;">
+                    <td>
+                        <span class="page"/>
+                        <span>/</span>
+                        <span class="topage"/>
+                    </td>
+                </tr>
+                <tr class="list-inline footer" style="text-align:left;">
+                    <td>
+                        Printed By : <span t-esc="user.name"></span>
+                        on <t t-set="print_time" t-value="context_timestamp(datetime.datetime.now()).strftime('%d,%b-%y %H:%M')"/>
+                        <span t-esc="print_time"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </template>
+
+    <template id="partner_external_header">
+        <div class="header">
+            <div class="row">
+                <table width="100%" style="font-size:12px;text-align:justify">
+                    <tr>
+                        <td width="30%">
+                            <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" style="width: 80px;max-height:80px;"/>
+                        </td>
+                        <td width="28%"/>
+                        <td width="18%">
+                            <p>
+                                <b><span style=" line-height:180%" t-field="company.name" /></b><br />
+                                <span style=" line-height:180%">P.O.Box:</span>
+                                <span style=" line-height:180%" t-field="company.zip"/>
+                                <span style=" line-height:180%">,</span><br />
+                                <span style=" line-height:180%" t-field="company.city"/>
+                                <span style=" line-height:180%">,</span>
+                                <span style=" line-height:180%" t-field="company.country_id.name"/>
+                            </p>
+                        </td>
+                        <td width="1%"/>
+                        <td style="height:20px; background-color:#DDD;width:1px;" width="1%"/>
+                        <td width="1%"/>
+                        <td width="5%">
+                            <span>Email</span><br/>
+                            <span>Website</span><br/>
+                            <span>Phone</span><br/>
+                            <span>TRN</span><br/>
+                        </td>
+                        <td width="2%">
+                            <span>:</span><br/>
+                            <span>:</span><br/>
+                            <span>:</span><br/>
+                            <span>:</span><br/>
+                        </td>
+                        <td width="22%">
+                           <span t-field="company.email"/><br/>
+                            <t t-set="website" t-value="company.website.split('//')"/>
+                            <span  t-esc="website[1]"/><br />
+                            <span t-field="company.phone"/><br/>
+                            <span t-field="company.vat"/><br/>
+                        </td>
+                    </tr>
+                </table>
+            </div><br/>
+        </div>
+    </template>
+
+    <template id="jt_report_external_layout">
+		<t t-if="o and 'company_id' in o">
+			<t t-set="company" t-value="o.company_id"></t>
+		</t>
+		<t t-if="not o or not 'company_id' in o">
+			<t t-set="company" t-value="res_company"></t>
+		</t>
+        <div class="article">
+            <t t-call="jt_prod_diff_by_location.partner_external_header"/>
+            <t t-raw="0" />
+            <t t-call="jt_prod_diff_by_location.partner_external_footer" />
+        </div>
+	</template>
+
+    <template id="inventory_stock_report">
+        <t t-call="web.html_container">
+            <t t-call="jt_prod_diff_by_location.jt_report_external_layout">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <div class="row mt32 mb32" id="informations">
+                            <div class="col-xs-3">
+                            </div>
+                            <div class="col-xs-6">
+                                <strong>
+                                    <h3><u><center>Stock Balance Report</center></u></h3>
+                                </strong>
+                            </div>
+                            <div class="col-xs-3">
+                            </div>
+                        </div>
+                        <center>
+                        <table class="table table-bordered">
+                            <div id="informations">
+                                <tr class="text-center">
+                                    <td style="padding:10px;">
+                                            <strong>Date From</strong>
+                                    </td>
+                                    <td style="padding:10px;">
+                                            <strong>Date To</strong>
+                                    </td>
+                                </tr>
+                                <tr class="text-center">
+                                     <td style="padding:10px;">
+                                        <div t-if="o.start_date">
+                                            <p t-field="o.start_date" />
+                                        </div>
+                                    </td>
+                                    <td style="padding:10px;">
+                                         <div t-if="o.end_date">
+                                             <p t-field="o.end_date" />
+                                         </div>
+                                    </td>
+                                </tr>
+                            </div>
+                        </table>
+                    </center>
+                        <t t-foreach="o._get_companies(o.company_ids)"
+                            t-as="company">
+                            <table class="table table-stripped">
+                                <tr style="font-weight: bold;">
+                                    <td>
+                                        <t t-esc="company.name" />
+                                    </td>
+                                    <td style="text-align:right;">Opening Stock</td>
+                                    <td style="text-align:right;">Received</td>
+                                    <td style="text-align:right;">Delivered</td>
+                                    <td style="text-align:right;">Return In</td>
+                                    <td style="text-align:right;">Return Out</td>
+                                    <td style="text-align:right;">Internal Moves</td>
+                                    <td style="text-align:right;">Adjustments</td>
+                                    <td style="text-align:right;">Closing Stock</td>
+                                </tr>
+                                <t t-foreach="o._get_warehouses(o.warehouse_ids, company)"
+                                    t-as="warehouse_id">
+                                    <tr>
+                                        <td colspan="9" class="text-left" style="font-size:medium;"> <![CDATA[&nbsp;&nbsp;]]>
+                                            WH:
+                                            <t t-esc="warehouse_id.name" />
+                                        </td>
+                                    </tr>
+                                    <t
+                                        t-foreach="o._get_product_categories(o.product_category_ids, o.product_ids)"
+                                        t-as="prod_categ_id">
+                                        <tr>
+                                            <td colspan="9" class="text-left" style="font-size:medium;">
+                                                <![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]]><i>
+                                                <t t-if="prod_categ_id">
+                                                    <t t-esc="prod_categ_id.name" />
+                                                </t>
+                                                <t t-if="not prod_categ_id">
+                                                    <span> </span>
+                                                </t>
+                                            </i>
+                                            </td>
+                                        </tr>
+                                        <t
+                                            t-foreach="o._get_product_detail(company, warehouse_id.id, prod_categ_id.id, o)"
+                                            t-as="product_info">
+                                            <tr>
+                                                <td><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]]>
+                                                    <t t-esc="product_info.get('product_name')" />
+                                                </td>
+                                                <t t-set="opening_stock" t-value="product_info.get('opening')" />
+                                                <t t-set="received_product" t-value="product_info.get('received_product')" />
+                                                <t t-set="delivered_product" t-value="product_info.get('delivered_product')" />
+                                                <t t-set="return_in_qty" t-value="product_info.get('return_in_qty')" />
+                                                <t t-set="return_out_qty" t-value="product_info.get('return_out_qty')" />
+                                                <t t-set="adjusted_qty" t-value="product_info.get('adjusted_qty')" />
+                                                <td style="text-align:right;">
+                                                    <t t-esc="opening_stock" />
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <t t-esc="received_product" />
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <t t-esc="delivered_product" />
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <t t-esc="return_in_qty" />
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <t t-esc="return_out_qty" />
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <t t-esc="product_info.get('internal_qty')" />
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <t t-esc="adjusted_qty" />
+                                                </td>
+                                                <t t-set="closing_stock"
+                                                    t-value="(opening_stock+received_product+adjusted_qty+ return_in_qty)-delivered_product-return_out_qty" />
+                                                <td style="text-align:right;">
+                                                    <t t-esc="closing_stock" />
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </t>
+                            </table>
+                            <p style="page-break-after:always;" />
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

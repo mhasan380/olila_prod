@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inventory_form_view" model="ir.ui.view">
+        <field name="name">inventory.form.view</field>
+        <field name="model">inventory.report</field>
+        <field name="arch" type="xml">
+            <form string="Stock Balance Report">
+                <group colspan="4" col="4">
+                    <field name="company_ids" widget="many2many_tags" />
+                    <field name="warehouse_ids" widget="many2many_tags"
+                        context="{'wiz_company_ids':company_ids}" />
+                    <field name="start_date" required="1" />
+                    <field name="end_date" required="1" />
+                </group>
+                <group>
+                    <field name="product_category_ids" widget="many2many_tags" />
+                    <field name="product_ids" widget="many2many_tags"
+                        context="{'wiz_product_categ_ids':product_category_ids}" />
+                    <field name="with_zero_info" />
+                </group>
+                <footer>
+                    <button name="print_inventory_report" string="Print" type="object"
+                        class="oe_highlight" />
+                    <span> Or </span>
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_inventory_report" model="ir.actions.act_window">
+        <field name="name">Stock Balance Report</field>
+        <field name="res_model">inventory.report</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="inventory_form_view" />
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        id="warehouse_reporting_main_menu"
+        name="Reporting"
+        parent="stock.menu_stock_root"
+    />
+    <menuitem
+        id="inventory_report_menu"
+        action="action_inventory_report"
+        parent="stock.menu_warehouse_report"
+    />
+</odoo>

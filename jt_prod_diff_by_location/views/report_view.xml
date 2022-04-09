@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_monthly_invoice_summary" model="report.paperformat">
+            <field name="name">Stock Reports</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">50</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">45</field>
+            <field name="dpi">90</field>
+            <!-- <field name="report_ids" eval="[(4, ref('jt_prod_diff_by_location.inventory_report_stock'))]" /> -->
+        </record>
+
+        <report
+            id="inventory_report_stock"
+            model="inventory.report"
+            string="Stock Balance Report"
+            report_type="qweb-pdf"
+            name="jt_prod_diff_by_location.inventory_stock_report"
+            file="jt_prod_diff_by_location.inventory_stock_report"
+            paperformat="jt_prod_diff_by_location.paperformat_monthly_invoice_summary"
+            menu="False"
+        />
+    </data>
+</odoo>
