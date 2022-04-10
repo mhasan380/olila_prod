@@ -4,7 +4,7 @@
         <field name="model">raw.stock.report.wizard</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="Raw Material Stock Report">
+            <form string="Raw Material Usage Stock Report">
                 <group>
                     <group>
                         <field name="consumtion"/>
@@ -19,12 +19,12 @@
         </field>
     </record>
     <act_window id="action_raw_stock_report_wizard"
-                name="Raw Material Stock Report"
+                name="Raw Material Usage Stock Report"
                 res_model="raw.stock.report.wizard"
                 view_mode="form"
                 target="new"/>
     <menuitem action="action_raw_stock_report_wizard"
               id="menu_raw_stock_report_wizard"
               parent="stock.menu_warehouse_report"
-              name="Raw Material Stock Report" />
+              name="Raw Material Usage Stock Report" />
 </odoo>

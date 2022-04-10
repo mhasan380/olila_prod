@@ -8,7 +8,7 @@
 
                         <div class="text-center">
 
-                         <h4>Raw Material Stock Report</h4>
+                         <h4>Raw Material Usage Stock Report</h4>
 
                         </div>
 
@@ -16,8 +16,8 @@
                 <thead><tr>
                     <th class="text-left" > Code</th>
                     <th class="text-left">Product Name</th>
-                    <th class="text-left">Stock Quantity</th>
-                    <th class="text-left">Daily Consumption</th>
+                    <th class="text-left">Stock Quantity(KG)</th>
+                    <th class="text-left">Daily Consumption(KG)</th>
                     <th class="text-left">Stock Days</th>
 
                 </tr></thead>

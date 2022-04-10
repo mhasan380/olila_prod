@@ -24,19 +24,25 @@
                     <th class="text-left">Category</th>
                     <th class="text-left">Quantity</th>
                     <th class="text-left">UoM</th>
+                    <th class="text-left">Value</th>
                 </tr></thead>
                 <tbody>
 
                     <t t-set="i" t-value="1"/>
                     <t t-set="total_qty" t-value="0"/>
+                    <t t-set="total_value" t-value="0"/>
                 <tr t-foreach='quants' t-as='quant'>
                      <td><t t-esc="i" /></td>
                     <td><t t-esc="quant.product_id.display_name"/></td>
                     <td><t t-esc="quant.product_id.categ_id.name"/></td>
                     <td><t t-esc="quant.quantity" t-options='{"widget": "float", "precision": 2}' /></td>
                     <td><t t-esc="quant.product_uom_id.name"/></td>
+                    <td> <t t-if="quant.product_id.goods_type == 'finish'">
+                        <t t-esc="quant.quantity * quant.product_id.lst_price" t-options='{"widget": "float", "precision": 2}'/> </t></td>
                      <t t-set="i" t-value="i+1"/>
                      <t t-set="total_qty" t-value="total_qty + quant.quantity"/>
+                     <t t-if="quant.product_id.goods_type == 'finish'">
+                         <t t-set="total_value" t-value="total_value + (quant.quantity * quant.product_id.lst_price)"/> </t>
 
                 </tr>
 
@@ -46,6 +52,7 @@
                      <td>  </td>
                      <td> <span t-esc="total_qty" t-options='{"widget": "float", "precision": 2}'/> </td>
                      <td> </td>
+                     <td> <span t-esc="total_value" t-options='{"widget": "float", "precision": 2}'/> </td>
 
                  </tr>
 

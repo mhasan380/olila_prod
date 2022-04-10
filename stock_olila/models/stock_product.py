@@ -23,6 +23,12 @@ class ProductTemplate(models.Model):
     mctn_qty = fields.Float(compute="_compute_mctn_qty",string='Master Carton Qty', search='_search_mctn_qty')
     undelivered_mctn = fields.Float(compute="_compute_undelivered_mctn",string='Undelivered MCTN', search='_search_undelivered_mctn')
     total_weight = fields.Float(compute="_compute_total_weight", string='Total Weight', search='_search_total_weight')
+    net_value = fields.Float(compute="_compute_net_value", string='Net value', search='_search_net_value')
+
+    @api.depends('lst_price', 'net_stock')
+    def _compute_net_value(self):
+        for product in self:
+            product.net_value = product.lst_price * product.net_stock
 
     @api.depends('qty_available', 'weight')
     def _compute_total_weight(self):
@@ -82,11 +88,14 @@ class ProductTemplate(models.Model):
     def _search_total_weight(self, operator, value):
         # TDE FIXME: should probably clean the search methods
         return self._search_product_total_quantity(operator, value, 'total_weight')
+    def _search_net_value(self, operator, value):
+        # TDE FIXME: should probably clean the search methods
+        return self._search_product_total_quantity(operator, value, 'net_value')
 
     def _search_product_total_quantity(self, operator, value, field):
         # TDE FIXME: should probably clean the search methods
         # to prevent sql injections
-        if field not in ('net_stock','sales_price_total','mctn_qty','undelivered_mctn','total_weight'):
+        if field not in ('net_stock','sales_price_total','mctn_qty','undelivered_mctn','total_weight','net_value'):
             raise UserError(_('Invalid domain left operand %s', field))
         if operator not in ('<', '>', '=', '!=', '<=', '>='):
             raise UserError(_('Invalid domain operator %s', operator))
@@ -107,7 +116,7 @@ class ProductTemplate(models.Model):
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
         res = super(ProductTemplate, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby,
                                                  lazy=lazy)
-        if 'qty_available' or 'net_stock' or 'outgoing_qty' or 'sales_price_total' or 'mctn_qty' or 'undelivered_mctn' or 'total_weight' in fields:
+        if 'qty_available' or 'net_stock' or 'outgoing_qty' or 'sales_price_total' or 'mctn_qty' or 'undelivered_mctn' or 'total_weight' or 'net_value' in fields:
             for line in res:
                 if '__domain' in line:
                     lines = self.search(line['__domain'])
@@ -118,6 +127,7 @@ class ProductTemplate(models.Model):
                     total_mctn_qty = 0.0
                     total_undelivered_mctn = 0.0
                     total_product_weight = 0.0
+                    total_net_value = 0.0
                     for record in lines:
                         total_product_qty += record.qty_available
                         total_net_qty += record.net_stock
@@ -126,6 +136,7 @@ class ProductTemplate(models.Model):
                         total_mctn_qty += record.mctn_qty
                         total_undelivered_mctn += record.undelivered_mctn
                         total_product_weight += record.total_weight
+                        total_net_value += record.net_value
 
                     line['qty_available'] = total_product_qty
                     line['net_stock'] = total_net_qty
@@ -134,6 +145,7 @@ class ProductTemplate(models.Model):
                     line['mctn_qty'] = total_mctn_qty
                     line['undelivered_mctn'] = total_undelivered_mctn
                     line['total_weight'] = total_product_weight
+                    line['net_value'] = total_net_value
 
         return res
 
