@@ -67,11 +67,11 @@ class UndeliveryStockReport(models.AbstractModel):
             if sale_type != 'all':
                 delivery_orders = self.env['stock.picking'].search(
                 [('location_id', '=', location_id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
-                 ('sale_type', '=', sale_type), ('state', 'in', ('confirmed', 'assigned'))])
+                 ('sale_type', '=', sale_type), ('transfer_id', '=', False), ('state', 'in', ('confirmed', 'assigned'))])
             else:
                 delivery_orders = self.env['stock.picking'].search(
                     [('location_id', '=', location_id), ('picking_type_code', '=', 'outgoing'),('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
-                     ('state', 'in', ('confirmed', 'assigned'))])
+                     ('transfer_id', '=', False), ('state', 'in', ('confirmed', 'assigned'))])
             for order in delivery_orders:
                 for line in order.move_ids_without_package:
                     key = (line.product_id)
@@ -139,11 +139,11 @@ class UndeliveryStockReport(models.AbstractModel):
                 if sale_type != 'all':
                     delivery_orders = self.env['stock.picking'].search(
                         [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
-                         ('sale_type', '=', sale_type), ('state', 'in', ('confirmed', 'assigned'))])
+                         ('sale_type', '=', sale_type), ('transfer_id', '=', False), ('state', 'in', ('confirmed', 'assigned'))])
                 else:
                     delivery_orders = self.env['stock.picking'].search(
                         [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
-                         ('state', 'in', ('confirmed', 'assigned'))])
+                         ('transfer_id', '=', False),   ('state', 'in', ('confirmed', 'assigned'))])
                 for order in delivery_orders:
                     for line in order.move_ids_without_package:
                         key = (line.product_id)
@@ -213,11 +213,11 @@ class UndeliveryStockReport(models.AbstractModel):
                 if sale_type != 'all':
                     delivery_orders = self.env['stock.picking'].search(
                         [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
-                         ('sale_type', '=', sale_type), ('state', 'in', ('confirmed', 'assigned'))])
+                         ('sale_type', '=', sale_type), ('transfer_id', '=', False), ('state', 'in', ('confirmed', 'assigned'))])
                 else:
                     delivery_orders = self.env['stock.picking'].search(
                         [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
-                         ('state', 'in', ('confirmed', 'assigned'))])
+                         ('transfer_id', '=', False), ('state', 'in', ('confirmed', 'assigned'))])
                 if partner_id:
                     delivery_orders = delivery_orders.search([('partner_id','=',partner_id)])
                 for order in delivery_orders:

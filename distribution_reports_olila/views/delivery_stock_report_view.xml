@@ -1,0 +1,202 @@
+<odoo>
+    <data>
+        <report id="delivered_stock_report" menu="False" model="delivered.report.wizard" name="distribution_reports_olila.delivered_report_template"  report_type="qweb-pdf" string="Delivery Stock Report"/>
+        <template id="delivered_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:5px;">
+                        <t t-if="report_type == 'depot'">
+                            <div class="text-center">
+                                <h4>Delivery Report Depot-Wise</h4>
+                            </div>
+                            <div class="customer_info">
+                                <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                    <p>
+                                        <b>From Date : </b>
+                                        <span t-esc="date_start"/>
+                                    </p>
+                                    <p>
+                                        <b>To Date : </b>
+                                        <span t-esc="date_end"/>
+                                    </p>
+                                </div>
+                                <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                    <t t-if="sale_type=='primary_sales'">
+                                        <b>Sale Type : Retail Sales </b>
+                                    </t>
+                                    <t t-elif="sale_type=='corporate_sales'">
+                                        <b>Sale Type : Corporate Sales </b>
+                                    </t>
+                                    <p>
+                                        <b>Depot Name : </b>
+                                        <span t-esc="warehouse_name"/>
+                                    </p>
+                                </div>
+                            </div>
+                            <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                            <table  class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" >SL</th>
+                                        <th class="text-left">Customer Name</th>
+                                        <th class="text-left">Address</th>
+                                        <th class="text-left">Date</th>
+                                        <th class="text-left">SO Number</th>
+                                        <th class="text-left">Challan Number</th>
+                                        <th class="text-left">Delivery Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="i" t-value="1"/>
+                                    <t t-set="total_qty" t-value="0"/>
+                                    <tr t-foreach='warehouse_dict' t-as='line'>
+                                        <td>
+                                            <t t-esc="i" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['customer_name']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['address']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['date']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['so_number']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['challan_number']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['total_qty']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <t t-set="i" t-value="i+1"/>
+                                        <t t-set="total_qty" t-value="total_qty + line['total_qty']"/>
+                                    </tr>
+                                    <tr style="font-weight: bold; color: blue;">
+                                        <td >
+                                            <b>Total </b>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <span t-esc="total_qty" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <style>
+                        td {border: 1px solid #000; }
+                        th {
+
+                            text-align: center;
+                         }
+
+                        </style>
+                            </table>
+                        </t>
+                        <t t-if="report_type == 'product'">
+                            <div class="page" style="padding-top:5px;">
+                                <div class="text-center">
+                                    <h4>Delivery Report Product-Wise</h4>
+                                </div>
+                                <div class="customer_info">
+                                    <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                        <p>
+                                            <b>From Date : </b>
+                                            <span t-esc="date_start"/>
+                                        </p>
+                                        <p>
+                                            <b>To Date : </b>
+                                            <span t-esc="date_end"/>
+                                        </p>
+                                    </div>
+                                    <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                        <t t-if="sale_type=='primary_sales'">
+                                            <b>Sale Type : Retail Sales </b>
+                                        </t>
+                                        <t t-elif="sale_type=='corporate_sales'">
+                                            <b>Sale Type : Corporate Sales </b>
+                                        </t>
+                                        <t t-else="">
+                                            <b>Sale Type : All Sales </b>
+                                        </t>
+                                        <t t-if="warehouse_name">
+                                            <p>
+                                                <b>Depot Name : </b>
+                                                <span t-esc="warehouse_name"/>
+                                            </p>
+                                        </t>
+                                    </div>
+                                </div>
+                                <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                                <table  class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left" >SL</th>
+                                            <th class="text-left">Product Code</th>
+                                            <th class="text-left">Product Name</th>
+                                            <th class="text-left">Delivery Quantity</th>
+                                            <th class="text-left">UoM</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="i" t-value="1"/>
+                                        <t t-set="total_qty" t-value="0"/>
+                                        <tr t-foreach='depot_stock_dict' t-as='line'>
+                                            <td>
+                                                <t t-esc="i" />
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['code']"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['product_name']"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['quantity']" t-options='{"widget": "float", "precision": 2}' />
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['uom']"/>
+                                            </td>
+                                            <t t-set="i" t-value="i+1"/>
+                                            <t t-set="total_qty" t-value="total_qty + line['quantity']"/>
+                                        </tr>
+                                        <tr style="font-weight: bold; color: blue;">
+                                            <td >
+                                                <b>Total </b>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <span t-esc="total_qty" t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                    <style>
+                        td {border: 1px solid #000; }
+                        th {
+
+                            text-align: center;
+                         }
+
+                        </style>
+                                </table>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

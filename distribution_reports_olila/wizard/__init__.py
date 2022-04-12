@@ -4,3 +4,4 @@
 
 
 from . import undelivery_report_wizard
+from . import delivery_report_wizard
