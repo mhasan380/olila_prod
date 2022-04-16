@@ -194,6 +194,117 @@
                                 </table>
                             </div>
                         </t>
+                        <t t-if="report_type == 'national'">
+                            <div class="page" style="padding-top:5px;">
+                                <div class="text-center">
+                                    <h4>Delivery Report National</h4>
+                                </div>
+                                <div class="customer_info">
+                                    <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                        <p>
+                                            <b>From Date : </b>
+                                            <span t-esc="date_start"/>
+                                        </p>
+                                        <p>
+                                            <b>To Date : </b>
+                                            <span t-esc="date_end"/>
+                                        </p>
+                                    </div>
+
+                                </div>
+                                <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                                <table  class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th> </th>
+                                            <th> </th>
+                                            <th colspan="2">Oppening Undelivery Qty</th>
+                                            <th colspan="2">DO Received Qty Qty</th>
+                                            <th colspan="2">Retail</th>
+                                            <th colspan="2">Corporate</th>
+                                            <th> </th>
+
+                                        </tr>
+                                        <tr>
+                                            <th class="text-left" >SL</th>
+                                            <th class="text-left">Depot</th>
+                                            <th class="text-left">Retail</th>
+                                            <th class="text-left">Corporate</th>
+                                            <th class="text-left">Retail</th>
+                                            <th class="text-left">Corporate</th>
+                                            <th class="text-left">Done Qty</th>
+                                            <th class="text-left">Percentage</th>
+                                            <th class="text-left">Done Qty</th>
+                                            <th class="text-left">Percentage</th>
+                                            <th class="text-left">Total Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="i" t-value="1"/>
+                                        <t t-set="total_qty" t-value="0"/>
+                                        <tr t-foreach='warehouse_dict' t-as='line'>
+                                            <td>
+                                                <t t-esc="i" />
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['depot_name']"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['pri_opening_qty']" t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['cor_opening_qty']" t-options='{"widget": "float", "precision": 2}' />
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['primary_total_qty']"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['corporate_total_qty']"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['primary_deiverd_qty']"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['primary_percent']" t-options='{"widget": "float", "precision": 2}'/> %
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['corporate_deiverd_qty']"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['corporate_percent']" t-options='{"widget": "float", "precision": 2}'/> %
+                                            </td>
+                                            <td>
+                                                <t t-esc="line['corporate_percent'] + line['primary_percent']" t-options='{"widget": "float", "precision": 2}'/> %
+                                            </td>
+                                            <t t-set="i" t-value="i+1"/>
+<!--                                            <t t-set="total_qty" t-value="total_qty + line['quantity']"/>-->
+                                        </tr>
+<!--                                        <tr style="font-weight: bold; color: blue;">-->
+<!--                                            <td >-->
+<!--                                                <b>Total </b>-->
+<!--                                            </td>-->
+<!--                                            <td></td>-->
+<!--                                            <td></td>-->
+<!--                                            <td>-->
+<!--                                                <span t-esc="total_qty" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                            </td>-->
+<!--                                            <td></td>-->
+<!--                                        </tr>-->
+                                    </tbody>
+                                    <style>
+                        td {border: 1px solid #000; }
+                        th {
+
+                            text-align: center;
+                         }
+
+                        </style>
+                                </table>
+                            </div>
+                        </t>
                     </div>
                 </t>
             </t>

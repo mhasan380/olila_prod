@@ -172,6 +172,69 @@ class DeliveredStockReport(models.AbstractModel):
                     } for (product), qty in depot_stock_dict.items()], key=lambda l: l['product_name']),
                 }
 
+        elif report_type == 'national':
+            depot_stock_dict = {}
+            depots = self.env['stock.warehouse'].search([('is_depot', '=', True)])
+            for depot in depots:
+                domain = [
+                    ('picking_type_code', '=', 'outgoing'),  # sale order(delivery)
+                    ('location_id', '=',  depot.lot_stock_id.id),  # depot wise filter
+                    ('transfer_id', '=', False)
+                     ]
+                deivery_orders = self.env['stock.picking'].search(domain)
+                opening_orders = deivery_orders.search([('date_deadline', '<', from_date.strftime("%Y-%m-%d %H:%M:%S")),('state', 'in', ('confirmed', 'assigned'))])
+                retail_undelivery = 0.0
+                corprate_undelivry = 0.0
+                primary_percent = 0.0
+                corporate_percent = 0.0
+                for order in opening_orders:
+                    if order.sale_type == 'primary_sales':
+                        retail_undelivery += sum(order.mapped('move_ids_without_package').mapped('product_uom_qty'))
+                    elif order.sale_type == 'corporate_sales':
+                        corprate_undelivry += sum(order.mapped('move_ids_without_package').mapped('product_uom_qty'))
+                print('Primay>>>>>',retail_undelivery)
+                print('Corporate>>>>>', corprate_undelivry)
+                total_undelivery = retail_undelivery + corprate_undelivry
+                current_orders = deivery_orders.search([('date_deadline', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")), ('date_deadline', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', 'not in', ('draft', 'cancel'))])
+                corporate_orders = current_orders.filtered(lambda x: x.sale_type and x.sale_type == 'corporate_sales')
+                corporate_total_qty = sum(corporate_orders.mapped('move_ids_without_package').mapped('product_uom_qty'))
+                corporate_deiverd_orders = deivery_orders.search([('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
+                        ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('sale_type', '=', 'corporate_sales')])
+                corporate_deiverd_qty = sum(corporate_deiverd_orders.mapped('move_ids_without_package').mapped('quantity_done'))
+                primary_orders = current_orders.filtered(lambda x: x.sale_type and x.sale_type == 'primary_sales')
+                primary_total_qty = sum(primary_orders.mapped('move_ids_without_package').mapped('product_uom_qty'))
+                primary_deiverd_orders = deivery_orders.search([('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
+                        ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('sale_type', '=', 'primary_sales')])
+                primary_deiverd_qty = sum(primary_deiverd_orders.mapped('move_ids_without_package').mapped('quantity_done'))
+                if primary_total_qty > 0:
+                    primary_percent = ((primary_deiverd_qty / primary_total_qty) * 100)
+                if corporate_total_qty > 0:
+                    corporate_percent = ((corporate_deiverd_qty / corporate_total_qty) * 100)
+
+                depot_stock_dict.setdefault(depot, {
+                                                    'depot_name': depot.name,
+                                                    'cor_opening_qty': corprate_undelivry,
+                                                    'pri_opening_qty': retail_undelivery,
+                                                    'corporate_total_qty': corporate_total_qty,
+                                                    'primary_total_qty': primary_total_qty,
+                                                    'corporate_deiverd_qty': corporate_deiverd_qty,
+                                                     'primary_deiverd_qty': primary_deiverd_qty,
+                                                     'primary_percent' : primary_percent,
+                                                      'corporate_percent' : corporate_percent
+
+                                                            })
+            print(depot_stock_dict)
+            return {
+                'doc_ids': data.get('docs'),
+                'doc_model': data.get('model'),
+                'warehouse_dict': list(depot_stock_dict.values()),
+                'report_type': report_type,
+                'date_start': date_start,
+                'date_end': date_end,
+
+
+            }
+
 
 
 
