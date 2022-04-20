@@ -6,6 +6,8 @@ class MrpProduction(models.Model):
     average_weight = fields.Float('Average Weight')
     total_weight = fields.Float('Total Weight')
     shift = fields.Selection([('a', 'A Shift'), ('b', 'B Shift'), ('c', 'C Shift')],string='Shift')
+    production_type = fields.Selection([('pcs', 'PCS'), ('ei', 'Empty Inner'), ('emm', 'Empty Master'),('fgi', 'FG Inner'),
+                ('fgm', 'FG Master'), ('cullet', 'Cullet'), ('converstion', 'Conversion')],string='Production Type')
 
     @api.onchange('average_weight','product_qty')
     def onchange_average_weight(self):

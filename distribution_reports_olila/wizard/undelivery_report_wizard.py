@@ -92,7 +92,8 @@ class UndeliveryStockReport(models.AbstractModel):
                         'product_name': product.name,
                         'code': product.default_code,
                         'quantity': qty,
-                        'uom': product.uom_id.name
+                        'uom': product.uom_id.name,
+                        'fs_type': product.fs_type
                     } for (product), qty in depot_stock_dict.items()], key=lambda l: l['quantity'],reverse=True),
                 }
             elif sort_type == 'asc':
@@ -110,7 +111,8 @@ class UndeliveryStockReport(models.AbstractModel):
                         'product_name': product.name,
                         'code': product.default_code,
                         'quantity': qty,
-                        'uom': product.uom_id.name
+                        'uom': product.uom_id.name,
+                        'fs_type': product.fs_type
                     } for (product), qty in depot_stock_dict.items()], key=lambda l: l['quantity']),
                   }
 
@@ -128,8 +130,9 @@ class UndeliveryStockReport(models.AbstractModel):
                         'product_name': product.name,
                         'code': product.default_code,
                         'quantity': qty,
-                        'uom': product.uom_id.name
-                    } for (product), qty in depot_stock_dict.items()], key=lambda l: l['product_name']),
+                        'uom': product.uom_id.name,
+                        'fs_type': product.fs_type
+                    } for (product), qty in depot_stock_dict.items()], key=lambda l: l['code']),
                 }
 
 
@@ -164,7 +167,8 @@ class UndeliveryStockReport(models.AbstractModel):
                         'product_name': product.name,
                         'code': product.default_code,
                         'quantity': qty,
-                        'uom': product.uom_id.name
+                        'uom': product.uom_id.name,
+                        'fs_type': product.fs_type
                     } for (product), qty in depot_stock_dict.items()], key=lambda l: l['quantity'],reverse=True),
                 }
             elif sort_type == 'asc':
@@ -182,7 +186,8 @@ class UndeliveryStockReport(models.AbstractModel):
                         'product_name': product.name,
                         'code': product.default_code,
                         'quantity': qty,
-                        'uom': product.uom_id.name
+                        'uom': product.uom_id.name,
+                        'fs_type': product.fs_type
                     } for (product), qty in depot_stock_dict.items()], key=lambda l: l['quantity']),
                   }
 
@@ -200,8 +205,9 @@ class UndeliveryStockReport(models.AbstractModel):
                         'product_name': product.name,
                         'code': product.default_code,
                         'quantity': qty,
-                        'uom': product.uom_id.name
-                    } for (product), qty in depot_stock_dict.items()], key=lambda l: l['product_name']),
+                        'uom': product.uom_id.name,
+                        'fs_type': product.fs_type
+                    } for (product), qty in depot_stock_dict.items()], key=lambda l: l['code']),
                 }
 
         elif report_type == 'customer':
@@ -219,7 +225,10 @@ class UndeliveryStockReport(models.AbstractModel):
                         [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
                          ('transfer_id', '=', False), ('state', 'in', ('confirmed', 'assigned'))])
                 if partner_id:
-                    delivery_orders = delivery_orders.search([('partner_id','=',partner_id)])
+                    delivery_orders = self.env['stock.picking'].search(
+                        [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '<=', date_time.strftime("%Y-%m-%d %H:%M:%S")),
+                         ('transfer_id', '=', False), ('partner_id','=',partner_id), ('state', 'in', ('confirmed', 'assigned'))])
+
                 for order in delivery_orders:
                     for line in order.move_ids_without_package:
                         key = (order.partner_id, line.product_id)
@@ -241,8 +250,10 @@ class UndeliveryStockReport(models.AbstractModel):
                     'code': product.default_code,
                     'quantity': qty,
                     'uom': product.uom_id.name,
-                    'customer_name':customer.name,
+                    'customer_name':customer.display_name,
                     'customer_code' : customer.code,
+                    'customer': customer
                 } for (customer,product), qty in depot_stock_dict.items()], key=lambda l: l['customer_name']),
                 }
+
 
