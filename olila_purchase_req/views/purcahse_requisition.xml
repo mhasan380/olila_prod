@@ -11,7 +11,7 @@
                 <xpath expr="//form/sheet/group" position="after">
                      <div>
                     <div class="float-left" name="button_box" style="width: 50%;">
-                       <field name="ref_number"/>
+                       <field name="ref_number" placeholder="Search Product"/>
                    </div>
                 <div class="float-right">
                     <button name="select_product" string="Select" type="object" class="btn-primary"/>
