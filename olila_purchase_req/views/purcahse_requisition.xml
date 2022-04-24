@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="purchase_request_form2_inherit_olila" model="ir.ui.view">
+            <field name="name">purchase.requisition.form2.inherit.olila</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//form/sheet/group" position="after">
+                     <div>
+                    <div class="float-left" name="button_box" style="width: 50%;">
+                       <field name="ref_number"/>
+                   </div>
+                <div class="float-right">
+                    <button name="select_product" string="Select" type="object" class="btn-primary"/>
+                </div>
+                  </div>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='product_id']"  position="before">
+                     <field name="to_purchase"/>
+
+                </xpath>
+                <xpath expr="//button[@name='action_cancel']"  position="after">
+                      <button name="create_po" string="Create PO" type="object" class="btn-primary"/>
+
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+
+</odoo>

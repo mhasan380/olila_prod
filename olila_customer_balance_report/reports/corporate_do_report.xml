@@ -79,8 +79,8 @@
                                 </div>
                                 <div class="col-auto col-3 mw-100 mb-2">
                                     <strong>Contact Person:</strong>
-                                    <p class="m-0" t-field="doc.partner_id.proprietor_name"/>
-                                    <p class="m-0" t-field="doc.partner_id.proprietor_contact"/>
+                                    <p class="m-0" t-field="doc.partner_id.secondary_contact_persion"/>
+                                    <p class="m-0" t-field="doc.partner_id.mobile"/>
                                 </div>
                                 <div class="col-auto col-3 mw-100 mb-2">
                                     <strong>Salesperson:</strong>
