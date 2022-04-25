@@ -252,7 +252,8 @@ class UndeliveryStockReport(models.AbstractModel):
                     'uom': product.uom_id.name,
                     'customer_name':customer.display_name,
                     'customer_code' : customer.code,
-                    'customer': customer
+                    'customer': customer,
+                    'fs_type': product.fs_type
                 } for (customer,product), qty in depot_stock_dict.items()], key=lambda l: l['customer_name']),
                 }
 

@@ -12,6 +12,7 @@
         'views/stock_product.xml',
         'views/stock_picking.xml',
         'views/store_rack.xml',
+        'views/stock_move.xml',
         'reports/corporate_delivery_report.xml',
         'reports/material_recieve_report.xml',
         'reports/depot_stock_report_view.xml',

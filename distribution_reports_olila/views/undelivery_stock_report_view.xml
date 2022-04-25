@@ -285,7 +285,13 @@
                                     <td><t t-esc="line['product_name']"/></td>
                                     <td><t t-esc="line['quantity']" t-options='{"widget": "float", "precision": 2}' /></td>
                                     <td><t t-esc="line['uom']"/></td>
-                                    <t t-set="customer_qty" t-value="customer_qty + line['quantity']"/>
+                                    <t t-if="line['fs_type'] == 'pcs'">
+                                    <t t-set="customer_qty" t-value="customer_qty + (line['quantity'] / 72)"/> </t>
+                                    <t t-if="line['fs_type'] == 'inner'">
+                                    <t t-set="customer_qty" t-value="customer_qty + (line['quantity'] / 12)"/> </t>
+                                    <t t-if="line['fs_type'] == 'master'">
+                                    <t t-set="customer_qty" t-value="customer_qty + line['quantity']"/> </t>
+
                                 </t>
                              </tr>
                             </t>

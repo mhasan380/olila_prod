@@ -48,7 +48,6 @@
                     <field name="company_id" groups="base.group_multi_company" optional="hide" readonly="1"/>
                     <field name="lst_price" optional="show" string="Unit Price"/>
                     <field name="sales_price_total"/>
-                    <field name="qty_available"/>
                     <field name="mctn_qty"/>
                     <field name="undelivered_mctn"/>
                     <field name="net_stock"/>
