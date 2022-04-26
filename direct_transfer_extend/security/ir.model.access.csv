@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_direct_transfer_extend_direct_transfer_extend,direct_transfer_extend.direct_transfer_extend,model_direct_transfer_extend_direct_transfer_extend,base.group_user,1,1,1,1

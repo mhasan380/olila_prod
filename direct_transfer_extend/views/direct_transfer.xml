@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="lc_direct_transfer_tree_inherit" model="ir.ui.view">
+            <field name="name">lc.direct.transfer.inherit.olila</field>
+            <field name="model">lc.direct.transfer</field>
+            <field name="inherit_id" ref="lc_direct_transfer.lc_direct_transfer_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="date"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_type']" position="before">
+                    <field name="ref"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="total_amount"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="lc_direct_transfer_form_inherit" model="ir.ui.view">
+            <field name="name">lc.direct.transfer.form.inherit.olila</field>
+            <field name="model">lc.direct.transfer</field>
+            <field name="inherit_id" ref="lc_direct_transfer.lc_direct_transfer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ref']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+
+</odoo>
