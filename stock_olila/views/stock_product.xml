@@ -31,6 +31,7 @@
                     <field name="goods_type"/>
                     <field name="fs_type"/>
                     <field name="rack_id"/>
+                    <field name="safety_qty"/>
 
                 </xpath>
             </field>
@@ -47,6 +48,7 @@
                     <field name="name" readonly="1"/>
                     <field name="company_id" groups="base.group_multi_company" optional="hide" readonly="1"/>
                     <field name="lst_price" optional="show" string="Unit Price"/>
+                    <field name="qty_available" optional="show" string="Unit Price"/>
                     <field name="sales_price_total"/>
                     <field name="mctn_qty"/>
                     <field name="undelivered_mctn"/>
@@ -57,6 +59,7 @@
                     <field name="price" invisible="not context.get('pricelist',False)"/>
                     <field name="product_tmpl_id" invisible="1" readonly="1"/>
                     <field name="active" invisible="1"/>
+
                 </tree>
             </field>
         </record>

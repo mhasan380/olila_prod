@@ -14,6 +14,7 @@
                        <field name="total_weight" attrs="{'readonly': [('state','!=','draft')]}"/>
                     <field name="shift" attrs="{'readonly': [('state','!=','draft')]}" required="1"/>
                     <field name="production_type"  required="1"/>
+                    <field name="cullet_type"  attrs="{'invisible':[('production_type', '!=', 'cullet')], 'required':[('production_type', '=', 'cullet')] }"/>
                 </xpath>
             </field>
         </record>

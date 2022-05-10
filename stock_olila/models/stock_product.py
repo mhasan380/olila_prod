@@ -24,6 +24,7 @@ class ProductTemplate(models.Model):
     undelivered_mctn = fields.Float(compute="_compute_undelivered_mctn",string='Undelivered MCTN', search='_search_undelivered_mctn')
     total_weight = fields.Float(compute="_compute_total_weight", string='Total Weight', search='_search_total_weight')
     net_value = fields.Float(compute="_compute_net_value", string='Net value', search='_search_net_value')
+    safety_qty = fields.Float('Safety Stock')
 
     @api.depends('lst_price', 'net_stock')
     def _compute_net_value(self):
