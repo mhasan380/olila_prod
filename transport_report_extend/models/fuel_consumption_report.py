@@ -24,8 +24,8 @@ class FuelConsumptionReport(models.AbstractModel):
                 'fuel_type': fuel_types.get(line.fuel_type, ''),
                 'fuel_qty' : line.fuel_purchase,
                 'fuel_unit_price' : round(fuel_unit_price, 2),
-                'total' : round((line.fuel_purchase * fuel_unit_price), 2),
-                'distance' : line.total_km
+                'total' : (line.fuel_purchase * fuel_unit_price),
+                'distance' : line.fuel_log_id.total_km
             })
             sr_no+=1
         return lines
