@@ -1,0 +1,90 @@
+
+<odoo>
+    <data>
+        <report id="vehicle_doc_cost_report" menu="False" model="vehicle.paper.cost.wizard" name="transport_reports_olila.vehicle_doc_cost_report_template"  report_type="qweb-pdf" string="Vehicle Paper Details With Cost"/>
+        <template id="vehicle_doc_cost_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:30px;">
+
+                        <div class="text-center">
+
+                         <h4>BRTA Paper Update Report With Cost</h4>
+
+                        </div>
+
+                        <div>
+                        <t t-if="vehicle_id">
+                            <p> Vehicle Name: <span t-esc="vehicle_id"/> </p>
+                        </t>
+
+                            <t t-if="doc_type">
+                            <p> Document Name: <span t-esc="doc_type"/> </p>
+                        </t>
+
+                        <p> From Date: <span t-esc="from_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/> </p>
+                        <p> To Date: <span t-esc="to_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/> </p>
+
+                        </div>
+
+                        <table  class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="text-left">SL</th>
+                        <th class="text-left">Vehicle Number</th>
+                        <th class="text-left">Document Name</th>
+                        <th class="text-left">Issue Date</th>
+                        <th class="text-left">Expiry Date</th>
+                        <th class="text-left">Update Cost</th>
+                        <th class="text-left">Others Cost</th>
+                        <th class="text-left">Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                    <t t-set="i" t-value="1"/>
+                    <t t-set="total_update_cost" t-value="0"/>
+                    <t t-set="total_others_cost" t-value="0"/>
+                    <t t-set="total_value" t-value="0"/>
+                <tr t-foreach='documents' t-as='document' style="border-bottom: solid 1px black;">
+                    <td><t t-esc="i" /></td>
+                    <td><t t-esc="document.vehicle_id.name"/></td>
+                    <td><t t-esc="document.licence_id.name"/></td>
+                    <td><t t-esc="document.date_from" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/></td>
+                    <td><t t-esc="document.date_to" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/></td>
+                    <td><t t-esc="document.cost"/></td>
+                    <td><t t-esc="document.speed_money"/></td>
+                    <td><t t-esc="document.total_cost"/></td>
+
+                    <t t-set="i" t-value="i+1"/>
+                    <t t-set="total_update_cost" t-value="total_update_cost + document.cost"/>
+                    <t t-set="total_others_cost" t-value="total_others_cost + document.speed_money"/>
+                    <t t-set="total_value" t-value="total_value + document.total_cost"/>
+
+                </tr>
+
+                <tr style="font-weight: bold; color: blue;">
+
+                    <td > <b>Total </b></td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  </td>
+                    <td>  <span t-esc="total_update_cost" t-options='{"widget": "float", "precision": 2}'/> </td>
+                    <td>  <span t-esc="total_others_cost" t-options='{"widget": "float", "precision": 2}'/> </td>
+                    <td>  <span t-esc="total_value" t-options='{"widget": "float", "precision": 2}'/> </td>
+
+                 </tr>
+
+                </tbody>
+
+
+            </table>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -245,6 +245,12 @@
                                     <tbody>
                                         <t t-set="i" t-value="1"/>
                                         <t t-set="total_qty" t-value="0"/>
+                                        <t t-set="total_pri_opening_qty" t-value="0"/>
+                                        <t t-set="total_cor_opening_qty" t-value="0"/>
+                                        <t t-set="total_primary_qty" t-value="0"/>
+                                        <t t-set="total_corporate_qty" t-value="0"/>
+                                        <t t-set="total_primary_deiverd_qty" t-value="0"/>
+                                        <t t-set="total_corporate_deiverd_qty" t-value="0"/>
                                         <tr t-foreach='warehouse_dict' t-as='line'>
                                             <td>
                                                 <t t-esc="i" />
@@ -280,19 +286,30 @@
                                                 <t t-esc="line['total_percent']" t-options='{"widget": "float", "precision": 2}'/> %
                                             </td>
                                             <t t-set="i" t-value="i+1"/>
-<!--                                            <t t-set="total_qty" t-value="total_qty + line['quantity']"/>-->
+                                            <t t-set="total_pri_opening_qty" t-value="total_pri_opening_qty + line['pri_opening_qty']"/>
+                                            <t t-set="total_cor_opening_qty" t-value="total_cor_opening_qty + line['cor_opening_qty']"/>
+                                            <t t-set="total_primary_qty" t-value="total_primary_qty + line['primary_total_qty']"/>
+                                            <t t-set="total_corporate_qty" t-value="total_corporate_qty + line['corporate_total_qty']"/>
+                                            <t t-set="total_primary_deiverd_qty" t-value="total_primary_deiverd_qty + line['primary_deiverd_qty']"/>
+                                            <t t-set="total_corporate_deiverd_qty" t-value="total_corporate_deiverd_qty + line['corporate_deiverd_qty']"/>
+
                                         </tr>
-<!--                                        <tr style="font-weight: bold; color: blue;">-->
-<!--                                            <td >-->
-<!--                                                <b>Total </b>-->
-<!--                                            </td>-->
-<!--                                            <td></td>-->
-<!--                                            <td></td>-->
-<!--                                            <td>-->
-<!--                                                <span t-esc="total_qty" t-options='{"widget": "float", "precision": 2}'/>-->
-<!--                                            </td>-->
-<!--                                            <td></td>-->
-<!--                                        </tr>-->
+                                        <tr style="font-weight: bold; color: blue;">
+                                            <td >
+                                                <b>Total </b>
+                                            </td>
+                                            <td></td>
+                                            <td> <span t-esc="total_pri_opening_qty" t-options='{"widget": "float", "precision": 2}'/> </td>
+                                            <td> <span t-esc="total_cor_opening_qty" t-options='{"widget": "float", "precision": 2}'/> </td>
+                                            <td> <span t-esc="total_primary_qty" t-options='{"widget": "float", "precision": 2}'/> </td>
+                                            <td> <span t-esc="total_corporate_qty" t-options='{"widget": "float", "precision": 2}'/> </td>
+                                            <td> <span t-esc="total_primary_deiverd_qty" t-options='{"widget": "float", "precision": 2}'/> </td>
+                                            <td></td>
+                                            <td> <span t-esc="total_corporate_deiverd_qty" t-options='{"widget": "float", "precision": 2}'/> </td>
+                                            <td>
+                                            </td>
+                                            <td></td>
+                                        </tr>
                                     </tbody>
                                     <style>
                         td {border: 1px solid #000; }

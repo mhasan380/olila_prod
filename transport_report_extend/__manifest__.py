@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "transport_reports_olila",
+    'name': "transport_report_extend",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,18 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['olila_fleet'],
+    'depends': ['base','olila_transport_reports'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
-        'views/vehicle_license_renew.xml',
-        'views/templates.xml',
-        'wizard/vehicle_paper_wizard.xml',
-        'views/vehicle_paper_report_view.xml',
-        'wizard/vehicle_paper_cost_wizard.xml',
-        'views/vehicle_paper_report_cost_view.xml',
-        'wizard/fuel_consumption_details_wizard.xml'
+        # 'security/ir.model.access.csv',
+        'views/views.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [

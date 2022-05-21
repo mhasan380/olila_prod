@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_vehicle_paper_wizard,vehicle.paper.wizard,model_vehicle_paper_wizard,,1,1,1,1
 access_vehicle_paper_cost_wizard,vehicle.paper.cost.wizard,model_vehicle_paper_cost_wizard,,1,1,1,1
+access_fuel_consumption_details_wizard,fuel.consumption.details.wizard,model_fuel_consumption_details_wizard,,1,1,1,1
+

@@ -1,0 +1,82 @@
+<odoo>
+    <data>
+        <report id="fuel_consumption_report" menu="False" model="fuel.consumption.details.wizard" name="transport_reports_olila.fuel_consumption_report_template"  report_type="qweb-pdf" string="Vehicle Fuel Log Details"/>
+        <template id="fuel_consumption_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:30px;">
+
+                        <div class="text-center">
+
+                         <h4>Vehicle Fuel Log Details</h4>
+
+                        </div>
+
+                        <div>
+                        <t t-if="vehicle_id">
+                            <p> Vehicle Name: <span t-esc="vehicle_id"/> </p>
+                        </t>
+
+                            <t t-if="doc_type">
+                            <p> Fuel Name: <span t-esc="fuel_type"/> </p>
+                        </t>
+
+                        <p> From Date: <span t-esc="from_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/> </p>
+                        <p> To Date: <span t-esc="to_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/> </p>
+
+                        </div>
+
+<!--                        <table  class="table table-condensed">-->
+<!--                <thead>-->
+<!--                    <tr>-->
+<!--                        <th class="text-left">SL</th>-->
+<!--                        <th class="text-left">Date</th>-->
+<!--                        <th class="text-left">Vehicle Number</th>-->
+<!--                        <th class="text-left">Depot</th>-->
+<!--                        <th class="text-left">Fuel Type</th>-->
+<!--                        <th class="text-left">Fuel Qty</th>-->
+<!--                        <th class="text-left">Fuel Unit Price</th>-->
+<!--                        <th class="text-left">Total Cost</th>-->
+<!--                        <th class="text-left">Job Done(MCtn)</th>-->
+<!--                        <th class="text-left">Performance Efficiency</th>-->
+<!--                    </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+
+
+<!--                    <t t-set="i" t-value="1"/>-->
+<!--&lt;!&ndash;&lt;!&ndash;                    <t t-set="total_qty" t-value="0"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;                    <t t-set="total_value" t-value="0"/>&ndash;&gt;&ndash;&gt;-->
+<!--                <tr t-foreach='documents' t-as='document' style="border-bottom: solid 1px black;">-->
+<!--                    <td><t t-esc="i" /></td>-->
+<!--                    <td><t t-esc="document.vehicle_id.license_plate"/></td>-->
+<!--                    <td><t t-esc="document.name"/></td>-->
+<!--                    <td><t t-esc="document.start_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/></td>-->
+<!--                    <td><t t-esc="document.expiration_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/></td>-->
+<!--                    <td><t t-if="document.state=='open'">-->
+<!--                        <span>About To Expire </span>-->
+<!--                        </t>-->
+<!--                        <t t-else="">-->
+<!--                           <t t-esc="document.state"/>-->
+<!--                        </t>-->
+<!--                    </td>-->
+<!--&lt;!&ndash;&lt;!&ndash;                    <td> <t t-if="quant.product_id.goods_type == 'finish'">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;                        <t t-esc="quant.quantity * quant.product_id.lst_price" t-options='{"widget": "float", "precision": 2}'/> </t></td>&ndash;&gt;&ndash;&gt;-->
+<!--                     <t t-set="i" t-value="i+1"/>-->
+<!--&lt;!&ndash;&lt;!&ndash;                     <t t-set="total_qty" t-value="total_qty + quant.quantity"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;                     <t t-if="quant.product_id.goods_type == 'finish'">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;                         <t t-set="total_value" t-value="total_value + (quant.quantity * quant.product_id.lst_price)"/> </t>&ndash;&gt;&ndash;&gt;-->
+
+<!--                </tr>-->
+
+<!--                </tbody>-->
+
+
+<!--            </table>-->
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,38 @@
+<odoo>
+    <record id="fuel_consumption_details_report_wizard_view" model="ir.ui.view">
+        <field name="name">fuel.consumption.details.wizard.form</field>
+        <field name="model">fuel.consumption.details.wizard</field>
+        <field name="arch" type="xml">
+          <form string="Print Fuel Consumption Details">
+              <group>
+                  <group>
+                      <field name="from_date" required="1">from date</field>
+                      <field name="to_date" required="1">to date</field>
+                  </group>
+                  <group>
+                      <field name="depot_id">depot</field>
+                      <field name="vehicle_id">vehicle</field>
+                      <field name="fuel_type">document</field>
+                  </group>
+
+              </group>
+
+              <footer>
+                  <button name="get_report" type="object" string="Print" class="btn-primary"/>
+                  <button string="Cancel" special="cancel"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+
+    <record id="action_fuel_consumption_report" model="ir.actions.act_window">
+        <field name="name">Vehicle Fuel Consumption Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">fuel.consumption.details.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="fuel_consumption_details_report_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem name="Vehicle Fuel Consumption Report" id="menu_fuel_consumption_details_report" parent="menu_transport_report" action="action_fuel_consumption_report" sequence="200"/>
+</odoo>

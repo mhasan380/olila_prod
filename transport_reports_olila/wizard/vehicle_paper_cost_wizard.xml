@@ -6,8 +6,8 @@
           <form string="Print BRTA Documents">
               <group>
                   <group>
-                      <field name="from_date">from date</field>
-                      <field name="to_date">to date</field>
+                      <field name="from_date" required="1">from date</field>
+                      <field name="to_date" required="1">to date</field>
                   </group>
                   <group>
                       <field name="vehicle_id">vehicle</field>
@@ -25,7 +25,7 @@
     </record>
 
     <record id="action_vehicle_paper_cost_report" model="ir.actions.act_window">
-        <field name="name">Document Name</field>
+        <field name="name">BRTA Paper Update Report With Cost</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">vehicle.paper.cost.wizard</field>
         <field name="view_mode">form</field>
@@ -33,5 +33,5 @@
         <field name="target">new</field>
     </record>
 
-    <menuitem name="BRTA Paper Update Report With Cost" id="menu_vehicle_paper_cost_details_report" parent="menu_transport_report" action="action_vehicle_paper_cost_report" sequence="200"/>
+    <menuitem name="BRTA Paper Update Report With Cost" id="menu_vehicle_paper_cost_details_report" parent="menu_transport_report" action="action_vehicle_paper_cost_report" sequence="2"/>
 </odoo>

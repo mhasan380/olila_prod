@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <record id="vehicle_liecense_renew_tree_olila" model="ir.ui.view">
+            <field name="name">vehicle.liecense.renew.inherit.olila</field>
+            <field name="model">vehicle.liecense.renew</field>
+            <field name="inherit_id" ref="olila_fleet.vehicle_license_renewal_details_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='licence_id']" position="after">
+                    <field name="vehicle_id" />
+
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

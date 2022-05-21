@@ -1,0 +1,7 @@
+<odoo>
+    <data>
+        <template id="delivery_report_inherit_olila" inherit_id="stock.fuel_consumption_template">
+
+        </template>
+    </data>
+</odoo>
