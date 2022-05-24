@@ -26,6 +26,10 @@
                 <xpath expr="//field[@name='ref']" position="attributes">
                     <attribute name="required">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='journal_id']" position="after">
+                     <field name="moves_id"/>
+                    <field name="word_num"/>
+                </xpath>
 
             </field>
         </record>

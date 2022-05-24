@@ -45,6 +45,7 @@ class LCDirectTransfer(models.Model):
         }
         move_id = self.env['account.move'].create(vals)
         move_id.ref = self.ref
+        self.moves_id = move_id.id
 
 
     def _prepare_move_line(self):
@@ -109,6 +110,12 @@ class LCDirectTransfer(models.Model):
         return move_line_dict
 
     total_amount = fields.Float('Total Amount', compute="_compute_total_amount")
+    moves_id = fields.Many2one('account.move', 'Journal Entry')
+    word_num = fields.Char(string="Amount In Words:", compute='_amount_in_word')
+
+    def _amount_in_word(self):
+        for rec in self:
+            rec.word_num = str(rec.currency_id.amount_to_text(rec.total_amount))
 
     @api.depends('line_ids')
     def _compute_total_amount(self):

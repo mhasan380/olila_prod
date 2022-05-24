@@ -43,9 +43,9 @@
 
                  <tr style="font-weight: bold; color: blue;">
                      <td > <b>Total </b></td>
-                     <td> <span t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}'/> </td>
+                     <td>  </td>
                      <td> <span t-esc="total_stock" t-options='{"widget": "float", "precision": 2}'/> </td>
-                     <td> </td>
+                     <td> <span t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}'/></td>
                      <td> </td>
 
 
