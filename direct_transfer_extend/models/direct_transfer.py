@@ -112,6 +112,7 @@ class LCDirectTransfer(models.Model):
     total_amount = fields.Float('Total Amount', compute="_compute_total_amount")
     moves_id = fields.Many2one('account.move', 'Journal Entry')
     word_num = fields.Char(string="Amount In Words:", compute='_amount_in_word')
+    payee = fields.Char('Payee/Receiver')
 
     def _amount_in_word(self):
         for rec in self:

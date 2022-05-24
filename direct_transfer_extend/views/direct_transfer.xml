@@ -30,7 +30,9 @@
                      <field name="moves_id"/>
                     <field name="word_num"/>
                 </xpath>
-
+              <xpath expr="//field[@name='ref']" position="after">
+                   <field name="payee"/>
+                </xpath>
             </field>
         </record>
 
