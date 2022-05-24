@@ -124,3 +124,8 @@ class LCDirectTransfer(models.Model):
             for line in record.line_ids:
                 total = total + line.amount
             record.total_amount = total
+
+    def change_journal_num(self):
+        for rec in self:
+            if rec.state == 'paid':
+                rec.moves_id = self.env['account.move'].search([('lc_treansfer_id', '=', rec.id)], limit=1).id
