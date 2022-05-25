@@ -9,8 +9,9 @@ class DeliverdReportWizard(models.TransientModel):
 
     date_start = fields.Date(string="Start Date", required=True)
     date_end = fields.Date(string="End Date", required=True)
-    report_type = fields.Selection([('depot','Depot Wise'),('product','Product Wise'), ('national','National')])
+    report_type = fields.Selection([('depot','Depot Wise'),('product','Product Wise'),('customer','Customer Wise'), ('national','National')])
     warehouse_id = fields.Many2one('stock.warehouse', 'Depot')
+    partner_id = fields.Many2one('res.partner', string='Customer')
     sort_type = fields.Selection([('asc', 'Smallest to Largest'), ('desc', 'Largest to Smallest')])
     sale_type = fields.Selection([('primary_sales', 'Primary Sales'), ('corporate_sales', 'Corporate Sales'), ('all', 'All Sales')],default='primary_sales')
 
@@ -29,6 +30,7 @@ class DeliverdReportWizard(models.TransientModel):
                 'sale_type' : self.sale_type,
                 'sort_type' : self.sort_type,
                 'report_type' : self.report_type,
+                'partner_id' : self.partner_id.id
 
 
                 },
@@ -54,6 +56,7 @@ class DeliveredStockReport(models.AbstractModel):
         report_type = data['form']['report_type']
         sale_type = data['form']['sale_type']
         sort_type = data['form']['sort_type']
+        partner_id = data['form']['partner_id']
         warehouse_name = self.env['stock.warehouse'].browse(warehouse_id)
 
         from_date = datetime.combine(datetime.strptime(date_start,"%Y-%m-%d"), datetime.min.time())
@@ -241,6 +244,53 @@ class DeliveredStockReport(models.AbstractModel):
 
             }
 
+        elif report_type == 'customer':
+            depot_stock_dict = {}
 
+            depot = self.env['stock.warehouse'].search([('is_depot', '=', True),('lot_stock_id', '=', location_id)])
+
+            if sale_type != 'all':
+                delivery_orders = self.env['stock.picking'].search(
+                    [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
+                     ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")),   ('sale_type', '=', sale_type), ('transfer_id', '=', False), ('state', '=', 'done')])
+            else:
+                delivery_orders = self.env['stock.picking'].search(
+                    [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
+                     ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")),
+                     ('transfer_id', '=', False), ('state', '=', 'done')])
+            if partner_id:
+                delivery_orders = self.env['stock.picking'].search(
+                    [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
+                     ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")),
+                     ('transfer_id', '=', False), ('partner_id','=',partner_id), ('state', '=', 'done')])
+
+            for order in delivery_orders:
+                for line in order.move_ids_without_package:
+                    key = (order.partner_id, line.product_id)
+                    depot_stock_dict.setdefault(key, 0.0)
+                    depot_stock_dict[key] += line.quantity_done
+
+
+            return {
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+
+                'warehouse_name' : warehouse_name,
+                'sale_type': sale_type,
+                'date_start': date_start,
+                'date_end': date_end,
+                'report_type':report_type,
+                'depot_stock_dict': sorted([{
+                    'product_id': product.id,
+                    'product_name': product.name,
+                    'code': product.default_code,
+                    'quantity': qty,
+                    'uom': product.uom_id.name,
+                    'customer_name':customer.display_name,
+                    'customer_code' : customer.code,
+                    'customer': customer,
+                    'fs_type': product.fs_type
+                } for (customer,product), qty in depot_stock_dict.items()], key=lambda l: l['customer_name']),
+                }
 
 

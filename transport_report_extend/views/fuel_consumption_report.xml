@@ -1,46 +1,59 @@
 <odoo>
     <data>
-<!--        <template id="fuel_consumption_template_inherit_olila" inherit_id="olila_transport_reports.fuel_consumption_template">-->
-<!--              <xpath expr="//table[@class='table table-bordered mt32']/" position="replace">-->
-<!--                  <table class="table table-bordered mt32">-->
-<!--                                <tr style="background-color: black;color: white !important;">-->
-<!--                                    <th class="text-center">Sr No</th>-->
-<!--                                    <th class="text-center">Date</th>-->
-<!--                                    <th class="text-left">Vehicle</th>-->
-<!--                                    <th class="text-left">Depot</th>-->
-<!--                                    <th class="text-left">Fuel Type</th>-->
-<!--                                    <th class="text-left">Fuel Qty(Ltr)</th>-->
-<!--                                    <th class="text-left">Fuel Unit Price</th>-->
-<!--                                    <th class="text-left">Total</th>-->
-<!--                                </tr>-->
-<!--                            <tbody class="sale_tbody">-->
-<!--                                <t t-set="total_fuel_qty" t-value="0"/>-->
-<!--                                <t t-set="total_consumption" t-value="0"/>-->
-<!--                                <t t-foreach="lines" t-as="line">-->
-<!--                                    <t t-set="total_fuel_qty" t-value="total_fuel_qty + line.get('fuel_qty')"/>-->
-<!--                                    <t t-set="total_consumption" t-value="total_consumption + line.get('total')"/>-->
-<!--                                    <tr>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('sr_no')"/></td>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('date')"/></td>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('vehicle')"/></td>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('depot')"/></td>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('fuel_type')"/></td>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('fuel_qty')"/></td>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('fuel_unit_price')"/></td>-->
-<!--                                        <td name="td_name"><span t-esc="line.get('total')" t-options='{"widget": "float", "precision": 2}'/></td>-->
-<!--                                    </tr>-->
-<!--                                </t>-->
-<!--                                <tr>-->
-<!--                                    <td colspan="5"><strong><span>Total</span></strong></td>-->
-<!--                                    <td><strong><span t-esc="round(total_fuel_qty, 2)"/></strong></td>-->
-<!--                                    <td/>-->
-<!--                                    <td><strong><span t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}' /></strong></td>-->
-<!--                                </tr>-->
-<!--                            </tbody>-->
-<!--                        </table>-->
+        <template id="fuel_consumption_template_inherit_olila" inherit_id="olila_transport_reports.fuel_consumption_template">
+           <xpath expr="//table[@class='table table-bordered mt32']" position="replace">
+               <table class="table table-bordered mt32">
+                                <tr style="background-color: black;color: white !important;">
+                                    <th class="text-center">Sr No</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-left">Vehicle</th>
+                                    <th class="text-left">Depot</th>
+                                    <th class="text-left">Fuel Type</th>
+                                    <th class="text-left">Fuel Qty(Ltr)</th>
+                                    <th class="text-left">Fuel Unit Price</th>
+                                    <th class="text-left">Total Cost</th>
+                                    <th class="text-left">Distance(KM)</th>
+                                     <th class="text-left">Mileage</th>
 
-<!--              </xpath>-->
+                                </tr>
+                            <tbody class="sale_tbody">
+                                <t t-set="total_fuel_qty" t-value="0"/>
+                                <t t-set="total_consumption" t-value="0"/>
+                                 <t t-set="total_distance" t-value="0"/>
 
-<!--        </template>-->
+                                <t t-foreach="lines" t-as="line">
+                                    <t t-set="total_fuel_qty" t-value="total_fuel_qty + line.get('fuel_qty')"/>
+                                    <t t-set="total_consumption" t-value="total_consumption + line.get('total')"/>
+                                    <t t-set="total_distance" t-value="total_distance + line.get('distance')"/>
+
+                                    <tr>
+                                        <td name="td_name"><span t-esc="line.get('sr_no')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('date')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('vehicle')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('depot')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('fuel_type')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('fuel_qty')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('fuel_unit_price')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('total')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td name="td_name"><span t-esc="line.get('distance')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td name="td_name"><span t-esc="line.get('mileage')" t-options='{"widget": "float", "precision": 2}'/></td>
+
+
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="5"><strong><span>Total</span></strong></td>
+                                    <td><strong><span t-esc="total_fuel_qty" t-options='{"widget": "float", "precision": 2}'/></strong></td>
+                                    <td/>
+                                    <td><strong><span t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}' /></strong></td>
+                                    <td><strong><span t-esc="total_distance" t-options='{"widget": "float", "precision": 2}' /></strong></td>
+                                     <td><strong><span t-esc="total_distance / total_fuel_qty " t-options='{"widget": "float", "precision": 2}' /></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+           </xpath>
+
+        </template>
     </data>
 </odoo>

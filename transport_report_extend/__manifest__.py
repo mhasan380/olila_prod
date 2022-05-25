@@ -26,6 +26,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         'views/fuel_consumption_report.xml',
+        'views/monthly_fuel_consumption_report.xml',
 
     ],
     # only loaded in demonstration mode

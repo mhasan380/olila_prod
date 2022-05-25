@@ -31,44 +31,45 @@ class FuelConsumptionReport(models.AbstractModel):
                 'fuel_qty' : line.fuel_purchase,
                 'fuel_unit_price' : round(fuel_unit_price, 2),
                 'total' : (line.fuel_purchase * fuel_unit_price),
-                'distance' : line.fuel_log_id.total_km
+                'distance' : line.fuel_log_id.total_km,
+                'mileage' : line.fuel_log_id.total_km / line.fuel_purchase if line.fuel_purchase > 0 else 0
             })
             sr_no+=1
         return lines
 
-# class MonthlyFuelConsumptionReport(models.AbstractModel):
-#     _inherit = 'report.olila_transport_reports.monthly_fuel_template'
-#
-#     def _prepare_monthly_fuel_consumption_lines(self, vehicle_ids, date_list, header):
-#         from datetime import datetime, timedelta
-#         log_fuel_ids = self.env['fleet.vehicle.log.fuel'].search([('vehicle_id', 'in', vehicle_ids.ids)])
-#         lines = []
-#         header = header
-#         vehicle_ids = log_fuel_ids.mapped('vehicle_id')
-#         footer_total = {}
-#         for head in header:
-#             footer_total[head] = 0
-#         total_fuel_cost = 0.0
-#         for vehicle_id in vehicle_ids:
-#             warehouse = vehicle_id.warehouse_id
-#             line = {'warehouse': warehouse.name, 'vehicle': vehicle_id and vehicle_id.display_name or '', 'Total Fuel Cost': 0}
-#             month_no = 0
-#             wm_total = 0
-#             for month, dates in date_list.items():
-#                 date_start = datetime.strptime(dates['date_from'] + ' 00:00:00', "%Y-%m-%d %H:%M:%S")
-#                 date_end = datetime.strptime(dates['date_to'] + ' 23:59:59', "%Y-%m-%d %H:%M:%S")
-#                 log_fuel_filterd_ids = log_fuel_ids.filtered(lambda x: x.vehicle_id.id == vehicle_id.id and x.date >= date_start.date() and x.date <= date_end.date())
-#                 m_total = self._get_fuel_log_cost(log_fuel_filterd_ids)
-#                 line[header[month_no]] = float_repr(m_total, precision_digits=2)
-#                 wm_total += m_total
-#                 month_key = header[month_no]
-#                 footer_total[month_key] = footer_total[month_key] + m_total
-#                 month_no += 1
-#             line['total_fuel_cost'] = wm_total
-#             total_fuel_cost += wm_total
-#             lines.append(line)
-#         footer_total['total_fuel_cost'] = total_fuel_cost
-#         return lines, footer_total
+class MonthlyFuelConsumptionReport(models.AbstractModel):
+    _inherit = 'report.olila_transport_reports.monthly_fuel_template'
+
+    def _prepare_monthly_fuel_consumption_lines(self, vehicle_ids, date_list, header):
+        from datetime import datetime, timedelta
+        log_fuel_ids = self.env['fleet.vehicle.log.fuel'].search([('vehicle_id', 'in', vehicle_ids.ids)])
+        lines = []
+        header = header
+        vehicle_ids = log_fuel_ids.mapped('vehicle_id')
+        footer_total = {}
+        for head in header:
+            footer_total[head] = 0
+        total_fuel_cost = 0.0
+        for vehicle_id in vehicle_ids:
+            warehouse = vehicle_id.warehouse_id
+            line = {'warehouse': warehouse.name, 'vehicle': vehicle_id and vehicle_id.display_name or '', 'Total Fuel Cost': 0}
+            month_no = 0
+            wm_total = 0
+            for month, dates in date_list.items():
+                date_start = datetime.strptime(dates['date_from'] + ' 00:00:00', "%Y-%m-%d %H:%M:%S")
+                date_end = datetime.strptime(dates['date_to'] + ' 23:59:59', "%Y-%m-%d %H:%M:%S")
+                log_fuel_filterd_ids = log_fuel_ids.filtered(lambda x: x.vehicle_id.id == vehicle_id.id and x.date >= date_start.date() and x.date <= date_end.date())
+                m_total = self._get_fuel_log_cost(log_fuel_filterd_ids)
+                line[header[month_no]] = m_total
+                wm_total += m_total
+                month_key = header[month_no]
+                footer_total[month_key] = footer_total[month_key] + m_total
+                month_no += 1
+            line['total_fuel_cost'] = wm_total
+            total_fuel_cost += wm_total
+            lines.append(line)
+        footer_total['total_fuel_cost'] = total_fuel_cost
+        return lines, footer_total
 
 class VehiclePaperUpdateStatusReport(models.AbstractModel):
     _name = 'report.olila_transport_reports.vehicle_paper_update'
