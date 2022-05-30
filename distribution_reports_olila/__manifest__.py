@@ -27,6 +27,8 @@
          'security/ir.model.access.csv',
          'views/undelivery_stock_report_view.xml',
          'views/delivery_stock_report_view.xml',
+         'views/delivery_performance_report.xml',
+         'wizard/delivery_performance_report_wizard_view.xml',
          'wizard/delivery_stock_report_wizard_view.xml',
          'wizard/undelivery_stock_report_wizard_view.xml'
     ],

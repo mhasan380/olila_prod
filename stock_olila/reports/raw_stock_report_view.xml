@@ -16,14 +16,16 @@
                 <thead><tr>
                     <th class="text-left" > Code</th>
                     <th class="text-left">Product Name</th>
-                    <th class="text-left">Stock Quantity(KG)</th>
+                    <th class="text-left">Store Qty(KG)</th>
+                    <th class="text-left">Mixing Floor Qty(KG)</th>
                     <th class="text-left">Daily Consumption(KG)</th>
                     <th class="text-left">Stock Days</th>
 
                 </tr></thead>
                 <tbody>
 
-                 <t t-set="total_stock" t-value="0"/>
+                 <t t-set="total_store_stock" t-value="0"/>
+                    <t t-set="total_mix_stock" t-value="0"/>
                     <t t-set="total_consumption" t-value="0"/>
                 <tr t-foreach='stock_dict' t-as='item'>
 
@@ -31,12 +33,14 @@
 
                     <td><t t-esc="item['code']" /></td>
                     <td><t t-esc="item['product_name']"/></td>
-                    <td><t t-esc="item['quantity']" t-options='{"widget": "float", "precision": 2}'/></td>
+                    <td><t t-esc="item['store_quantity']" t-options='{"widget": "float", "precision": 2}'/></td>
+                    <td><t t-esc="item['mix_quantity']" t-options='{"widget": "float", "precision": 2}'/></td>
                     <td><t t-esc="item['daily_consumtion']" t-options='{"widget": "float", "precision": 2}' /></td>
                     <td><t t-esc="item['stock_days']" t-options='{"widget": "float", "precision": 0}' /></td>
 
 
-                 <t t-set="total_stock" t-value="total_stock + item['quantity']"/>
+                 <t t-set="total_store_stock" t-value="total_store_stock + item['store_quantity']"/>
+                 <t t-set="total_mix_stock" t-value="total_mix_stock + item['mix_quantity']"/>
                  <t t-set="total_consumption" t-value="total_consumption + item['daily_consumtion']"/>
 
                 </tr>
@@ -44,7 +48,8 @@
                  <tr style="font-weight: bold; color: blue;">
                      <td > <b>Total </b></td>
                      <td>  </td>
-                     <td> <span t-esc="total_stock" t-options='{"widget": "float", "precision": 2}'/> </td>
+                     <td> <span t-esc="total_store_stock" t-options='{"widget": "float", "precision": 2}'/> </td>
+                     <td> <span t-esc="total_mix_stock" t-options='{"widget": "float", "precision": 2}'/> </td>
                      <td> <span t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}'/></td>
                      <td> </td>
 

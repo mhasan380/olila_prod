@@ -49,7 +49,9 @@ class RawStockReport(models.AbstractModel):
         products = self.env['product.product'].search([('categ_id', '=', 'Raw Materials'),('active','=', True)])
         for product in products:
             code = product.default_code
-            quantity = self.env['stock.quant'].search([('location_id', '=', 'GENST/Stock'),('product_id', '=', product.id)],limit = 1).quantity
+            store_quantity = self.env['stock.quant'].search([('location_id', '=', 'GENST/Stock'),('product_id', '=', product.id)],limit = 1).quantity
+            mix_quantity = self.env['stock.quant'].search(
+                [('location_id', '=', 'MIX/Stock'), ('product_id', '=', product.id)], limit=1).quantity
             if product.default_code == '3794':
                 daily_consumtion = total_consumtion * 0.5485
             elif product.default_code == '3792':
@@ -76,15 +78,18 @@ class RawStockReport(models.AbstractModel):
                 daily_consumtion = total_consumtion * 0.0361
             elif product.default_code == '3783':
                 daily_consumtion = total_consumtion * 0.0181
+            elif product.default_code == '5435':
+                daily_consumtion = total_consumtion * 0.25
             else:
                 daily_consumtion = 0.0
             stock_days = 0.0
             if daily_consumtion != 0:
-                stock_days = quantity / daily_consumtion
+                stock_days = (store_quantity + mix_quantity) / daily_consumtion
 
             stock_dict.setdefault(product, {'code': code,
                                                      'product_name': product.name,
-                                                     'quantity': quantity,
+                                                     'store_quantity': store_quantity,
+                                                     'mix_quantity' : mix_quantity,
                                                       'daily_consumtion': daily_consumtion,
                                                       'stock_days': stock_days,
                                                                                                           })

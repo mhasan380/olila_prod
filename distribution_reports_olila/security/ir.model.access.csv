@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_undeliverd_report_wizard,undeliverd.report.wizard,model_undeliverd_report_wizard,olila_distribution.group_distribution_user,1,1,1,0
 access_delivered_report_wizard,delivered.report.wizard,model_delivered_report_wizard,olila_distribution.group_distribution_user,1,1,1,0
+access_delivered_performance_wizard,delivered.performance.wizard,model_delivered_performance_wizard,olila_distribution.group_distribution_user,1,1,1,0
