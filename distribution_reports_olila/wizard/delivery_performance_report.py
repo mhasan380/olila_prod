@@ -78,7 +78,7 @@ class DeliveredPerformanceReport(models.AbstractModel):
                 if delivery.sale_id.date_order:
                     so_date = delivery.sale_id.date_order.date()
                 elif delivery.do_date:
-                    so_date = delivery.do_date
+                    so_date = delivery.do_date.date()
                 else:
                     so_date = delivery.date_deadline.date()
                 delivery_days = (delivery_datetime - so_date).days
