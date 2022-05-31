@@ -75,7 +75,12 @@ class DeliveredPerformanceReport(models.AbstractModel):
             for delivery in delivery_orders:
                 total_product_delivery = sum(delivery.mapped('move_ids_without_package').mapped('quantity_done'))
                 delivery_datetime = delivery.scheduled_date.date()
-                so_date = delivery.sale_id.date_order.date()
+                if delivery.sale_id.date_order:
+                    so_date = delivery.sale_id.date_order.date()
+                elif delivery.do_date:
+                    so_date = delivery.do_date
+                else:
+                    so_date = delivery.date_deadline.date()
                 delivery_days = (delivery_datetime - so_date).days
 
 
