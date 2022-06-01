@@ -75,9 +75,8 @@ class DeliveredPerformanceReport(models.AbstractModel):
             for delivery in delivery_orders:
                 total_product_delivery = sum(delivery.mapped('move_ids_without_package').mapped('quantity_done'))
                 delivery_datetime = delivery.scheduled_date.date()
-                if delivery.sale_id.date_order:
-                    so_date = delivery.sale_id.date_order.date()
-                elif delivery.do_date:
+
+                if delivery.do_date:
                     so_date = delivery.do_date.date()
                 else:
                     so_date = delivery.date_deadline.date()
@@ -92,7 +91,7 @@ class DeliveredPerformanceReport(models.AbstractModel):
                                                     'so_number': delivery.origin,
                                                     'challan_number': delivery.name,
                                                     'total_qty': total_product_delivery,
-                                                     'so_date' : delivery.sale_id.date_order.date(),
+                                                     'so_date' : so_date,
                                                      'delivery_days' : delivery_days
                                                     })
 
