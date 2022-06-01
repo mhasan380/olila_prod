@@ -75,36 +75,34 @@ class DeliveredPerformanceReport(models.AbstractModel):
             for delivery in delivery_orders:
                 total_product_delivery = sum(delivery.mapped('move_ids_without_package').mapped('quantity_done'))
                 delivery_datetime = delivery.scheduled_date.date()
-
                 if delivery.do_date:
                     so_date = delivery.do_date.date()
                 else:
                     so_date = delivery.date_deadline.date()
                 delivery_days = (delivery_datetime - so_date).days
 
-
                 depot_stock_dict.setdefault(delivery, {
-                                                    'customer_name': delivery.partner_id.name,
-                                                    'customer_code': delivery.partner_id.code,
-                                                    'address': delivery.partner_id.street,
-                                                    'do_date': delivery.scheduled_date.date(),
-                                                    'so_number': delivery.origin,
-                                                    'challan_number': delivery.name,
-                                                    'total_qty': total_product_delivery,
-                                                     'so_date' : so_date,
-                                                     'delivery_days' : delivery_days
-                                                    })
+                    'customer_name': delivery.partner_id.name,
+                    'customer_code': delivery.partner_id.code,
+                    'address': delivery.partner_id.street,
+                    'do_date': delivery.scheduled_date.date(),
+                    'so_number': delivery.origin,
+                    'challan_number': delivery.name,
+                    'total_qty': total_product_delivery,
+                    'so_date': so_date,
+                    'delivery_days': delivery_days
+                })
 
+            return {
+                'doc_ids': data.get('docs'),
+                'doc_model': data.get('model'),
+                'warehouse_dict': list(depot_stock_dict.values()),
+                'date_start': date_start,
+                'date_end': date_end,
+                'warehouse_name': warehouse_name.name,
+                'sale_type': sale_type
+            }
 
-        return {
-            'doc_ids': data.get('docs'),
-            'doc_model': data.get('model'),
-            'warehouse_dict': list(depot_stock_dict.values()),
-            'date_start' : date_start,
-            'date_end' : date_end,
-            'warehouse_name' : warehouse_name.name,
-            'sale_type' : sale_type
-           }
 
 
 
