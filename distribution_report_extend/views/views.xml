@@ -1,60 +1,137 @@
 <odoo>
   <data>
-    <!-- explicit list view definition -->
-<!--
-    <record model="ir.ui.view" id="distribution_report_extend.list">
-      <field name="name">distribution_report_extend list</field>
-      <field name="model">distribution_report_extend.distribution_report_extend</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
--->
+    <template id="opening_undelivery_Report_template_inherit_olila" inherit_id="olila_distribution_dashboard.opening_stock_template">
+      <xpath expr="//table[@class='table table-bordered mt32']" position="replace">
+          <table class="table table-bordered mt32">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <t t-foreach="warehouse" t-as="wh">
+                                        <th colspan="2"><span t-esc="wh"/></th>
+                                    </t>
+                                    <th></th>
+                                    <th colspan="3">Undelivered Qty</th>
+                                    <th colspan="3">Last Day Delivery</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <th>SL No</th>
+                                    <th>Product Code</th>
+                                    <th>Product Name</th>
+                                    <t t-foreach="wh_data" t-as="wh">
+                                        <th><span t-esc="wh"/></th>
+                                    </t>
+                                    <th>Total Gross Stock</th>
+                                    <th>Retail</th>
+                                    <th>Corporate</th>
+                                    <th>Total</th>
+                                    <th>Retail</th>
+                                    <th>Corporate</th>
+                                    <th>Total</th>
+                                    <th>Last Day DO</th>
+                                    <th>Net Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="i" t-value="1"/>
+                                <t t-foreach="lines" t-as="line">
+                                    <tr>
+                                        <td class="text-left">
+                                            <span t-esc="i"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['code']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['product']"/>
+                                        </td>
+                                        <t t-foreach="line['wh_stock']" t-as="sd">
+                                            <td class="text-left">
+                                                <span t-esc="sd['stock']"/>
+                                            </td>
+                                            <td class="text-left">
+                                                <span t-esc="sd['qty']"/>
+                                            </td>
+                                        </t>
+                                        <td class="text-left">
+                                            <span t-esc="line['total_stock']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['total_undel_retail']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['total_undel_corp']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['total_undelivered']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['last_day_del_retail']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['last_day_del_corp']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['total_delivery']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['last_day_do']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['net_stock']"/>
+                                        </td>
+                                         <t t-set="i" t-value="i+1"/>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td class="text-left" colspan="3">
+                                        <strong><span>Total</span></strong>
+                                    </td>
+                                    <t t-foreach="warehouse" t-as="wh">
+                                        <td><strong><span t-esc="round(footer_total[wh]['wh_total_stock'], 2)"/></strong></td>
+                                        <td><strong><span t-esc="round(footer_total[wh]['total_stock'], 2)"/></strong></td>
+                                    </t>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_total_gross_stock']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_total_undel_retail']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_total_undel_corp']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_total_undelivered']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_last_day_del_retail']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_last_day_del_corp']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_total_delivery']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_last_day_do']"/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="footer_total['footer_net_stock']"/></strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                           <style>
+                        td,tr {border: 1px solid #000; }
 
-    <!-- actions opening views on models -->
-<!--
-    <record model="ir.actions.act_window" id="distribution_report_extend.action_window">
-      <field name="name">distribution_report_extend window</field>
-      <field name="res_model">distribution_report_extend.distribution_report_extend</field>
-      <field name="view_mode">tree,form</field>
-    </record>
--->
 
-    <!-- server action to the one above -->
-<!--
-    <record model="ir.actions.server" id="distribution_report_extend.action_server">
-      <field name="name">distribution_report_extend server</field>
-      <field name="model_id" ref="model_distribution_report_extend_distribution_report_extend"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }
-      </field>
-    </record>
--->
+                        </style>
+                        </table>
 
-    <!-- Top menu item -->
-<!--
-    <menuitem name="distribution_report_extend" id="distribution_report_extend.menu_root"/>
--->
-    <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="distribution_report_extend.menu_1" parent="distribution_report_extend.menu_root"/>
-    <menuitem name="Menu 2" id="distribution_report_extend.menu_2" parent="distribution_report_extend.menu_root"/>
--->
-    <!-- actions -->
-<!--
-    <menuitem name="List" id="distribution_report_extend.menu_1_list" parent="distribution_report_extend.menu_1"
-              action="distribution_report_extend.action_window"/>
-    <menuitem name="Server to list" id="distribution_report_extend" parent="distribution_report_extend.menu_2"
-              action="distribution_report_extend.action_server"/>
--->
+      </xpath>
+
+    </template>
   </data>
 </odoo>

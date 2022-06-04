@@ -292,5 +292,3 @@ class DeliveredStockReport(models.AbstractModel):
                     'fs_type': product.fs_type
                 } for (customer,product), qty in depot_stock_dict.items()], key=lambda l: l['customer_name']),
                 }
-
-

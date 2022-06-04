@@ -16,7 +16,7 @@ class OpeningStockReport(models.AbstractModel):
         warehouse_ids = self.env['stock.warehouse'].browse(data['warehouse_ids'])
 
         if not product_ids:
-            product_ids = self.env['product.product'].search([('fs_type', '=', 'master')]).mapped('id')
+            product_ids = self.env['product.product'].search([('fs_type', '=', 'master')],order='default_code asc').mapped('id')
 
         if not warehouse_ids:
             warehouse_ids = self.env['stock.warehouse'].search([('name', 'in', warehouse_name)])
@@ -162,13 +162,12 @@ class OpeningStockReport(models.AbstractModel):
             'footer_last_day_do': round(footer_last_day_do, 2),
             'footer_net_stock': round(footer_net_stock, 2),
         })
-        print('ddddddddddddddd', footer_total)
-        print('depot', wh_stock)
+        print('lines', lines)
         return {
             'docs': docs,
             'warehouse': warehouse_ids.mapped('name'),
             'wh_data': wh_data,
-            'lines': lines,
+            'lines': sorted(lines, key=lambda l: l['code']),
             'wh_header': ', '.join(warehouse_ids.mapped('name')),
             'footer_total': footer_total,
         }
