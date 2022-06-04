@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="purchase_request.view_purchase_request_from"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='schedule_date']" position="after">
-                    <field name="requisition_month"/>
+                    <field name="requisition_month" required="1"/>
                 </xpath>
                  <xpath expr="//field[@name='request_lines_ids']/tree/field[@name='name']" position="after">
                     <field name="department"/>

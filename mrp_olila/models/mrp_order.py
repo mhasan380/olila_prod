@@ -17,3 +17,10 @@ class MrpProduction(models.Model):
             if mo.average_weight:
                 mo.total_weight = mo.average_weight * mo.product_qty
 
+    @api.onchange('production_type')
+    def onchange_production_type(self):
+        for mo in self:
+            if mo.production_type == 'cullet':
+                mo.average_weight = 1.0
+                mo.onchange_average_weight()
+
