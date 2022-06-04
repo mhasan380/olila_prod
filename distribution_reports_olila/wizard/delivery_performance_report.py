@@ -93,15 +93,15 @@ class DeliveredPerformanceReport(models.AbstractModel):
                     'delivery_days': delivery_days
                 })
 
-            return {
-                'doc_ids': data.get('docs'),
-                'doc_model': data.get('model'),
-                'warehouse_dict': list(depot_stock_dict.values()),
-                'date_start': date_start,
-                'date_end': date_end,
-                'warehouse_name': warehouse_name.name,
-                'sale_type': sale_type
-            }
+        return {
+            'doc_ids': data.get('docs'),
+            'doc_model': data.get('model'),
+            'warehouse_dict': list(depot_stock_dict.values()),
+            'date_start': date_start,
+            'date_end': date_end,
+            'warehouse_name': warehouse_name.name,
+            'sale_type': sale_type
+        }
 
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "distribution_reports_olila",
+    'name': "distribution_report_extend",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,17 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['olila_distribution','olila_distribution_dashboard'],
+    'depends': ['olila_distribution_dashboard'],
 
     # always loaded
     'data': [
-         'security/ir.model.access.csv',
-         'views/undelivery_stock_report_view.xml',
-         'views/delivery_stock_report_view.xml',
-         'views/delivery_performance_report.xml',
-         'wizard/delivery_performance_report_wizard_view.xml',
-         'wizard/delivery_stock_report_wizard_view.xml',
-         'wizard/undelivery_stock_report_wizard_view.xml'
+        # 'security/ir.model.access.csv',
+        'views/views.xml',
+        'views/templates.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
