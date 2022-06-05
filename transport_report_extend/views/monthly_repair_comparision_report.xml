@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+         <template id="monthly_repair_template_inherit_olila" inherit_id="olila_transport_reports.monthly_repairing_template">
+             <xpath expr="//table[@class='table table-bordered mt32']" position="replace">
+             <table class="table table-bordered mt32">
+                                <tr style="background-color: black;color: white !important;">
+                                    <th>Depot name</th>
+                                    <th>Vehicle Name</th>
+                                    <t t-foreach="header" t-as="head">
+                                        <th><span t-esc="head"/></th>
+                                    </t>
+                                    <th>Total Repairing Cost</th>
+                                </tr>
+                            <tbody>
+                                <t t-foreach="lines" t-as="line">
+                                    <tr>
+                                        <td class="text-left">
+                                            <span t-esc="line['warehouse']"/>
+                                        </td>
+                                        <td class="text-left">
+                                            <span t-esc="line['vehicle']"/>
+                                        </td>
+                                        <t t-foreach="header" t-as="head">
+                                            <td class="text-left">
+                                                <span t-esc="line[head]" t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                        </t>
+                                        <td class="text-left">
+                                            <span t-esc="line['total_repairing_cost']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="2"><strong><span>Total</span></strong></td>
+                                    <t t-foreach="header" t-as="head">
+                                        <td><strong><span t-esc="footer_total[head]" t-options='{"widget": "float", "precision": 2}'/></strong></td>
+                                    </t>
+                                    <td><strong><span t-esc="footer_total['total_cost']" t-options='{"widget": "float", "precision": 2}'/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+             </xpath>
+
+         </template>
+    </data>
+</odoo>

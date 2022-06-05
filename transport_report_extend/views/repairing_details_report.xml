@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <template id="repair_details_template_inherit_olila" inherit_id="olila_transport_reports.repairing_details_template">
+            <xpath expr="//table[@class='table table-bordered mt32']" position="replace">
+            <table class="table table-bordered mt32">
+                            <tr style="background-color: black;color: white !important;">
+                                <th class="text-left">SL No</th>
+                                <th  class="text-center">Date</th>
+                                <th class="text-left">Vehicle</th>
+                                <th class="text-left">Depot</th>
+                                <th class="text-left">Repairing Name</th>
+                                <th class="text-left">Repairing Cost</th>
+                                <th class="text-left">Total Cost</th>
+                            </tr>
+                            <t t-set="total_cost" t-value="0"/>
+                            <tbody class="sale_tbody">
+                                <t t-foreach="lines" t-as="line">
+                                    <t t-set="total_cost" t-value="total_cost + line.get('repairing_cost')"/>
+                                    <tr>
+                                        <td name="td_name"><span t-esc="line.get('sr_no')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('date')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('vehicle')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('depot')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('repairing_name')"/></td>
+                                        <td name="td_name"><span t-esc="line.get('repairing_cost')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td name="td_name"><span t-esc="line.get('repairing_cost')" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="5">
+                                        <strong><span>Total</span></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="total_cost" t-options='{"widget": "float", "precision": 2}'/></strong>
+                                    </td>
+                                    <td>
+                                        <strong><span t-esc="total_cost" t-options='{"widget": "float", "precision": 2}'/></strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+            </xpath>
+
+        </template>
+    </data>
+</odoo>

@@ -26,6 +26,8 @@
     'data': [
         # 'security/ir.model.access.csv',
         'views/fuel_consumption_report.xml',
+        'views/repairing_details_report.xml',
+        'views/monthly_repair_comparision_report.xml',
         'views/monthly_fuel_consumption_report.xml',
 
     ],

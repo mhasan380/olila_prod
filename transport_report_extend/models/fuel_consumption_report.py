@@ -40,6 +40,43 @@ class FuelConsumptionReport(models.AbstractModel):
 class MonthlyFuelConsumptionReport(models.AbstractModel):
     _inherit = 'report.olila_transport_reports.monthly_fuel_template'
 
+    def _get_header(self, no_of_month):
+        from datetime import datetime, timedelta
+        from collections import OrderedDict
+        #start, end = [datetime.strptime(_, "%Y-%m-%d") for _ in [date_from, date_to]]
+        start = date.today() + relativedelta(months=-no_of_month)
+        end = date.today()
+        total_months = lambda dt: dt.month + 12 * dt.year
+        mlist = []
+        for tot_m in range(total_months(start)-1, total_months(end)):
+            y, m = divmod(tot_m, 12)
+            if m == 0:
+                head = 'January '+ str(y)
+            elif m == 1:
+                head = 'February '+str(y)
+            elif m == 2:
+                head = 'March '+str(y)
+            elif m == 3:
+                head = 'April '+str(y)
+            elif m == 4:
+                head = 'May '+str(y)
+            elif m == 5:
+                head = 'June '+str(y)
+            elif m == 6:
+                head = 'July '+str(y)
+            elif m == 7:
+                head = 'August '+str(y)
+            elif m == 8:
+                head = 'September '+str(y)
+            elif m == 9:
+                head = 'October '+str(y)
+            elif m == 10:
+                head = 'November '+str(y)
+            elif m == 11:
+                head = 'December '+str(y)
+            mlist.append(head)
+        return mlist
+
     def _prepare_monthly_fuel_consumption_lines(self, vehicle_ids, date_list, header):
         from datetime import datetime, timedelta
         log_fuel_ids = self.env['fleet.vehicle.log.fuel'].search([('vehicle_id', 'in', vehicle_ids.ids)])
