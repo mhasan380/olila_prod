@@ -1,0 +1,118 @@
+<odoo>
+    <data>
+        <report id="delivery_details_report" menu="False" model="delivery.details.wizard"
+                name="transport_reports_olila.delivery_details_report_template" report_type="qweb-pdf"
+                string="Delivery Details Report View"/>
+        <template id="delivery_details_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:30px;">
+
+                        <div class="text-center">
+
+                            <h4>Delivery Details Report</h4>
+
+                        </div>
+
+                        <div>
+                            <t t-if="vehicle_id">
+                                <p>Vehicle Name:
+                                    <span t-esc="vehicle_id"/>
+                                </p>
+                            </t>
+
+                            <t t-if="doc_type">
+                                <p>Depot Name:
+                                    <span t-esc="doc_type"/>
+                                </p>
+                            </t>
+
+                            <p>From Date:
+                                <span t-esc="from_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                            </p>
+                            <p>To Date:
+                                <span t-esc="to_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                            </p>
+
+                        </div>
+
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">SL</th>
+                                    <th class="text-left">Date</th>
+                                    <th class="text-left">Vehicle Number</th>
+                                    <th class="text-left">Depot Name</th>
+                                    <th class="text-left">Delivery (Master Carton)</th>
+                                    <th class="text-left">Total Amount (Tk)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                <t t-set="i" t-value="1"/>
+                                <t t-set="total_value" t-value="0"/>
+<!--                                <tr t-foreach='documents' t-as='document' style="border-bottom: solid 1px black;">-->
+<!--                                    <td>-->
+<!--                                        <t t-esc="i"/>-->
+<!--                                    </td>-->
+
+<!--                                    <td>-->
+<!--                                        <t t-esc="document.date"-->
+<!--                                           t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>-->
+<!--                                    </td>-->
+
+<!--                                    <td>-->
+<!--                                        <t t-esc="document.vehicle_id.name"/>-->
+<!--                                    </td>-->
+
+<!--                                    <td>-->
+<!--                                        <t t-esc="document.depot_id.name"/>-->
+<!--                                    </td>-->
+
+<!--                                    <td>-->
+<!--                                        <t t-esc="document.product_qty" />-->
+<!--                                        <t t-foreach="row" t-as="rows"-->
+
+<!--                                    </td>-->
+
+<!--                                    <td>-->
+<!--                                        <t t-esc="document.cost"/>-->
+<!--                                    </td>-->
+
+                                    <t t-set="i" t-value="i+1"/>
+<!--                                    <t t-set="total_master_carton" t-value="total_master_carton + document.product_qty"/>-->
+                                    <t t-set="total_value" t-value="total_value + document.cost"/>
+
+<!--                                </tr>-->
+
+                                <tr style="font-weight: bold; color: blue;">
+
+                                    <td>
+                                        <b>Total</b>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <span t-esc="product_qty"
+                                              t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+
+                                    <td>
+                                        <span t-esc="total_value" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+
+                        </table>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

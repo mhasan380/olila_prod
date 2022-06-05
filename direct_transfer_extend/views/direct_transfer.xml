@@ -32,6 +32,13 @@
                 </xpath>
               <xpath expr="//field[@name='ref']" position="after">
                    <field name="payee"/>
+                  <field name="journal_type"/>
+                  <field name="cheque_no" attrs="{'invisible':[('journal_type', '=', 'cash')], 'required':[('journal_type', '=', 'bank')] }"/>
+                  <field name="cheque_date" attrs="{'invisible':[('journal_type', '=', 'cash')], 'required':[('journal_type', '=', 'bank')] }"/>
+                </xpath>
+
+                <xpath expr="//button[@name='button_post']" position="replace">
+                     <button name="button_post" states="confirm" string="Payment" type="object" class="btn-primary"/>
                 </xpath>
             </field>
         </record>

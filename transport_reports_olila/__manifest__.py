@@ -27,6 +27,8 @@
         'security/ir.model.access.csv',
         'views/vehicle_license_renew.xml',
         'views/templates.xml',
+        'views/delivery_details_view.xml',
+        'wizard/delivery_details_wizard.xml',
         'wizard/vehicle_paper_wizard.xml',
         'views/vehicle_paper_report_view.xml',
         'wizard/vehicle_paper_cost_wizard.xml',

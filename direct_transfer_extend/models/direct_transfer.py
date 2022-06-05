@@ -15,7 +15,7 @@ class account_journal(models.Model):
             'view_id': False,
             'type': 'ir.actions.act_window',
             'domain': [('journal_id', '=', self.id)],
-            'context': {'default_journal_id': self.id}
+            'context': {'default_journal_id': self.id, 'default_journal_type': self.type}
         }
 
 
@@ -46,6 +46,7 @@ class LCDirectTransfer(models.Model):
         move_id = self.env['account.move'].create(vals)
         move_id.ref = self.ref
         self.moves_id = move_id.id
+        self.state = 'journal'
 
 
     def _prepare_move_line(self):
@@ -73,6 +74,18 @@ class LCDirectTransfer(models.Model):
             })
 
         if self.payment_type == 'expense':
+
+            for line in self.line_ids:
+                move_line_dict.append({
+                    'account_id': line.account_id.id,
+                    'partner_id': line.partner_id and line.partner_id.id or False,
+                    'name': line.ref,
+                    'currency_id': line.currency_id and line.currency_id.id,
+                    'debit': line.amount,
+                    'date_maturity': self.date,
+                    'ref': line.ref,
+                    'date': self.date,
+                })
             move_line_dict.append({
                 'account_id': account.id,
                 'partner_id': partner_id and partner_id[0].id or False,
@@ -83,6 +96,7 @@ class LCDirectTransfer(models.Model):
                 'ref': self.name,
                 'date': self.date,
             })
+
 
         for line in self.line_ids:
             if self.payment_type == 'income':
@@ -96,23 +110,21 @@ class LCDirectTransfer(models.Model):
                     'ref': line.ref,
                     'date': self.date,
                 })
-            if self.payment_type == 'expense':
-                move_line_dict.append({
-                    'account_id': line.account_id.id,
-                    'partner_id': line.partner_id and line.partner_id.id or False,
-                    'name': line.ref,
-                    'currency_id': line.currency_id and line.currency_id.id,
-                    'debit': line.amount,
-                    'date_maturity': self.date,
-                    'ref': line.ref,
-                    'date': self.date,
-                })
+
+
         return move_line_dict
 
     total_amount = fields.Float('Total Amount', compute="_compute_total_amount")
     moves_id = fields.Many2one('account.move', 'Journal Entry')
     word_num = fields.Char(string="Amount In Words:", compute='_amount_in_word')
     payee = fields.Char('Payee/Receiver')
+    journal_type = fields.Selection([('bank','Bank'), ('cash','Cash')], string='Journal Type')
+    cheque_no = fields.Char('Cheque No')
+    cheque_date = fields.Date('Cheque Date')
+    state = fields.Selection([('draft', 'Draft'), ('confirm', 'Confirm'),('journal', 'Journal Entry'), ('paid', 'Paid'), ('cancel', 'Cancel')],
+                             string='Status', required=True, readonly=True, copy=False, tracking=True, default='draft')
+
+
 
     def _amount_in_word(self):
         for rec in self:
