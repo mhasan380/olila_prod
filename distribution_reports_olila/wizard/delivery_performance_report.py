@@ -71,7 +71,7 @@ class DeliveredPerformanceReport(models.AbstractModel):
             else:
                 delivery_orders = self.env['stock.picking'].search(
                             [('location_id', '=', depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'),('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
-                             ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('transfer_id', '=', False)])
+                             ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('sale_type', 'in', ('primary_sales','corporate_sales'))])
             for delivery in delivery_orders:
                 total_product_delivery = sum(delivery.mapped('move_ids_without_package').mapped('quantity_done'))
                 delivery_datetime = delivery.scheduled_date.date()
