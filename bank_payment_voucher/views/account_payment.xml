@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_account_payment_form_vendor_payment" model="ir.ui.view">
+        <field name="name">account.payment.form.vendor.payment</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="sale_advance_payment.view_account_payment_olila_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='check_no']" position="attributes">
+                <attribute name="string">Cheque No</attribute>
+                 <attribute name="attrs">{'required':[('payment_type', '=', 'outbound')]}</attribute>
+
+            </xpath>
+            <xpath expr="//field[@name='check_date']" position="attributes">
+                <attribute name="string">Cheque Date</attribute>
+                 <attribute name="attrs">{'required':[('payment_type', '=', 'outbound')]}</attribute>
+
+            </xpath>
+        </field>
+    </record>
+    </data>
+</odoo>

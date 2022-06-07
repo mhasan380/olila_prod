@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_bank_vendor_voucher_report" model="ir.actions.report">
+            <field name="name">Bank Vouchar</field>
+            <field name="model">account.payment</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">bank_payment_voucher.olila_vendor_bank_voucher</field>
+            <field name="report_file">bank_payment_voucher.olila_vendor_bank_voucher</field>
+            <field name="print_report_name">'Bank Vouchar - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="account.model_account_payment"/>
+            <field name="binding_type">report</field>
+        </record>
+
+         <template id="olila_vendor_bank_voucher">
+            <t t-call="web.html_container">
+                <t t-as="doc" t-foreach="docs">
+                    <t t-call="web.external_layout">
+                        <div style="text-align: center; margin-bottom: 5px; margin-top: 5px; text-decoration: underline;">
+                            <h2>
+                                <b>Bank Voucher</b>
+                            </h2>
+                           <t t-if="doc.payment_type=='inbound'">
+                               <h4>
+                                <b>(Receipt Voucher)</b>
+                              </h4>
+                           </t>
+                            <t t-elif="doc.payment_type=='outbound'">
+                               <h4>
+                                <b>(Payment Voucher)</b>
+                              </h4>
+                           </t>
+
+                        </div>
+                        <!-- <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)" />-->
+                        <div class="customer_info">
+
+
+                          <div style="float: right; padding-left: 5px; padding-top: 5px;">
+
+                    <h5> Date :  <span t-field="doc.date"/> </h5>
+                              <t t-if="doc.payment_type=='inbound'">
+                               <h5>
+                                Receiver :  <span t-field="doc.partner_id.name"/>
+                              </h5>
+                           </t>
+                            <t t-elif="doc.payment_type=='outbound'">
+                               <h5>
+                                 Payee :  <span t-field="doc.partner_id.name"/>
+                              </h5>
+                           </t>
+
+                          </div>
+                            <div style="float: left; padding-right: 5px; padding-top: 5px;">
+                                <h4> Voucher No: <span t-field="doc.name"/> </h4>
+                                 <h5> Bank Name :  <span t-field="doc.journal_id.name"/> </h5>
+
+
+
+                            </div>
+                        </div>
+                        <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                        <div class="page">
+                            <div class="oe_structure"/>
+
+                            <table class="table table-sm o_main_table" style="font-size: 15px;">
+                                <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" >
+                                            <b>Account </b>
+                                        </th>
+                                        <th class="text-center" >
+                                            <b>Partner</b>
+                                        </th>
+                                         <th class="text-center">
+                                            <b>Debit</b>
+                                        </th>
+                                       <th class="text-center" >
+                                            <b>Credit</b>
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-set="debit_total" t-value="0"/>
+                                     <t t-set="credit_total" t-value="0"/>
+                                    <t t-as="line" t-foreach="doc.move_id.line_ids">
+                                        <tr>
+                                            <td name="th_sl">
+                                              <span t-esc="line.account_id.name"/>
+                                            </td>
+                                            <td name="th_partner">
+                                                <span t-esc="line.partner_id.name"/>
+                                            </td>
+                                             <td class="text-right" name="th_debit">
+                                                <span t-esc="float(line.debit)" t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                            <td class="text-right" name="th_credit">
+
+                                                    <span  t-esc="float(line.credit)" t-options='{"widget": "float", "precision": 2}'/>
+                                            </td>
+                                      <t t-set="debit_total" t-value="debit_total + line.debit"/>
+                                         <t t-set="credit_total" t-value="credit_total + line.credit"/>
+                                        </tr>
+                                    </t>
+                                        <tr style="font-weight: bold; ">
+                                            <td colspan="2" class="text-center"> <strong>Total:  </strong>  </td>
+
+                                            <td class="text-right"> <t t-esc="debit_total" t-options='{"widget": "float", "precision": 2}' /> </td>
+                                            <td class="text-right">
+
+                                            <t t-esc="credit_total" t-options='{"widget": "float", "precision": 2}' />
+                                        </td>
+
+
+                                        </tr>
+                </tbody>
+                                <style>td ,th {border: 1px solid #000;
+                                font-size: 14px;
+
+                        }
+                        </style>
+                            </table>
+
+                            <div style="font-size: 15px;">
+<!--                               <p> <strong>In Words: </strong> <t t-esc="doc.word_num" /> </p>-->
+                                 <p> <strong>Naration: </strong> <t t-esc="doc.ref" /> </p>
+
+                            </div>
+
+                            <div class="row mt32 mb32" id="informations">
+                <div class="col-auto col-3 mw-100 mb-2">
+                    <strong>Bank Name:</strong>
+                    <p class="m-0" t-esc="doc.journal_id.name"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2">
+                    <strong>Cheque No:</strong>
+                    <p class="m-0" t-field="doc.check_no"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2">
+                    <strong>Cheque Date:</strong>
+                    <p class="m-0" t-field="doc.check_date"/>
+                </div>
+
+            </div>
+
+
+
+                            <table class="table table-sm mt48" style="margin-top: 120px">
+                              <tbody>
+                                <tr>
+                                  <td class="text-center">
+                                    <strong>Received By </strong>
+                                  </td>
+                                  <td class="text-center">
+                                    <strong>Prepared By </strong>
+                                  </td>
+                                  <td class="text-center">
+                                    <strong>Authorized By </strong>
+                                  </td>
+                                  <td class="text-center">
+                                    <strong>Approved By </strong>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+
+</odoo>
