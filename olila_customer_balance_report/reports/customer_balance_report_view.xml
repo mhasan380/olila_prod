@@ -12,6 +12,20 @@
 
                         </div>
 
+                        <div class="customer_info">
+
+
+
+                            <div style="float: left; padding-right: 5px; padding-top: 5px;">
+                                <h4> Customer Name: <span t-field="customer_name.name"/> </h4>
+                                 <h5> Customer Code :  <span t-field="customer_name.code"/> </h5>
+
+
+
+
+                            </div>
+                        </div>
+
                         <table  class="table table-condensed">
                 <thead><tr>
                     <th class="text-left" >SO Number</th>
@@ -22,46 +36,39 @@
                     <th class="text-left">Pending Amount</th>
                     <th class="text-left">Closed Amount</th>
                      <th class="text-left">Balance</th>
+                    <th class="text-left">Status</th>
                 </tr></thead>
                 <tbody>
-<!--                 <t t-set="stock_subtotal" t-value="0"/>-->
-<!--                 <t t-set="ret_und_subtotal" t-value="0"/>-->
-<!--                 <t t-set="cor_und_subtotal" t-value="0"/>-->
-<!--                 <t t-set="total_und_subtotal" t-value="0"/>-->
-<!--                 <t t-set="net_stock_subtotal" t-value="0"/>-->
-<!--                 <t t-set="value_subtotal" t-value="0"/>-->
+                    <tr style="font-weight: bold; color: blue;">
+                     <td colspan="7" class="text-center"> <b>Initial Balance </b></td>
+
+                     <td> <span t-esc="previous_balance" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                        <td></td>
+
+                 </tr>
+
                 <tr t-foreach='customer_balance_dict' t-as='order'>
 
 
 
                     <td><t t-esc="order['order_nunmber']" /></td>
                     <td><t t-esc="order['order_date']"/></td>
-                    <td><t t-esc="order['order_amount']" t-options='{"widget": "float", "precision": currency_precision}'/></td>
-                    <td><t t-esc="order['payment_amount']" t-options='{"widget": "float", "precision": currency_precision}'/></td>
-                    <td><t t-esc="order['delivery_amount']" t-options='{"widget": "float", "precision": currency_precision}' /></td>
-                    <td><t t-esc="order['pending_amount']" t-options='{"widget": "float", "precision": currency_precision}' /></td>
-                     <td><t t-esc="order['cancel_do_amount']" t-options='{"widget": "float", "precision": currency_precision}' /></td>
-                     <td><t t-esc="order['so_balance']" t-options='{"widget": "float", "precision": currency_precision}'/></td>
+                    <td><t t-esc="order['order_amount']" t-options='{"widget": "float", "precision": 2}'/></td>
+                    <td><t t-esc="order['payment_amount']" t-options='{"widget": "float", "precision": 2}'/></td>
+                    <td><t t-esc="order['delivery_amount']" t-options='{"widget": "float", "precision": 2}' /></td>
+                    <td><t t-esc="order['pending_amount']" t-options='{"widget": "float", "precision": 2}' /></td>
+                     <td><t t-esc="order['cancel_do_amount']" t-options='{"widget": "float", "precision": 2}' /></td>
+                     <td><t t-esc="order['so_balance']" t-options='{"widget": "float", "precision": 2}'/></td>
+                    <td><t t-esc="order['do_state']"/></td>
 
 
-<!--                 <t t-set="stock_subtotal" t-value="stock_subtotal + depot['total_stock']"/>-->
-<!--                 <t t-set="ret_und_subtotal" t-value="ret_und_subtotal + depot['retail_undelivery']"/>-->
-<!--                 <t t-set="cor_und_subtotal" t-value="cor_und_subtotal + depot['corporate_undelivery']"/>-->
-<!--                 <t t-set="total_und_subtotal" t-value="total_und_subtotal + depot['total_undelivery']"/>-->
-<!--                 <t t-set="net_stock_subtotal" t-value="net_stock_subtotal + depot['net_stock']"/>-->
-<!--                 <t t-set="value_subtotal" t-value="value_subtotal + depot['total_sale_price']"/>-->
 
                 </tr>
 
                  <tr style="font-weight: bold; color: blue;">
-                     <td > <b>Total </b></td>
-                     <td>  </td>
-                     <td> </td>
-                     <td> </td>
-                     <td> </td>
-                     <td> </td>
-                     <td> </td>
-                     <td> <span t-esc="customer_balance" t-options="{'widget': 'float', 'precision': currency_precision}"/></td>
+                     <td colspan="7" class="text-center"> <b>Customer Balance </b></td>
+
+                     <td colspan="2"> <span t-esc="customer_balance + previous_balance" t-options="{'widget': 'float', 'precision': 2}"/></td>
 
                  </tr>
 
