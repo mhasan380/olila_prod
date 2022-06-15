@@ -101,8 +101,6 @@ class DepotStockReport(models.AbstractModel):
 
 
 
-
-
         return {
             'doc_ids': data.get('ids'),
             'doc_model': data.get('model'),

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "olila_sale_extend",
+    'name': "sale_report_extend",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,12 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['sale'],
+    'depends': ['olila_reports'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/views.xml',
+        'views/sale_summary_report.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [
