@@ -12,6 +12,7 @@ class DeliveryPerformanceReportWizard(models.TransientModel):
     warehouse_id = fields.Many2one('stock.warehouse', 'Depot')
     partner_id = fields.Many2one('res.partner', string='Customer')
     sale_type = fields.Selection([('primary_sales', 'Primary Sales'), ('corporate_sales', 'Corporate Sales'), ('all', 'All Sales')],default='primary_sales')
+    sort_type = fields.Selection([('asc', 'Ascending'), ('desc', 'Descending')], string='Sort Type')
 
 
     def get_report(self):
@@ -26,7 +27,8 @@ class DeliveryPerformanceReportWizard(models.TransientModel):
                 'date_start' : self.date_start,
                 'date_end' : self.date_end,
                 'sale_type' : self.sale_type,
-                'partner_id' : self.partner_id.id
+                'partner_id' : self.partner_id.id,
+                'sort_type' : self.sort_type
 
 
                 },
@@ -50,6 +52,7 @@ class DeliveredPerformanceReport(models.AbstractModel):
         date_start = data['form']['date_start']
         date_end = data['form']['date_end']
         sale_type = data['form']['sale_type']
+        sort_type = data['form']['sort_type']
         partner_id = data['form']['partner_id']
         warehouse_name = self.env['stock.warehouse'].browse(warehouse_id)
 
@@ -57,7 +60,7 @@ class DeliveredPerformanceReport(models.AbstractModel):
         to_date = datetime.combine(datetime.strptime(date_end,"%Y-%m-%d"), datetime.max.time())
 
 
-        depot_stock_dict ={}
+        depot_stock_dict =[]
         if location_id:
             depots = self.env['stock.warehouse'].search([('lot_stock_id', '=', location_id)])
         else:
@@ -81,7 +84,18 @@ class DeliveredPerformanceReport(models.AbstractModel):
                     so_date = delivery.date_deadline.date()
                 delivery_days = (delivery_datetime - so_date).days
 
-                depot_stock_dict.setdefault(delivery, {
+                # depot_stock_dict.setdefault(delivery, {
+                #     'customer_name': delivery.partner_id.name,
+                #     'customer_code': delivery.partner_id.code,
+                #     'address': delivery.partner_id.street,
+                #     'do_date': delivery.scheduled_date.date(),
+                #     'so_number': delivery.origin,
+                #     'challan_number': delivery.name,
+                #     'total_qty': total_product_delivery,
+                #     'so_date': so_date,
+                #     'delivery_days': delivery_days
+                # })
+                depot_stock_dict.append({
                     'customer_name': delivery.partner_id.name,
                     'customer_code': delivery.partner_id.code,
                     'address': delivery.partner_id.street,
@@ -93,16 +107,36 @@ class DeliveredPerformanceReport(models.AbstractModel):
                     'delivery_days': delivery_days
                 })
 
-        return {
-            'doc_ids': data.get('docs'),
-            'doc_model': data.get('model'),
-            'warehouse_dict': list(depot_stock_dict.values()),
-            'date_start': date_start,
-            'date_end': date_end,
-            'warehouse_name': warehouse_name.name,
-            'sale_type': sale_type
-        }
-
+        if sort_type == 'desc':
+            return {
+                'doc_ids': data.get('docs'),
+                'doc_model': data.get('model'),
+                'warehouse_dict': sorted(depot_stock_dict, key=lambda l: l['delivery_days'], reverse= True),
+                'date_start': date_start,
+                'date_end': date_end,
+                'warehouse_name': warehouse_name.name,
+                'sale_type': sale_type
+            }
+        elif sort_type == 'asc':
+            return {
+                'doc_ids': data.get('docs'),
+                'doc_model': data.get('model'),
+                'warehouse_dict': sorted(depot_stock_dict, key=lambda l: l['delivery_days']),
+                'date_start': date_start,
+                'date_end': date_end,
+                'warehouse_name': warehouse_name.name,
+                'sale_type': sale_type
+            }
+        else:
+            return {
+                'doc_ids': data.get('docs'),
+                'doc_model': data.get('model'),
+                'warehouse_dict': depot_stock_dict,
+                'date_start': date_start,
+                'date_end': date_end,
+                'warehouse_name': warehouse_name.name,
+                'sale_type': sale_type
+            }
 
 
 
