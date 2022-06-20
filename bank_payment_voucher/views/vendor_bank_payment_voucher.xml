@@ -8,7 +8,7 @@
             <field name="report_name">bank_payment_voucher.olila_vendor_bank_voucher</field>
             <field name="report_file">bank_payment_voucher.olila_vendor_bank_voucher</field>
             <field name="print_report_name">'Bank Vouchar - %s' % (object.name)</field>
-            <field name="binding_model_id" ref="account.model_account_payment"/>
+            <field name="binding_model_id" eval="False"/>
             <field name="binding_type">report</field>
         </record>
 
@@ -127,7 +127,7 @@
                             </table>
 
                             <div style="font-size: 15px;">
-<!--                               <p> <strong>In Words: </strong> <t t-esc="doc.word_num" /> </p>-->
+                                <p> <strong>In Words: </strong> <t t-esc="doc.word_num" />  &#160;only</p>
                                  <p> <strong>Naration: </strong> <t t-esc="doc.ref" /> </p>
 
                             </div>

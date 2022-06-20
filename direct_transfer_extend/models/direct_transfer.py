@@ -142,3 +142,10 @@ class LCDirectTransfer(models.Model):
         for rec in self:
             if rec.state == 'paid':
                 rec.moves_id = self.env['account.move'].search([('lc_treansfer_id', '=', rec.id)], limit=1).id
+
+
+    def print_cash_vouchar(self):
+        return self.env.ref('direct_transfer_extend.action_olila_cash_voucher_report').report_action(self)
+
+    def print_bank_vouchar(self):
+        return self.env.ref('direct_transfer_extend.action_olila_bank_voucher_report').report_action(self)
