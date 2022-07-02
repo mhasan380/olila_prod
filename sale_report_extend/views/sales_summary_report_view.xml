@@ -1,0 +1,122 @@
+<odoo>
+    <data>
+        <report id="sales_summary_report" menu="False" model="sales.summary.wizard"
+                name="sale_report_extend.sales_summary_report_template" report_type="qweb-pdf"
+                string="Sales Summary Report"/>
+        <template id="sales_summary_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:30px;">
+
+                        <div class="text-center">
+
+                            <h4>Sales Summary Report</h4>
+
+                        </div>
+
+                        <div>
+                            <t t-if="zone_id">
+                                <p>Region Name:
+                                    <span t-esc="zone_id"/>
+                                </p>
+                            </t>
+
+                            <p>From Date:
+                                <span t-esc="from_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                            </p>
+                            <p>To Date:
+                                <span t-esc="to_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                            </p>
+
+                        </div>
+
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">SL</th>
+                                    <th class="text-left">Region Name</th>
+                                    <th class="text-left" colspan="3">Product Quantity</th>
+                                    <th class="text-left">Total Value</th>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <th class="text-left">Pcs</th>
+                                    <th class="text-left">Inner</th>
+                                    <th class="text-left">Master</th>
+                                    <td></td>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <t t-set="i" t-value="1"/>
+                                <t t-set="total_pcs" t-value="0"/>
+                                <t t-set="total_inner_cartons" t-value="0"/>
+                                <t t-set="total_master_cartons" t-value="0"/>
+                                <t t-set="total_value" t-value="0"/>
+                                <tr t-foreach="lines"  t-as="line" style="border-bottom: solid 1px black;">
+                                    <td>
+                                        <t t-esc="i"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line['zone']"/>
+                                    </td>
+
+                                    <td>
+                                        <t t-esc="line['pcs_qty']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line['inner_qty']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line['master_qty']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line['total_value']" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+
+                                    <t t-set="i" t-value="i+1"/>
+                                    <t t-set="total_pcs" t-value="total_pcs + line['pcs_qty']"/>
+                                    <t t-set="total_inner_cartons" t-value="total_inner_cartons + line['inner_qty']"/>
+                                    <t t-set="total_master_cartons" t-value="total_master_cartons + line['master_qty']"/>
+                                    <t t-set="total_value" t-value="total_value + line['total_value']"/>
+
+                                </tr>
+
+                                <tr style="font-weight: bold; color: blue;">
+
+                                    <td>
+                                        <b>Total</b>
+                                    </td>
+                                    <td></td>
+                                    <td>
+                                        <span t-esc="total_pcs"
+                                              t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="total_inner_cartons"
+                                              t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="total_master_cartons"
+                                              t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="total_value" t-options='{"widget": "float", "precision": 2}'/>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+
+                        </table>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

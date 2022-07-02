@@ -1,0 +1,37 @@
+<odoo>
+    <record id="sales_summary_report_wizard_view" model="ir.ui.view">
+        <field name="name">sales.summary.wizard.form</field>
+        <field name="model">sales.summary.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Sales Summary">
+                <group>
+                    <group>
+                        <field name="from_date" required="1">from date</field>
+                        <field name="to_date" required="1">to date</field>
+                    </group>
+                    <group>
+                        <field name="zone_id">zone</field>
+                    </group>
+
+                </group>
+
+                <footer>
+                    <button name="get_report" type="object" string="Print" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sales_summary_wizard" model="ir.actions.act_window">
+        <field name="name">Sales Summary Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sales.summary.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="sales_summary_report_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem name="Sales Summary Report" id="menu_sales_summary_report"
+              parent="olila_reports.menu_olila_reports" action="action_sales_summary_wizard" sequence="7"/>
+</odoo>

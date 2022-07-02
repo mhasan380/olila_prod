@@ -1,0 +1,37 @@
+<odoo>
+    <record model="ir.ui.view" id="undelivery_value_report_wizard_view">
+        <field name="name">Undelivery Value Report</field>
+        <field name="model">undeliverd.value.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Undelivery Value Report">
+                <group>
+                    <group>
+                        <field name="date"/>
+                        <field name="sale_type"/>
+                    </group>
+
+                    <group>
+                        <field name="warehouse_id" />
+                        <field name="partner_id" />
+                        <field name="sort_type"/>
+                    </group>
+
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="action_undelivery_value_report_wizard"
+                name="Undelivery Value Report"
+                res_model="undeliverd.value.wizard"
+                view_mode="form"
+                target="new"/>
+    <menuitem action="action_undelivery_value_report_wizard"
+              id="menu_undelivery_value_report_wizard"
+              parent="olila_reports.menu_olila_reports"
+              name="Undelivery Value Report" />
+</odoo>

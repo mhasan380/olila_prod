@@ -24,9 +24,13 @@
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/sale_summary_report.xml',
         'views/sale_status_report.xml',
+        'views/sales_summary_report_view.xml',
+        'views/undelivery_value_report.xml',
+        'wizard/sales_summary_wizard.xml',
+        'wizard/undelivery_stock_report_wizard_view.xml',
 
     ],
     # only loaded in demonstration mode

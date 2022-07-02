@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report id="undelivery_value_report" menu="False" model="undeliverd.value.wizard" name="sale_report_extend.undelivery_value_template"  report_type="qweb-pdf" string="Undelivery Value Report"/>
+        <template id="undelivery_value_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:5px;">
+                            <div class="text-center">
+                                <h4>Undelivery Value Report</h4>
+                            </div>
+                            <div class="customer_info">
+                                <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                    <p>
+                                        <b> Date : </b>
+                                        <span t-esc="date"/>
+                                    </p>
+
+                                </div>
+                                <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                    <t t-if="sale_type=='primary_sales'">
+                                        <b>Sale Type : Retail Sales </b>
+                                    </t>
+                                    <t t-elif="sale_type=='corporate_sales'">
+                                        <b>Sale Type : Corporate Sales </b>
+                                    </t>
+                                    <p>
+                                        <b>Depot Name : </b>
+                                        <span t-esc="warehouse_name"/>
+                                    </p>
+                                </div>
+                            </div>
+                            <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                            <table  class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" >SL</th>
+                                        <th class="text-left">Customer Code</th>
+                                        <th class="text-left">Customer Name</th>
+                                        <th class="text-left">Total Qty</th>
+                                        <th class="text-left">Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="i" t-value="1"/>
+                                    <t t-set="qty_total" t-value="0"/>
+                                     <t t-set="total_value" t-value="0"/>
+                                    <tr t-foreach='lines' t-as='line'>
+                                        <td>
+                                            <t t-esc="i" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['code']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['name']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['qty']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="line['value']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+
+                                        <t t-set="i" t-value="i+1"/>
+                                        <t t-set="qty_total" t-value="qty_total + line['qty']"/>
+                                        <t t-set="total_value" t-value="total_value + line['value']"/>
+                                    </tr>
+                                    <tr style="font-weight: bold; color: blue;">
+                                        <td colspan="3" class="text-center">
+                                            <b>Total </b>
+                                        </td>
+
+                                        <td>
+                                            <span t-esc="qty_total" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="total_value" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <style>
+                        td {border: 1px solid #000; }
+                        th {
+
+                            text-align: center;
+                         }
+
+                        </style>
+                            </table>
+
+
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
