@@ -208,7 +208,8 @@
                                 <div class="seller" style="float:left;">
                                     <p>---------------------------------   </p>
                                     <P>
-                                        <b>Prepared By </b>
+                                        <b>Prepared By </b> <br/>
+                                      <span t-field="doc.create_uid.name"/>
                                     </P>
                                 </div>
                                 <style>.customer_signature{ text-align: center;
