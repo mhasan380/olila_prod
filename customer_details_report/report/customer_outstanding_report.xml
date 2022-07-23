@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="customer_out_summary_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center">
+                            <h4 style="font-weight:800;">Customer Outstanding Report(Summary)</h4>
+                        </div>
+                        <br/>
+                        <div class="row mt32 mb32" id="informations">
+                            <div  class="col-auto col-3 mw-100 mb-2">
+                                <strong>Date:</strong>
+                                <p class="m-0" t-field="docs.date"/>
+                            </div>
+                            <div t-if="customer_type" class="col-auto col-3 mw-100 mb-2">
+                                <strong>Customer Type:</strong>
+                                <p class="m-0" t-esc="customer_type"/>
+                            </div>
+                        </div>
+                        <table class="table table-bordered mt32">
+                            <tr style="background-color: black;color: white !important;">
+                                <th>Customer Code</th>
+                                <th>Customer Name</th>
+                                <th>15 Days</th>
+                                <th>30 Days</th>
+                                <th>45 Days</th>
+                                <th>60 Days</th>
+                                <th>90 Days</th>
+                                <th>Older than 90 Days</th>
+                                <th>Total</th>
+                            </tr>
+                            <tbody>
+                                <t t-foreach="lines" t-as="line">
+                                    <tr>
+                                        <td><span t-esc="line['code']"/></td>
+                                        <td><span t-esc="line['name']"/></td>
+                                        <td><span t-esc="line['days_15']"/></td>
+                                        <td><span t-esc="line['days_30']"/></td>
+                                        <td><span t-esc="line['days_45']"/></td>
+                                        <td><span t-esc="line['days_60']"/></td>
+                                        <td><span t-esc="line['days_90']"/></td>
+                                        <td><span t-esc="line['older_90']"/></td>
+                                        <td><span t-esc="line['total']"/></td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="2"><strong>Total</strong></td>
+                                    <td><strong><span t-esc="footer_total['total_15']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_30']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_45']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_60']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_90']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_older_90']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['grand_total']"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+        <template id="customer_out_details_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center">
+                            <h4 style="font-weight:800;">Customer Outstanding Report(Details)</h4>
+                        </div>
+                        <br/>
+                        <div class="row mt32 mb32" id="informations">
+                            <div  class="col-auto col-3 mw-100 mb-2">
+                                <strong>Date:</strong>
+                                <p class="m-0" t-field="docs.date"/>
+                            </div>
+                            <div t-if="customer_type" class="col-auto col-3 mw-100 mb-2">
+                                <strong>Customer Type:</strong>
+                                <p class="m-0" t-esc="customer_type"/>
+                            </div>
+                        </div>
+                        <table class="table table-bordered mt32">
+                            <tr style="background-color: black;color: white !important;">
+                                <th>Customer Code</th>
+                                <th>Customer Name</th>
+                                <th style="width: 15%;">Invoice No</th>
+                                <th>SO Number</th>
+                                <th>15 Days</th>
+                                <th>30 Days</th>
+                                <th>45 Days</th>
+                                <th>60 Days</th>
+                                <th>90 Days</th>
+                                <th>Older than 90 Days</th>
+                                <th>Total</th> 
+                            </tr>
+                            <tbody>
+                                <t t-foreach="lines" t-as="line">
+                                    <tr>
+                                        <td><span t-esc="line['code']"/></td>
+                                        <td><span t-esc="line['name']"/></td>
+                                        <td><span t-esc="line['invoice']"/></td>
+                                        <td><span t-esc="line['sale_order']"/></td>
+                                        <td><span t-esc="line['days_15']"/></td>
+                                        <td><span t-esc="line['days_30']"/></td>
+                                        <td><span t-esc="line['days_45']"/></td>
+                                        <td><span t-esc="line['days_60']"/></td>
+                                        <td><span t-esc="line['days_90']"/></td>
+                                        <td><span t-esc="line['older_90']"/></td>
+                                        <td><span t-esc="line['total']"/></td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="4"><strong>Total</strong></td>
+                                    <td><strong><span t-esc="footer_total['total_15']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_30']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_45']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_60']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_90']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['total_older_90']"/></strong></td>
+                                    <td><strong><span t-esc="footer_total['grand_total']"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

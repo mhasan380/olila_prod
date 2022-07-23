@@ -1,0 +1,31 @@
+<odoo>
+    <record model="ir.ui.view" id="customer_balance_report_wizard_view">
+        <field name="name">Customer Balance Report</field>
+        <field name="model">customer.balance.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Customer Balance Report">
+                <group>
+                    <group>
+                        <field name="customer_id"/>
+                    </group>
+
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="action_customer_balance_wizard"
+                name="Customer Balance Report"
+                res_model="customer.balance.wizard"
+                view_mode="form"
+                target="new"/>
+    <menuitem action="action_customer_balance_wizard"
+              id="menu_customer_balance_report"
+              parent="customer_details_report.menu_customer_details_report"
+              name="Customer Balance All Report"
+              sequence="2"/>
+</odoo>

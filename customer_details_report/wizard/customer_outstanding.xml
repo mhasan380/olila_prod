@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="customer_outstanding_summary_wizard_view" model="ir.ui.view">
+        <field name="name">Customer Outstanding Report</field>
+        <field name="model">customer.outstanding.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Customer Outstanding Summary Report">
+                <group>
+                    <group>
+                        <field name="date"/>
+                        <field name="olila_type"/>
+                    </group>
+                    <group>
+                        <field name="report_type"/>
+                        <field name="partner_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button class="oe_highlight" name="action_print_report" string="Print" type="object"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_customer_outstanding_wizard" model="ir.actions.act_window">
+        <field name="name">Customer Outstanding Report</field>
+        <field name="res_model">customer.outstanding.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record> 
+
+    <menuitem
+        id="menu_customer_details_report"
+        name="Customer Details Report"
+        sequence="6"
+        parent="sale.sale_menu_root"/>
+
+    <menuitem
+        id="menu_customer_outstanding"
+        name="Customer Outstanding Report"
+        action="action_customer_outstanding_wizard"
+        sequence="1"
+        parent="customer_details_report.menu_customer_details_report"/>
+</odoo>

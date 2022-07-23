@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="st_paperformat_euro_lowmargin" model="report.paperformat">
+            <field name="name">Customer Details Report</field>
+            <field eval="True" name="default"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">40</field>
+            <field name="margin_bottom">20</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field eval="False" name="header_line"/>
+            <field name="header_spacing">35</field>
+            <field name="dpi">90</field>
+        </record>
+        <record id="customer_out_summary_report" model="ir.actions.report">
+            <field name="name">Customer Outstanding Summary Report</field>
+            <field name="model">customer.outstanding.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">customer_details_report.customer_out_summary_template</field>
+            <field name="report_file">customer_details_report.customer_out_summary_template</field>
+            <field name="binding_model_id" ref="customer_details_report.model_customer_outstanding_wizard"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="customer_details_report.st_paperformat_euro_lowmargin"/>
+        </record>
+        <record id="customer_out_details_report" model="ir.actions.report">
+            <field name="name">Customer Outstanding Details Report</field>
+            <field name="model">customer.outstanding.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">customer_details_report.customer_out_details_template</field>
+            <field name="report_file">customer_details_report.customer_out_details_template</field>
+            <field name="binding_model_id" ref="customer_details_report.model_customer_outstanding_wizard"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="customer_details_report.st_paperformat_euro_lowmargin"/>
+        </record>
+
+    </data>
+</odoo>
