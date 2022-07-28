@@ -45,7 +45,8 @@ class PrimarySales(http.Controller):
                     # dt_obj = datetime.strptime(order.date_order,'%Y-%m-%d')
                     millisec = order.date_order.timestamp() * 1000
                     sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total, 'sate': order.state,
-                                 'customer': order.partner_id.name, 'date': order.date_order, 'date_long': millisec}
+                                 'customer': order.partner_id.name, 'date': order.date_order,
+                                 'date_long': int(millisec)}
                     my_orders.append(sale_dict)
 
             msg = json.dumps(my_orders,

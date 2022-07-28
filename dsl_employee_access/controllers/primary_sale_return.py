@@ -45,7 +45,7 @@ class SaleReturnPrimary(http.Controller):
                 if start_date <= order.date_order < end_date and order.delivery_count > 0:
                     millisec = order.date_order.timestamp() * 1000
                     sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total, 'sate': order.state,
-                                 'customer': order.partner_id.name, 'date': order.date_order, 'date_long': millisec}
+                                 'customer': order.partner_id.name, 'date': order.date_order, 'date_long': int(millisec)}
                     my_orders.append(sale_dict)
 
             msg = json.dumps(my_orders,
