@@ -1,0 +1,172 @@
+# -*- coding: utf-8 -*-
+from odoo import _, fields, http, release
+from odoo.http import request, Response
+from odoo.models import check_method_name
+from odoo.tools.image import image_data_uri
+from odoo.tools import misc, config
+from odoo.exceptions import ValidationError, UserError
+from werkzeug import secure_filename, exceptions
+from datetime import date, datetime, time
+from dateutil.relativedelta import relativedelta
+from pytz import timezone
+from odoo.addons.dsl_employee_access import tools
+from odoo.addons.dsl_employee_access.tools.json import ResponseEncoder
+import string
+from secrets import choice
+import random
+
+import base64
+import json
+import re
+import urllib
+
+_csrf = config.get('rest_csrf', False)
+import logging
+
+_logger = logging.getLogger(__name__)
+
+
+class EmployeeTargetAchievement(http.Controller):
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/payment/data', auth='none', type='http', csrf=False, methods=['POST'])
+    def get_payment_data(self, **kwargs):
+        try:
+            # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
+            # employee = request.env['hr.employee'].sudo().search([('id', '=', kwargs['empl'])])
+            payment_journals = request.env['account.journal'].sudo().search([('type', 'in', ['bank', 'cash'])])
+
+            order = request.env['sale.order'].sudo().search([('id', '=', kwargs['order_id'])])
+            res_dict = {}
+            res_dict['customer_id'] = order.partner_id.id
+            res_dict['customer_name'] = order.partner_id.name
+            res_dict['balance'] = self.get_customer_balance(order.partner_id.id)
+            res_dict['customer_address'] = order.address
+            res_dict['customer_code'] = order.partner_id.code
+
+            journals = []
+            for journal in payment_journals:
+                journal_dict = {}
+                journal_dict['id'] = journal.id
+                journal_dict['name'] = journal.name
+                journal_dict['type'] = journal.type
+                accounts = []
+                if journal.type == 'bank':
+                    banks_accounts = request.env['res.partner.bank'].sudo().search([('journal_id', '=', journal.id)])
+                    account_dict = {}
+                    for acc in banks_accounts:
+                        account_dict['id'] = acc.id
+                        account_dict['acc_number'] = acc.acc_number
+                        accounts.append(account_dict)
+                journal_dict['accounts'] = accounts
+                journals.append(journal_dict)
+
+            res_dict['journals'] = journals
+            msg = json.dumps(res_dict,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/payment/collect', auth='none', type='http', csrf=False, methods=['POST'])
+    def payment_collect(self, **kwargs):
+        try:
+            # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
+            # employee = request.env['hr.employee'].sudo().search([('id', '=', kwargs['empl'])])
+            # payment_journals = request.env['account.journal'].sudo().search([('type', 'in', ['bank', 'cash'])])
+
+            journal_id = request.env['account.journal'].sudo().browse(int(kwargs['method_id']))
+            amount = float(kwargs['amount'])
+            payment_date = kwargs['payment_date']
+            if kwargs['account_id']:
+                account_id = request.env['res.partner.bank'].sudo().browse(int(kwargs['account_id'])).id
+            else:
+                account_id = False
+            cheque_number = kwargs['cheque_number']
+            if kwargs['cheque_date']:
+                cheque_date = kwargs['cheque_date']
+            else:
+                cheque_date = False
+            branch = kwargs['branch']
+            # responsible = employee.id
+
+            sale_id = kwargs['order_id']
+            _logger.warning(f'------------------{sale_id}')
+            if sale_id:
+                sale = request.env['sale.order'].sudo().browse(int(sale_id))
+                _logger.warning(f'------------------{sale.name}')
+                exchange_rate = request.env['res.currency'].sudo()._get_conversion_rate(sale.company_id.currency_id,
+                                                                                        sale.currency_id,
+                                                                                        sale.company_id,
+                                                                                        sale.date_order)
+                currency_amount = amount * (1.0 / exchange_rate)
+                payment_dict = {'payment_type': 'inbound',
+                                'partner_type': 'customer',
+                                'sale_id': sale.id,
+                                'responsible_id': sale.responsible and sale.responsible.id,
+                                'ref': _("Advance") + " - " + sale.name,
+                                'partner_id': sale.partner_id and sale.partner_id.id,
+                                'journal_id': journal_id and journal_id.id,
+                                'company_id': sale.company_id and sale.company_id.id,
+                                'currency_id': sale.pricelist_id.currency_id and sale.pricelist_id.currency_id.id,
+                                'date': payment_date,
+                                'amount': currency_amount,
+                                'check_no': cheque_number,
+                                'check_date': cheque_date,
+                                'payment_method_id': request.env.ref('account.account_payment_method_manual_in').id,
+                                'partner_bank_id': account_id,
+                                'customer_code': sale.partner_id.code,
+                                'bank_branch': branch,
+                                # 'file_attachment': false,
+                                }
+                payment = request.env['account.payment'].sudo().create(payment_dict)
+                if payment.id:
+                    created = True
+                    value = 'Successfully Submitted'
+                else:
+                    created = False
+                    value = 'Failed to Submitted. Please contact to administrator'
+            else:
+                created = False
+                value = 'You can not collect payment for this sale order'
+
+            msg = json.dumps({'result': created, 'data': value},
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    def get_customer_balance(self, customer_id):
+        try:
+            # customer_id = request.env['res.partner'].sudo().browse(cus_id).id
+            sales = request.env['sale.order'].sudo().search([('partner_id', '=', customer_id), ('state', '=', 'sale')])
+            customer_balance = 0.0
+            for sale in sales:
+                payments = request.env['account.payment'].sudo().search(
+                    [('sale_id', '=', sale.id), ('state', '=', 'posted')])
+                payment_amount = sum(payments.mapped('amount'))
+                invoices = sale.invoice_ids.filtered(lambda x: x.state and x.state == 'posted')
+                delivery_amount = sum(invoices.mapped('amount_total'))
+                pending_delivery_orders = sale.picking_ids.filtered(
+                    lambda x: x.state == 'confirmed' or x.state == 'assigned')
+                pending_amount = 0.0
+                for transfer in pending_delivery_orders:
+                    for line in transfer.move_ids_without_package:
+                        product_id = line.product_id.id
+                        quantity = line.product_uom_qty
+                        price_unit = line.sale_line_id.price_unit if line.sale_line_id else line.product_id.lst_price
+                        discount = line.sale_line_id.discount
+                        pending_amount += ((price_unit - (price_unit * discount) / 100) * quantity)
+                so_balance = payment_amount - delivery_amount - pending_amount
+                customer_balance += so_balance
+
+            return customer_balance
+        except Exception as e:
+            return -999999

@@ -81,7 +81,7 @@ class DepotStockReport(models.AbstractModel):
                     price_unit = line.sale_line_id.price_unit if line.sale_line_id else line.product_id.lst_price
                     discount = line.sale_line_id.discount
                     cancel_do_amount += ((price_unit - (price_unit * discount) / 100) * quantity)
-            if sale_amount == (delivery_amount + cancel_do_amount):
+            if sale_amount == delivery_amount:
                 do_state = 'Done'
             else:
                 do_state = 'Pending'

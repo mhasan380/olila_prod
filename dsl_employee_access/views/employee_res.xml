@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record model="ir.ui.view" id="view_employee_form_sales_force">
+        <field name="name">view.employee.form.sales.force</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <field name="coach_id" position="after">
+                <field name="is_enable_sales_force"/>
+            </field>
+            <notebook position="inside">
+                <page name="sales_force" string="Sales Force"
+                      attrs="{'invisible': [('is_enable_sales_force', '!=', True)]}">
+
+                        <group string="Setup Sales Force">
+                            <field name="active_status"/>
+
+                            <field name="access_code" password="True"/>
+                            <!--                            <field name="access_token"/>-->
+
+                            <field name="is_wrong_code_limit_exceeded" invisible="1"/>
+                        </group>
+
+
+                        <group>
+                                <button name="action_revoke_restriction" class="btn btn-primary" type="object"
+                                        string="Revoke wrong Access code restriction"
+                                        attrs="{'invisible': [('is_wrong_code_limit_exceeded', '=', False)]}"/>
+                            </group>
+
+
+                </page>
+            </notebook>
+
+            <!--            <xpath expr="//page[@name='sales_force']" position="attributes">-->
+            <!--                <attribute name="attrs">{'invisible': [('is_enable_sales_force', '!=', True)]}</attribute>-->
+            <!--            </xpath>-->
+
+        </field>
+    </record>
+</odoo>

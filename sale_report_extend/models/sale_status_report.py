@@ -9,6 +9,15 @@ import pytz
 
 type_list = {'corporater': 'Corporate', 'distributor': 'Distributor', 'dealer': 'Dealer'}
 
+
+# class CustomerOutstandingSummaryWizard(models.TransientModel):
+#     _inherit = 'sales.status.wizard'
+#
+#     sale_type = fields.Selection(
+#         [('primary_sales', 'Primary Sales'), ('corporate_sales', 'Corporate Sales'), ('all', 'All Sales')],
+#         default='primary_sales')
+
+
 class SaleStatusReport(models.AbstractModel):
     _inherit = 'report.olila_reports.sales_status_report_template'
 
