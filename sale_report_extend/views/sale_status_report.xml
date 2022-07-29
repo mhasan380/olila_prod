@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+       <record id="sale_status_wizard_view_inheirt" model="ir.ui.view">
+            <field name="name">sales.status.wizard.inherit.olila</field>
+            <field name="model">sales.status.wizard</field>
+            <field name="inherit_id" ref="olila_reports.sale_status_wizard_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='olila_type']" position="replace">
+                    <field name="sale_type"/>
+                </xpath>
+            </field>
+        </record>
+
         <template id="sale_status_Report_template_inherit_olila" inherit_id="olila_reports.sales_status_report_template">
 
              <xpath expr="//table[@class='table table-bordered mt32']" position="replace">

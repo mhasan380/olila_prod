@@ -6,6 +6,26 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import pytz
 type_list = {'corporater': 'Corporate', 'distributor': 'Distributor', 'dealer': 'Dealer'}
 
+class SaleSummaryWizard(models.TransientModel):
+    _inherit = 'sale.summary.wizard'
+    sort_type = fields.Selection([('asc', 'Ascending'), ('desc', 'Descending')], string='Sort Type')
+    def action_print_report(self):
+        data = {
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'olila_type': self.olila_type or False,
+            'partner_id': self.partner_id and self.partner_id.id or False,
+            'zone_ids': self.zone_ids.ids,
+            'product_ids': self.product_ids.ids,
+            'sort_type' : self.sort_type
+        }
+        if self.report_type == 'customer':
+            return self.env.ref('olila_reports.sale_summary_customer_wise_report').report_action(self, data=data)
+        if self.report_type == 'product':
+            return self.env.ref('olila_reports.sale_summary_product_wise_report').report_action(self, data=data)
+        if self.report_type == 'region':
+            return self.env.ref('olila_reports.sale_summary_region_wise_report').report_action(self, data=data)
+
 class SaleSummaryRegionWiseReport(models.AbstractModel):
     _inherit = 'report.olila_reports.sale_summary_region_wise_template'
 
@@ -18,6 +38,7 @@ class SaleSummaryRegionWiseReport(models.AbstractModel):
         partner_id = data.get('partner_id')
         zone_ids = data.get('zone_ids')
         product_ids = data.get('product_ids')
+        sort_type = data.get('sort_type')
         partners = self.env['res.partner']
 
         if olila_type and not partner_id:
@@ -54,16 +75,39 @@ class SaleSummaryRegionWiseReport(models.AbstractModel):
                 total_qty += sum(o_lines.mapped('product_uom_qty'))
                 total_invoice_value += invoice_value
 
-        return {
-            'docs': docs,
-            'doc_ids': data.get('ids'),
-            'doc_model': data.get('model'),
-            'lines':lines,
-            'total_qty': round(total_qty, 2),
-            'total_invoice_value': round(total_invoice_value, 2),
-            'customer_type': type_list.get(olila_type) or '',
-            'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
-        }
+        if sort_type == 'desc':
+            return {
+                'docs': docs,
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'lines': sorted(lines, key=lambda l: l['invoice_value'],reverse= True),
+                'total_qty': round(total_qty, 2),
+                'total_invoice_value': round(total_invoice_value, 2),
+                'customer_type': type_list.get(olila_type) or '',
+                'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
+            }
+        elif sort_type == 'asc':
+            return {
+                'docs': docs,
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'lines': sorted(lines, key=lambda l: l['invoice_value']),
+                'total_qty': round(total_qty, 2),
+                'total_invoice_value': round(total_invoice_value, 2),
+                'customer_type': type_list.get(olila_type) or '',
+                'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
+            }
+        else:
+            return {
+                'docs': docs,
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'lines':lines,
+                'total_qty': round(total_qty, 2),
+                'total_invoice_value': round(total_invoice_value, 2),
+                'customer_type': type_list.get(olila_type) or '',
+                'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
+            }
 
 
 class SaleSummaryCustomerWiseReport(models.AbstractModel):
@@ -76,6 +120,7 @@ class SaleSummaryCustomerWiseReport(models.AbstractModel):
         date_from = data['date_from']
         date_to = data['date_to']
         olila_type = data.get('olila_type')
+        sort_type = data.get('sort_type')
         partner_id = data.get('partner_id')
         partners = self.env['res.partner']
         if olila_type and not partner_id:
@@ -117,12 +162,33 @@ class SaleSummaryCustomerWiseReport(models.AbstractModel):
 
         footer_total = {'total_invoice': total_invoice, 'total_sale': total_sale,
                         'total_undelivered': total_undelivered}
-        return {
-            'docs': docs,
-            'doc_ids': data.get('ids'),
-            'doc_model': data.get('model'),
-            'lines': lines,
-            'footer_total': footer_total,
-            'customer_type': type_list.get(olila_type) or '',
-            'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
-        }
+        if sort_type == 'desc':
+            return {
+                'docs': docs,
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'lines': sorted(lines, key=lambda l: l['sale_value'],reverse= True),
+                'footer_total': footer_total,
+                'customer_type': type_list.get(olila_type) or '',
+                'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
+            }
+        elif sort_type == 'asc':
+            return {
+                'docs': docs,
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'lines': sorted(lines, key=lambda l: l['sale_value']),
+                'footer_total': footer_total,
+                'customer_type': type_list.get(olila_type) or '',
+                'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
+            }
+        else:
+            return {
+                'docs': docs,
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'lines': lines,
+                'footer_total': footer_total,
+                'customer_type': type_list.get(olila_type) or '',
+                'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
+            }

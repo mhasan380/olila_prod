@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="sale_summary_wizard_view_inherit" model="ir.ui.view">
+            <field name="name">sale.summary.wizard.inherit.olila</field>
+            <field name="model">sale.summary.wizard</field>
+            <field name="inherit_id" ref="olila_reports.sale_summary_wizard_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='zone_ids']" position="after">
+                    <field name="sort_type"/>
+                </xpath>
+            </field>
+        </record>
+
          <template id="sale_summary_Report_region_template_inherit_olila" inherit_id="olila_reports.sale_summary_region_wise_template">
 
          <xpath expr="//table[@class='table table-bordered mt32']" position="replace">

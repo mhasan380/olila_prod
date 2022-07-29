@@ -10,12 +10,21 @@ import pytz
 type_list = {'corporater': 'Corporate', 'distributor': 'Distributor', 'dealer': 'Dealer'}
 
 
-# class CustomerOutstandingSummaryWizard(models.TransientModel):
-#     _inherit = 'sales.status.wizard'
-#
-#     sale_type = fields.Selection(
-#         [('primary_sales', 'Primary Sales'), ('corporate_sales', 'Corporate Sales'), ('all', 'All Sales')],
-#         default='primary_sales')
+class CustomerOutstandingSummaryWizard(models.TransientModel):
+    _inherit = 'sales.status.wizard'
+
+    sale_type = fields.Selection(
+        [('primary_sales', 'Primary Sales'), ('corporate_sales', 'Corporate Sales')],
+        default='primary_sales')
+    def action_print_report(self):
+        data = {
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'olila_type': self.olila_type or False,
+            'partner_id': self.partner_id and self.partner_id.id or False,
+            'sale_type' : self.sale_type
+        }
+        return self.env.ref('olila_reports.sales_status_report').report_action(self, data=data)
 
 
 class SaleStatusReport(models.AbstractModel):
@@ -29,16 +38,19 @@ class SaleStatusReport(models.AbstractModel):
         date_to = data['date_to']
         olila_type = data.get('olila_type')
         partner_id = data.get('partner_id')
+        sale_type = data.get('sale_type')
         partners = self.env['res.partner']
-        if olila_type and not partner_id:
-            partners = self.env['res.partner'].sudo().search([('olila_type', '=', olila_type)])
+        if sale_type and not partner_id:
+            sale_orders = self.env['sale.order'].search(
+                [('sale_type', '=', sale_type), ('date_order', '>=', date_from), ('date_order', '<=', date_to)])
         if partner_id:
-            partners = self.env['res.partner'].browse(partner_id)
-        if not partners and not olila_type:
-            partners = self.env['res.partner'].search([])
+            sale_orders = self.env['sale.order'].search(
+                [('partner_id', 'in', partners.ids), ('date_order', '>=', date_from), ('date_order', '<=', date_to)])
+        if not partner_id and not sale_type:
+            sale_orders = self.env['sale.order'].search(
+                [('date_order', '>=', date_from), ('date_order', '<=', date_to)])
 
-        sale_orders = self.env['sale.order'].search(
-            [('partner_id', 'in', partners.ids), ('date_order', '>=', date_from), ('date_order', '<=', date_to)])
+
         sale_status = {
             'draft': 'Quotation',
             'sent': 'Quotation Sent',

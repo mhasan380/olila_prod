@@ -10,6 +10,7 @@ class SalesSummaryWizard(models.TransientModel):
     from_date = fields.Date(string="From Date")
     to_date = fields.Date(string="To Date")
     zone_id = fields.Many2one('res.zone', string="Zone")
+    sort_type = fields.Selection([('asc', 'Ascending'), ('desc', 'Descending')], string='Sort Type')
 
     def get_report(self):
         zone_id = self.zone_id
@@ -20,7 +21,8 @@ class SalesSummaryWizard(models.TransientModel):
             'form': {
                 'zone_id': zone_id.name,
                 'from_date': self.from_date,
-                'to_date': self.to_date
+                'to_date': self.to_date,
+                'sort_type': self.sort_type
             },
         }
 
@@ -35,6 +37,7 @@ class SalesSummaryReport(models.AbstractModel):
         model = self.env.context.get('active_model')
         docs = self.env[model].browse(self.env.context.get('active_id'))
         zone_id = data['form']['zone_id']
+        sort_type = data['form']['sort_type']
         date_start = data['form']['from_date']
         date_end = data['form']['to_date']
 
@@ -77,13 +80,33 @@ class SalesSummaryReport(models.AbstractModel):
                           'master_qty': master_qty,
                           'total_value': total_value
                           })
-
-        return {
-            'doc_ids': data.get('ids'),
-            'doc_model': data.get('model'),
-            'sale_orders': sale_orders,
-            'zone_id': zone_id,
-            'from_date': from_date,
-            'to_date': to_date,
-            'lines': lines
-        }
+        if sort_type == 'asc':
+            return {
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'sale_orders': sale_orders,
+                'zone_id': zone_id,
+                'from_date': from_date,
+                'to_date': to_date,
+                'lines': sorted(lines, key=lambda l: l['total_value']),
+            }
+        elif sort_type == 'desc':
+            return {
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'sale_orders': sale_orders,
+                'zone_id': zone_id,
+                'from_date': from_date,
+                'to_date': to_date,
+                'lines': sorted(lines, key=lambda l: l['total_value'],reverse= True),
+            }
+        else:
+            return {
+                'doc_ids': data.get('ids'),
+                'doc_model': data.get('model'),
+                'sale_orders': sale_orders,
+                'zone_id': zone_id,
+                'from_date': from_date,
+                'to_date': to_date,
+                'lines': lines
+            }
