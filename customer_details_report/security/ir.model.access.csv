@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_customer_outstanding_wizard,access_customer_outstanding_wizard,model_customer_outstanding_wizard,base.group_user,1,1,1,1
 access_customer_balance_wizard,access_customer_balance_wizard,model_customer_balance_wizard,base.group_user,1,1,1,1
+access_undelivered_so_wizard,access_undelivered_so_wizard,model_undelivered_so_wizard,base.group_user,1,1,1,1

@@ -31,7 +31,9 @@
         'report/customer_outstanding_report.xml',
         'wizard/customer_outstanding.xml',
         'wizard/customer_balance_wizard.xml',
-        'report/customer_balance_report_view.xml'
+        'report/customer_balance_report_view.xml',
+        'wizard/undelivered_sales_order.xml',
+        'report/undelivered_sales_order_report_view.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

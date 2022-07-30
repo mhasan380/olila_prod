@@ -149,7 +149,7 @@ class CustomerBalanceReport(models.AbstractModel):
 
                 customer_balance_dict.update({customer.code: {'customer_code': customer.code,
                                                               'customer_name': customer.name,
-                                                              'so_balance': so_balance + abs(previous_balance),
+                                                              'so_balance': so_balance,
                                                               'customer_balance': customer_balance}})
         return {
             'doc_ids': data.get('ids'),

@@ -1,0 +1,37 @@
+<odoo>
+    <record model="ir.ui.view" id="undelivered_sales_order_wizard_view">
+        <field name="name">Undelivered Sales Order Report</field>
+        <field name="model">undelivered.so.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Undelivered Sales Order Report">
+                <group>
+                    <group>
+                        <field name="from_date" required="1">From date</field>
+                        <field name="to_date" required="1">To date</field>
+                    </group>
+
+                    <group>
+                        <field name="partner_id">Customer</field>
+                        <field name="sale_type">Customer Type</field>
+                    </group>
+
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="action_undelivered_sales_order_report"
+                name="Undelivered Sales Order Report"
+                res_model="undelivered.so.wizard"
+                view_mode="form"
+                target="new"/>
+    <menuitem action="action_undelivered_sales_order_report"
+              id="menu_undelivered_so_report"
+              parent="customer_details_report.menu_customer_details_report"
+              name="Undelivered Sales Order Report"
+              sequence="3"/>
+</odoo>
