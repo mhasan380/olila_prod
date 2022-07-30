@@ -29,13 +29,24 @@ class EmployeeAccess(models.Model):
     #     ('so', 'Sales officer(SO)'),
     #     ('sr', 'Sales Representative(SR)')
     # ])
-    access_code = fields.Char(string='Set Access Code', copy=False, store=False)
+    access_code = fields.Char(string='Set Access Code', copy=False, store=False, )
     access_code_crypto = fields.Char(string='crypt', compute='onchange_access_code', store=True)
     access_token = fields.Char(string='token_access', groups='base.group_system', copy=False)
     wrong_code_data = fields.Char(string='wrong_code_data', )
     wrong_code_time = fields.Char(string='wrong_code_time')
     wrong_code_count = fields.Integer(string='wrong_code_count', copy=False)
     is_wrong_code_limit_exceeded = fields.Boolean(default=False, invisible=True)
+
+    # @api.model
+    # def fields_get(self, fields=None):
+    #     hide = ['access_code', 'access_code_crypto', 'access_token', 'wrong_code_data', 'wrong_code_time',
+    #             'is_wrong_code_limit_exceeded', 'wrong_code_count']
+    #     res = super(EmployeeAccess, self).fields_get()
+    #     for field in hide:
+    #         res[field]['searchable'] = False
+    #         res[field]['sortable'] = False
+    #         res[field]['exportable'] = False
+    #     return res
 
     @api.depends('access_code')
     def onchange_access_code(self):

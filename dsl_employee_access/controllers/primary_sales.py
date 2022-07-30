@@ -151,16 +151,23 @@ class PrimarySales(http.Controller):
         try:
 
             products = request.env['product.product'].sudo().search(
-                [('sale_ok', '=', True), ('purchase_ok', '=', True), ('type', '=', 'product'),
+                # [('sale_ok', '=', True), ('purchase_ok', '=', True), ('type', '=', 'product'),
+                [('sale_ok', '=', True), ('type', '=', 'product'),
                  ('default_code', '!=', False)], order='id desc')
 
             product_records = []
             for product in products:
+                raw_code = product.default_code
+                if raw_code and '/' in raw_code:
+                    x = raw_code.split('/')[1:]
+                    raw_code = x[0]
+
                 product_dict = {'id': product.id,
                                 'name': product.name,
                                 'price': product.list_price,
                                 'available': product.virtual_available,
-                                'code': product.default_code
+                                'code': product.default_code,
+                                'reference': raw_code
                                 }
                 product_records.append(product_dict)
 
