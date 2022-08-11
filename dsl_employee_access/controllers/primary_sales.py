@@ -6,7 +6,7 @@ from odoo.tools.image import image_data_uri
 from odoo.tools import misc, config
 from odoo.exceptions import ValidationError, UserError
 from werkzeug import secure_filename, exceptions
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from pytz import timezone
 from odoo.addons.dsl_employee_access import tools
@@ -34,14 +34,14 @@ class PrimarySales(http.Controller):
         try:
             start_date = datetime.strptime(kwargs["start_date"], '%Y-%m-%d')
             end_date = datetime.strptime(kwargs["end_date"], '%Y-%m-%d')
-
-            # _logger.warning(f' ============== ' + str(start_date) + ' -- ' + str(end_date))
+            modified_end_date = end_date + timedelta(days=1)
+            # _logger.warning(f' ============== ' + str(start_date) + ' -- ' + str(modified_date))
             # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
             my_sale_orders = request.env['sale.order'].sudo().search([('responsible.id', '=', kwargs['empl'])])
             _logger.warning(f' ============== ' + str(len(my_sale_orders)))
             my_orders = []
             for order in my_sale_orders:
-                if start_date <= order.date_order < end_date:
+                if start_date <= order.date_order < modified_end_date:
                     # dt_obj = datetime.strptime(order.date_order,'%Y-%m-%d')
                     millisec = order.date_order.timestamp() * 1000
                     sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total, 'sate': order.state,
@@ -54,6 +54,7 @@ class PrimarySales(http.Controller):
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
+
             err = {'error': str(e)}
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
@@ -67,6 +68,7 @@ class PrimarySales(http.Controller):
             for line in order.order_line:
                 order_line = {'id': line.product_id.id,
                               'name': line.product_id.name,
+                              'code': line.product_id.default_code,
                               'product_uom_qty': line.product_uom_qty,
                               'price_unit': line.price_unit,
                               'price_subtotal': line.price_subtotal,
@@ -113,6 +115,10 @@ class PrimarySales(http.Controller):
 
             records = []
             for customer in customers:
+                reference_code = customer.code
+                if reference_code and '/' in reference_code:
+                    x = reference_code.split('/')[1:]
+                    reference_code = x[0]
                 customer_dict = {'id': customer.id,
                                  'name': customer.name,
                                  'price_list_id': customer.with_context(
@@ -132,6 +138,7 @@ class PrimarySales(http.Controller):
                                  'zone_id': customer.zone_id.id,
                                  'zone': customer.zone_id.name,
                                  'discount': customer.discount,
+                                 'reference': reference_code,
                                  'code': customer.code}
                 records.append(customer_dict)
 
@@ -165,7 +172,7 @@ class PrimarySales(http.Controller):
                 product_dict = {'id': product.id,
                                 'name': product.name,
                                 'price': product.list_price,
-                                'available': product.virtual_available,
+                                'available': product.net_stock,
                                 'code': product.default_code,
                                 'reference': raw_code
                                 }

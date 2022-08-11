@@ -2,7 +2,7 @@
 ###################################################################################
 #    A part of Open HRMS Project <https://www.openhrms.com>
 #
-#    Cybrosys Technologies Pvt. Ltd.
+#    Daffodil Computers Ltd.
 #    Copyright (C) 2020-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
 #
 #    This program is free software: you can modify
@@ -30,7 +30,11 @@
     'website': "https://daffodil.computer",
     'depends': ['base', 'hr', 'dsl_road_plan'],
     'data': [
+        'security/access_security.xml',
+        'security/ir.model.access.csv',
         'views/employee_res.xml',
+        'views/setting_logger_menu.xml'
+
     ],
     'images': ['static/description/banner.png'],
     'license': 'AGPL-3',

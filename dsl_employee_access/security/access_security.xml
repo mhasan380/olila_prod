@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="category_sales_force_admin" model="ir.module.category">
+            <field name="name">Salesforce Management</field>
+            <field name="description">This group category is only for salesforce administrator</field>
+        </record>
+
+        <record id="group_hr_employee_access_app_login" model="res.groups">
+            <field name="name">Salesforce Admin</field>
+            <field name="category_id" ref="dsl_employee_access.category_sales_force_admin"/>
+        </record>
+
+    </data>
+</odoo>

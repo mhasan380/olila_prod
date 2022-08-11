@@ -53,6 +53,7 @@ import json, ast
 from odoo import http, api, SUPERUSER_ID
 from datetime import date, datetime, time
 from odoo.addons.dsl_employee_access.tools.json import ResponseEncoder
+import geocoder
 
 _logger = logging.getLogger(__name__)
 
@@ -104,6 +105,8 @@ def protected_rafiul(operations=['read'], check_custom_routes=False, *args, **kw
     def wrapper(func):
         @functools.wraps(func)
         def verify(*args, **kwargs):
+            # create_log_salesforce(http.request, access_type='protected', system_returns='functionality',
+            #                       trace_ref='olila-OP-002')
             headers = http.request.httprequest.headers
             if not headers['Authorization']:
                 unauthorized_message = json.dumps({'state': 'failed', 'error': 'unauthorized access'},
@@ -113,23 +116,25 @@ def protected_rafiul(operations=['read'], check_custom_routes=False, *args, **kw
             if token_verified and empl:
                 kwargs.update({'empl': empl, 'unauthorize': False})
                 http.request.em_id = empl
+                create_log_salesforce(http.request, access_type='protected', system_returns='functionality',
+                                      trace_ref='olila-OP-003')
             else:
                 kwargs.update({'empl': False, 'unauthorize': True})
-
+                _logger.warning('------------------- test111')
+                create_log_salesforce(http.request, access_type='protected',
+                                      system_returns='functionality_unauthorized',
+                                      trace_ref='olila-OP-002')
                 unauthorized_message = json.dumps({'state': 'failed', 'error': 'unauthorized access'},
                                                   sort_keys=True, indent=4, cls=ResponseEncoder)
                 return http.Response(unauthorized_message, content_type='application/json;charset=utf-8', status=401)
-            # _logger.warning(f'========================= {str(kwargs)}')
-            # _logger.warning('================================ token ' + headers['Authorization'])
             return func(*args, **kwargs)
-
         return verify
-
     return wrapper
 
 
 def verify_public_token(header_token=False, request=False):
     try:
+
         if header_token and request:
             config_record = request.env['app.config'].sudo().search([], limit=1)
             if config_record:
@@ -159,20 +164,63 @@ def public_rafiul(operations=['read'], check_custom_routes=False, *args, **kwarg
     def wrapper(func):
         @functools.wraps(func)
         def verify_client(*args, **kwargs):
+            trace_mail = ''
+            if 'mail' in kwargs:
+                trace_mail = kwargs['mail']
             headers = http.request.httprequest.headers
             token_verified = verify_public_token(header_token=headers['Authorization'], request=http.request)
             if token_verified:
                 kwargs.update({'unauthorize': False})
+                create_log_salesforce(http.request, access_type='public', system_returns='authorized_client',
+                                      trace_ref=trace_mail)
             else:
                 kwargs.update({'unauthorize': True})
-
+                create_log_salesforce(http.request, access_type='public', system_returns='unauthorized_client',
+                                      trace_ref=trace_mail)
                 unauthorized_message = json.dumps({'state': 'failed', 'error': 'unauthorized client'},
                                                   sort_keys=True, indent=4, cls=ResponseEncoder)
                 return http.Response(unauthorized_message, content_type='application/json;charset=utf-8', status=401)
-            # _logger.warning(f'========================= {str(kwargs)}')
-            # _logger.warning('================================ token ' + headers['Authorization'])
             return func(*args, **kwargs)
-
         return verify_client
-
     return wrapper
+
+
+def create_log_salesforce(request, access_type, system_returns, trace_ref):
+    try:
+        headers = request.httprequest.headers
+
+        trace_ip_address = ""
+        trace_mac = ""
+
+        employee_id = False
+        if hasattr(request, 'em_id') and request.em_id:
+            employee_id = request.env['employee.logger.salesforce'].sudo().browse(request.em_id).id
+
+        if not trace_mac:
+            trace_mac = request.httprequest.environ.get('HTTP_USER_AGENT', '')
+        if not trace_ip_address:
+            trace_ip_address = request.httprequest.environ.get('REMOTE_ADDR', '')
+
+        if trace_ip_address:
+            g = geocoder.ip(trace_ip_address)
+        else:
+            g = geocoder.ip('me')
+        g_location = f'{str(g.city)}, {str(g.state)}, {str(g.country)}'
+
+        vals = {
+            'access_type': access_type,
+            'name': request.httprequest.url,
+            'access_credential': headers['Authorization'],
+            'employee_id': employee_id,
+            'trace_ip_address': trace_ip_address,
+            'trace_agent': trace_mac,
+            'trace_latlng': g.latlng,
+            'system_returns': system_returns,
+            'trace_location': g_location,
+            'trace_ref': trace_ref
+        }
+        created = request.env['employee.logger.salesforce'].sudo().create(vals)
+        # _logger.warning(f'--------------------{str(created)}')
+    except Exception as e:
+        # _logger.warning(f'--------------------{str(e)}')
+        pass

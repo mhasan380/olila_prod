@@ -6,39 +6,25 @@ import os
 
 _logger = logging.getLogger(__name__)
 
-""" ===========Code Statements========
- **employee_type
- National sales Manager(NSM)-->Regional Sales Manager(RSM)--->
- Zonal Sales Manager(ZSM)--->Area Sales Manager(ASM)--->Sales officer(SO)-->Sales Representative(SR)
- 
- **access_code
- 
-"""
 
+class EmployeeAccessNew(models.Model):
+    _name = 'hr.employee.appaccess'
 
-class EmployeeAccess(models.Model):
-    _inherit = 'hr.employee'
-
+    employee_id = fields.many2one('hr.employee', string='Employee', required=True)
     is_enable_sales_force = fields.Boolean(string='Enable Sales Force')
     active_status = fields.Boolean(string='Active App Login')
-    # app_employee_type = fields.Selection(string="App User Type", selection=[
-    #     ('nsm', 'National sales Manager(NSM)'),
-    #     ('rsm', 'Regional Sales Manager(RSM)'),
-    #     ('zsm', 'Zonal Sales Manager(ZSM)'),
-    #     ('asm', 'Area Sales Manager(ASM)'),
-    #     ('so', 'Sales officer(SO)'),
-    #     ('sr', 'Sales Representative(SR)')
-    # ])
+
     access_code = fields.Char(string='Set Access Code', copy=False, store=False, )
-    access_code_crypto = fields.Char(string='crypt', compute='onchange_access_code', store=True,groups='dsl_employee_access.group_hr_employee_access_app_login')
-    access_token = fields.Char(string='token_access', copy=False, groups='dsl_employee_access.group_hr_employee_access_app_login')
-    wrong_code_data = fields.Char(string='wrong_code_data', groups='dsl_employee_access.group_hr_employee_access_app_login')
-    wrong_code_time = fields.Char(string='wrong_code_time', groups='dsl_employee_access.group_hr_employee_access_app_login')
-    wrong_code_count = fields.Integer(string='wrong_code_count', copy=False, groups='dsl_employee_access.group_hr_employee_access_app_login')
+    access_code_crypto = fields.Char(string='crypt', compute='onchange_access_code', store=True)
+    access_token = fields.Char(string='token_access', copy=False)
+    wrong_code_data = fields.Char(string='wrong_code_data', )
+    wrong_code_time = fields.Char(string='wrong_code_time')
+    wrong_code_count = fields.Integer(string='wrong_code_count', copy=False)
     is_wrong_code_limit_exceeded = fields.Boolean(default=False, invisible=True)
 
+    # @api.model
     # def fields_get(self, fields=None):
-    #     hide = ['access_code_crypto', 'access_token', 'wrong_code_data', 'wrong_code_time',
+    #     hide = ['access_code', 'access_code_crypto', 'access_token', 'wrong_code_data', 'wrong_code_time',
     #             'is_wrong_code_limit_exceeded', 'wrong_code_count']
     #     res = super(EmployeeAccess, self).fields_get()
     #     for field in hide:

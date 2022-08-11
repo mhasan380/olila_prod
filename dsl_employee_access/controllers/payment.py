@@ -34,12 +34,14 @@ class EmployeeTargetAchievement(http.Controller):
         try:
             # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
             # employee = request.env['hr.employee'].sudo().search([('id', '=', kwargs['empl'])])
-            payment_journals = request.env['account.journal'].sudo().search([('type', 'in', ['bank', 'cash'])])
+            # payment_journals = request.env['account.journal'].sudo().search([('type', 'in', ['bank', 'cash'])])
+            payment_journals = request.env['account.journal'].sudo().search([('type', '=', 'bank')])
 
             order = request.env['sale.order'].sudo().search([('id', '=', kwargs['order_id'])])
             res_dict = {}
             res_dict['customer_id'] = order.partner_id.id
             res_dict['customer_name'] = order.partner_id.name
+            res_dict['amount_total'] = order.amount_total
             res_dict['balance'] = self.get_customer_balance(order.partner_id.id)
             res_dict['customer_address'] = order.address
             res_dict['customer_code'] = order.partner_id.code
@@ -62,6 +64,22 @@ class EmployeeTargetAchievement(http.Controller):
                 journals.append(journal_dict)
 
             res_dict['journals'] = journals
+
+            payments = []
+            for advance_payment in order.sale_payment_ids:
+                payment_dict = {}
+                payment_dict['id'] = advance_payment.id
+                payment_dict['number'] = advance_payment.name
+                payment_dict['date'] = advance_payment.date
+                payment_dict['method'] = advance_payment.journal_id.name
+                payment_dict['amount'] = advance_payment.amount
+                payment_dict['status'] = advance_payment.state
+                payment_dict['customer'] = advance_payment.partner_id.name
+                payments.append(payment_dict)
+
+            res_dict['payments'] = payments
+            res_dict['payment_count'] = order.payment_count
+
             msg = json.dumps(res_dict,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)

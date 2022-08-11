@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <record id="salesforce_log_view_tree" model="ir.ui.view">
+        <field name="name">salesforce.log.view.tree</field>
+        <field name="model">employee.logger.salesforce</field>
+        <field name="arch" type="xml">
+            <tree default_order='id desc'>
+                <field name="employee_id" decoration-bf="1"/>
+                <field name="name"/>
+                <field name="trace_agent"/>
+                <field name="trace_ip_address"/>
+                <field name="trace_latlng"/>
+                <field name="trace_location"/>
+                <field name="access_type"/>
+                <field name="log_datetime"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_to_salesforce_logger" model="ir.actions.act_window">
+        <field name="name">Salesforce Logs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">employee.logger.salesforce</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No logs found.
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+            action="action_to_salesforce_logger"
+            id="menu_action_salesforce"
+            parent="base.menu_security"
+            name="Salesforce Logs"
+    />
+</odoo>

@@ -56,6 +56,7 @@ class EmployeeAccessBase(http.Controller):
                 return Response(unauthorized_message, content_type='application/json;charset=utf-8', status=200)
 
             this_employee_res = request.env['hr.employee'].sudo().search([('work_email', '=', kwargs['mail'])])
+            _logger.warning('4444444444444444444444444')
             # if self.is_employee_restricted(this_employee_res.id):
 
             if this_employee_res:
@@ -65,7 +66,7 @@ class EmployeeAccessBase(http.Controller):
                                          sort_keys=True,
                                          indent=4, cls=ResponseEncoder)
                     return Response(message, content_type='application/json;charset=utf-8', status=200)
-
+                _logger.warning('33333333333333333333333333333')
                 if this_employee_res.is_wrong_code_limit_exceeded and self.make_wrong_code_limit_invalid(
                         this_employee_res.id):
                     # if self.make_wrong_code_limit_invalid(this_employee_res.id):
@@ -82,9 +83,9 @@ class EmployeeAccessBase(http.Controller):
                                                                  ('access_code_crypto', '=',
                                                                   this_employee_res.to_hash(kwargs['code']))])
             if employee:
-
                 employee.access_token = self._token_generate(id=employee.id, mail=employee.work_email,
                                                              name=employee.name)
+                # employee.write({'access_token':'3w4tesryg56'})
                 message = json.dumps(
                     {'state': 'success', 'name': employee.name, 'mail': employee.work_email,
                      'access_token': employee.access_token},
@@ -104,6 +105,8 @@ class EmployeeAccessBase(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exception_01',
+                                  trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -200,6 +203,7 @@ class EmployeeAccessBase(http.Controller):
             employee_dict['department_id'] = employee.department_id.id
             employee_dict['department'] = employee.department_id.name
             employee_dict['manager_id'] = employee.parent_id.id
+            employee_dict['manager_phone'] = employee.parent_id.work_phone
             employee_dict['manager'] = employee.parent_id.name
             employee_dict['photo'] = employee.image_1920
             employee_dict['type'] = employee.type
@@ -212,6 +216,8 @@ class EmployeeAccessBase(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exception_02',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 

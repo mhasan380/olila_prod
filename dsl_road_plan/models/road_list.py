@@ -4,11 +4,12 @@ import requests
 from odoo import models, fields, api
 from odoo.addons import decimal_precision as dp
 
-UNIT = dp.get_precision("Location")
 
-
-def urlplus(url, params):
-    return werkzeug.Href(url)(params or None)
+# UNIT = dp.get_precision("Location")
+#
+#
+# def urlplus(url, params):
+#     return werkzeug.Href(url)(params or None)
 
 
 class CheckList(models.Model):
@@ -19,27 +20,24 @@ class CheckList(models.Model):
     customer = fields.Many2one('res.partner', string='Customer')
     street = fields.Char(related='customer.street', string='Street')
     status = fields.Selection(string="Status",
-                              selection=[('done', 'Done'), ('progress', 'In Progress'), ('cancel', 'Cancel')],
-                              readonly=True, )
+                              selection=[('ready', 'Ready'), ('done', 'Done'), ('progress', 'In Progress'),
+                                         ('cancel', 'Cancel')],
+                              readonly=True)
 
-    check_in_latitude = fields.Float(
+    check_in_latitude = fields.Char(
         "Check-in Latitude",
-        digits=UNIT,
         readonly=True
     )
-    check_in_longitude = fields.Float(
+    check_in_longitude = fields.Char(
         "Check-in Longitude",
-        digits=UNIT,
         readonly=True
     )
-    check_out_latitude = fields.Float(
+    check_out_latitude = fields.Char(
         "Check-out Latitude",
-        digits=UNIT,
         readonly=True
     )
-    check_out_longitude = fields.Float(
+    check_out_longitude = fields.Char(
         "Check-out Longitude",
-        digits=UNIT,
         readonly=True
     )
     check_in_map_link = fields.Char('Check In Map',
@@ -52,20 +50,20 @@ class CheckList(models.Model):
     @api.depends('check_in_latitude', 'check_in_longitude')
     def _compute_check_in_map_url(self):
         for record in self:
-            params = {
-                'q': '%s,%s' % (record.check_in_latitude or '', record.check_in_longitude or ''),
-                'z': 10,
-            }
-            record.check_in_map_link = urlplus('https://maps.google.com/maps', params)
+            link_builder = f'https://www.google.com/maps/place/{record.check_in_latitude}+{record.check_in_longitude}/@{record.check_in_latitude},{record.check_in_longitude},17z'
+            if record.check_in_latitude and record.check_in_longitude:
+                record.check_in_map_link = link_builder
+            else:
+                record.check_in_map_link = ''
 
     @api.depends('check_out_latitude', 'check_out_longitude')
     def _compute_check_out_map_url(self):
         for record in self:
-            params = {
-                'q': '%s,%s' % (record.check_out_latitude or '', record.check_out_longitude or ''),
-                'z': 10,
-            }
-            record.check_out_map_link = urlplus('https://maps.google.com/maps', params)
+            link_builder = f'https://www.google.com/maps/place/{record.check_out_latitude}+{record.check_out_longitude}/@{record.check_out_latitude},{record.check_out_longitude},17z'
+            if record.check_out_latitude and record.check_out_longitude:
+                record.check_out_map_link = link_builder
+            else:
+                record.check_out_map_link = ''
 
     def do_accept(self):
 
@@ -87,3 +85,28 @@ class CheckList(models.Model):
         self.write({
             'status': ''
         })
+
+    def open_check_in_url(self):
+        if self.id:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.check_in_map_link,
+                'target': 'new',
+            }
+
+    def open_check_out_url(self):
+        if self.id:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.check_out_map_link,
+                'target': 'new',
+            }
+
+    @api.model
+    def create(self, vals):
+
+        vals['status'] = 'ready'
+        print(f'----------------{vals}')
+        rec = super(CheckList, self).create(vals)
+
+        return rec

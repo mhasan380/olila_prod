@@ -161,11 +161,12 @@ class SaleReturnPrimary(http.Controller):
         try:
 
             task = request.env['rode.list'].sudo().browse(int(kwargs['task_id']))
-            lat = float(kwargs['lat'])
-            lon = float(kwargs['lon'])
+            lat = kwargs['lat']
+            lon = kwargs['lon']
             updated = False
             _logger.warning(f'------------------{task.id}')
             if task.status:
+                _logger.warning(f'location------------------{lat}, {lon}')
                 if task.status == 'progress':
                     updated_id = task.write({'status': 'done', 'check_out_latitude': lat, 'check_out_longitude': lon})
                 else:
@@ -202,10 +203,15 @@ class SaleReturnPrimary(http.Controller):
             my_customers = []
             customers1 = request.env['res.partner'].sudo().search([('responsible', '=', employee.id)])
             for customer1 in customers1:
+                reference_code1 = customer1.code
+                if reference_code1 and '/' in reference_code1:
+                    x = reference_code1.split('/')[1:]
+                    reference_code1 = x[0]
                 customer_dict1 = {}
                 customer_dict1['id'] = customer1.id
                 customer_dict1['name'] = customer1.name
                 customer_dict1['code'] = customer1.code
+                customer_dict1['reference_code'] = reference_code1
                 my_customers.append(customer_dict1)
 
             sub_tree = [
@@ -217,10 +223,15 @@ class SaleReturnPrimary(http.Controller):
                 customer_list = []
                 customers = request.env['res.partner'].sudo().search([('responsible', '=', record.id)])
                 for customer in customers:
+                    reference_code = customer.code
+                    if reference_code and '/' in reference_code:
+                        x = reference_code.split('/')[1:]
+                        reference_code = x[0]
                     customer_dict = {}
                     customer_dict['id'] = customer.id
                     customer_dict['name'] = customer.name
                     customer_dict['code'] = customer.code
+                    customer_dict['reference_code'] = reference_code
                     customer_list.append(customer_dict)
                 employee_dict['customers'] = customer_list
                 sub_tree.append(employee_dict)

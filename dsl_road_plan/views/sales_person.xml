@@ -82,10 +82,20 @@
                                         <field name="status" string="Status"/>
                                         <field name="check_in_latitude" invisible="1"/>
                                         <field name="check_in_longitude" invisible="1"/>
-                                        <field name="check_in_map_link" widget="url"/>
+
+                                        <button name="open_check_in_url" string="Checked In" type="object"
+                                                icon="fa-location-arrow text-success"
+                                                attrs="{'invisible':['|',('check_in_map_link','=',''),('check_in_map_link','=',False)]}"/>
+                                        <field name="check_in_map_link" widget="url" invisible="1"/>
+
                                         <field name="check_out_latitude" invisible="1"/>
                                         <field name="check_out_longitude" invisible="1"/>
-                                        <field name="check_out_map_link" widget="url"/>
+
+                                        <button name="open_check_out_url" string="Checked Out" type="object"
+                                                icon="fa-location-arrow text-success"
+                                                attrs="{'invisible':['|',('check_out_map_link','=',''),('check_out_map_link','=',False)]}"/>
+                                        <field name="check_out_map_link" widget="url" invisible="1"/>
+
                                         <button name="do_accept" string="Done" type="object"
                                                 icon="fa-check text-success"
                                                 attrs="{'invisible':['|',('status','=','done'),('status','=','cancel')]}"/>
