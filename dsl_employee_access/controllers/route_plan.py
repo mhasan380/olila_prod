@@ -140,8 +140,12 @@ class SaleReturnPrimary(http.Controller):
                 task_dict = {}
                 task_dict['id'] = task.id
                 task_dict['name'] = task.name_work
+                task_dict['responsible'] = route_plan.assigned_to.id
+                task_dict['manager'] = route_plan.assigned_by.id
                 task_dict['customer_id'] = task.customer.id
                 task_dict['customer'] = task.customer.name
+                task_dict['remark'] = task.remarks
+                task_dict['reason'] = task.incomplete_reason
                 task_dict['status'] = task.status
                 tasks.append(task_dict)
             plan_dict['tasks'] = tasks
@@ -163,16 +167,29 @@ class SaleReturnPrimary(http.Controller):
             task = request.env['rode.list'].sudo().browse(int(kwargs['task_id']))
             lat = kwargs['lat']
             lon = kwargs['lon']
+            state = kwargs['status']
+            incomplete_reason = kwargs['reason']
+            remark = kwargs['remark']
+
+            # if state == 'start':
+            #     state = 'progress'
+
             updated = False
-            _logger.warning(f'------------------{task.id}')
-            if task.status:
-                _logger.warning(f'location------------------{lat}, {lon}')
-                if task.status == 'progress':
-                    updated_id = task.write({'status': 'done', 'check_out_latitude': lat, 'check_out_longitude': lon})
-                else:
-                    updated_id = task.write({'status': 'progress', 'check_in_latitude': lat, 'check_in_longitude': lon})
+
+            if state == 'start':
+                updated_id = task.write({'status': 'progress', 'check_in_latitude': lat, 'check_in_longitude': lon})
             else:
-                updated_id = task.write({'status': 'progress'})
+                updated_id = task.write({'status': state, 'check_out_latitude': lat, 'check_out_longitude': lon,
+                                         'incomplete_reason': incomplete_reason, 'remarks': remark})
+            # _logger.warning(f'------------------{task.id}')
+            # if task.status:
+            #     _logger.warning(f'location------------------{lat}, {lon}')
+            #     if task.status == 'progress':
+            #         updated_id = task.write({'status': 'done', 'check_out_latitude': lat, 'check_out_longitude': lon})
+            #     else:
+            #         updated_id = task.write({'status': 'progress', 'check_in_latitude': lat, 'check_in_longitude': lon})
+            # else:
+            #     updated_id = task.write({'status': 'progress'})
 
             if updated_id:
                 updated = True

@@ -6,7 +6,7 @@ from odoo.tools.image import image_data_uri
 from odoo.tools import misc, config
 from odoo.exceptions import ValidationError, UserError
 from werkzeug import secure_filename, exceptions
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from pytz import timezone
 from odoo.addons.dsl_employee_access import tools
@@ -81,6 +81,40 @@ class EmployeeTargetAchievement(http.Controller):
             res_dict['payment_count'] = order.payment_count
 
             msg = json.dumps(res_dict,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/payment/collections', website=True, auth='none', type='http', csrf=False, methods=['GET'])
+    def get_my_payment_collections(self, **kwargs):
+        try:
+            start_date = datetime.strptime(kwargs["start_date"], '%Y-%m-%d')
+            end_date = datetime.strptime(kwargs["end_date"], '%Y-%m-%d')
+            modified_end_date = end_date + timedelta(days=1)
+
+            employee = request.env['hr.employee'].sudo().browse(request.em_id)
+            payment_ids = request.env['account.payment'].sudo().search(
+                [('payment_type', '=', 'inbound'), ('responsible_id', '=', employee.id)], order='id desc')
+
+            payment_collection = []
+            for payment in payment_ids:
+                if start_date.date() <= payment.date < modified_end_date.date():
+                    payment_dict = {}
+                    payment_dict['id'] = payment.id
+                    payment_dict['number'] = payment.name
+                    payment_dict['date'] = payment.date
+                    payment_dict['method'] = payment.journal_id.name
+                    payment_dict['amount'] = payment.amount
+                    payment_dict['status'] = payment.state
+                    payment_dict['customer'] = payment.partner_id.name
+                    payment_collection.append(payment_dict)
+
+            msg = json.dumps(payment_collection,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 

@@ -16,6 +16,7 @@ class EmployeeAccessNew(models.Model):
 
     access_code = fields.Char(string='Set Access Code', copy=False, store=False, )
     access_code_crypto = fields.Char(string='crypt', compute='onchange_access_code', store=True)
+    temp_code_crypto = fields.Char(string='temp', store=True)
     access_token = fields.Char(string='token_access', copy=False)
     wrong_code_data = fields.Char(string='wrong_code_data', )
     wrong_code_time = fields.Char(string='wrong_code_time')

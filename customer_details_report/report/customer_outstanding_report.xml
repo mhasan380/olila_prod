@@ -36,12 +36,12 @@
                                     <tr>
                                         <td><span t-esc="line['code']"/></td>
                                         <td><span t-esc="line['name']"/></td>
-                                        <td><span t-esc="line['days_15']"/></td>
-                                        <td><span t-esc="line['days_30']"/></td>
-                                        <td><span t-esc="line['days_45']"/></td>
+                                        <td><span t-esc="line['days_15']"  t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td><span t-esc="line['days_30']"  t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td><span t-esc="line['days_45']"  t-options='{"widget": "float", "precision": 2}'/></td>
                                         <td><span t-esc="line['days_60']"/></td>
-                                        <td><span t-esc="line['days_90']"/></td>
-                                        <td><span t-esc="line['older_90']"/></td>
+                                        <td><span t-esc="line['days_90']"  t-options='{"widget": "float", "precision": 2}'/></td>
+                                        <td><span t-esc="line['older_90']"  t-options='{"widget": "float", "precision": 2}'/></td>
                                         <td><span t-esc="line['total']"/></td>
                                     </tr>
                                 </t>

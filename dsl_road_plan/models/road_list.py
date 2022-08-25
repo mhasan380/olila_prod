@@ -16,13 +16,17 @@ class CheckList(models.Model):
     _name = 'rode.list'
     name = fields.Char('Name')
     name_work = fields.Text('Task')
-    description = fields.Text('Description')
-    customer = fields.Many2one('res.partner', string='Customer')
+    remarks = fields.Text('Remarks')
+    customer = fields.Many2one('res.partner', string='Customer', required=True)
     street = fields.Char(related='customer.street', string='Street')
-    status = fields.Selection(string="Status",
-                              selection=[('ready', 'Ready'), ('done', 'Done'), ('progress', 'In Progress'),
-                                         ('cancel', 'Cancel')],
-                              readonly=True)
+    status = fields.Selection(string="Status", selection=[('todo', 'To Do'), ('done', 'Done'),
+                                                          ('progress', 'In Progress'), ('incomplete', 'Incomplete'),
+                                                          ('cancel', 'Cancel')], readonly=True)
+    incomplete_reason = fields.Selection(string="Incomplete Reason", selection=[('reason1', 'Shop owner was not there'),
+                                                                                ('reason2', 'Shop was closed'),
+                                                                                ('reason3', 'Not enough money'),
+                                                                                ('reason4', 'Enough stock available in shop'),
+                                                                                ('others', 'Others')], readonly=True)
 
     check_in_latitude = fields.Char(
         "Check-in Latitude",
@@ -105,7 +109,7 @@ class CheckList(models.Model):
     @api.model
     def create(self, vals):
 
-        vals['status'] = 'ready'
+        vals['status'] = 'todo'
         print(f'----------------{vals}')
         rec = super(CheckList, self).create(vals)
 

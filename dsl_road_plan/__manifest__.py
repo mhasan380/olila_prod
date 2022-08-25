@@ -3,18 +3,17 @@
     'name': "dsl_road_plan",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        Route Plan developed by Daffodil Computers""",
 
     'description': """
-        Long description of module's purpose
+        Long description of module's purpose is to handle route plan of an user
     """,
 
-    'author': "My Company",
-    'website': "http://www.yourcompany.com",
+    'author': "Firoz, Rafiul",
+    'website': "https://daffodil-bd.com",
 
     # Categories can be used to filter modules in modules listing
-    # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
+
     # for the full list
     'category': 'Uncategorized',
     'version': '0.1',

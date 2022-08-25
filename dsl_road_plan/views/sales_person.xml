@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <odoo>
 
-    <record id="view_rode_plan_filter" model="ir.ui.view">
-        <field name="name">sales.person.plan.search</field>
-        <field name="model">sales.person.plan</field>
-        <field name="arch" type="xml">
-            <search string="Rode Plan">
+<!--    <record id="view_rode_plan_filter" model="ir.ui.view">-->
+<!--        <field name="name">sales.person.plan.search</field>-->
+<!--        <field name="model">sales.person.plan</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <search string="Rode Plan">-->
 
-            </search>
-        </field>
-    </record>
+<!--            </search>-->
+<!--        </field>-->
+<!--    </record>-->
     <record id="view_sales_plan_tree" model="ir.ui.view">
         <field name="name">sales.person.plan.tree</field>
         <field name="model">sales.person.plan</field>
@@ -130,7 +130,6 @@
             </p>
         </field>
     </record>
-
 
     <menuitem id="menu_sales_plan_view" name="Road Plan"
               action="action_sales_plan_menu"

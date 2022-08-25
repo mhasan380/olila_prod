@@ -29,6 +29,8 @@ class EmployeeAccess(models.Model):
     #     ('so', 'Sales officer(SO)'),
     #     ('sr', 'Sales Representative(SR)')
     # ])
+    temp_code_crypto = fields.Char(string='temp', store=True, groups='dsl_employee_access.group_hr_employee_access_app_login')
+    wrong_temp_code_count = fields.Integer(string='temp_count', copy=False, store=True, groups='dsl_employee_access.group_hr_employee_access_app_login')
     access_code = fields.Char(string='Set Access Code', copy=False, store=False, )
     access_code_crypto = fields.Char(string='crypt', compute='onchange_access_code', store=True,groups='dsl_employee_access.group_hr_employee_access_app_login')
     access_token = fields.Char(string='token_access', copy=False, groups='dsl_employee_access.group_hr_employee_access_app_login')
@@ -36,6 +38,8 @@ class EmployeeAccess(models.Model):
     wrong_code_time = fields.Char(string='wrong_code_time', groups='dsl_employee_access.group_hr_employee_access_app_login')
     wrong_code_count = fields.Integer(string='wrong_code_count', copy=False, groups='dsl_employee_access.group_hr_employee_access_app_login')
     is_wrong_code_limit_exceeded = fields.Boolean(default=False, invisible=True)
+
+    is_temp_code_count_limit_exceeded = fields.Boolean(string="temp_count_exceeded", compute='action_temp_code_restriction_check', default=False)
 
     # def fields_get(self, fields=None):
     #     hide = ['access_code_crypto', 'access_token', 'wrong_code_data', 'wrong_code_time',
@@ -70,6 +74,16 @@ class EmployeeAccess(models.Model):
 
     def to_hash(self, value):
         return str(hashlib.md5(value.encode('utf8')).hexdigest())
+
+    def action_revoke_temp_code_restriction(self):
+        self.wrong_temp_code_count = 0
+
+    @api.depends('wrong_temp_code_count')
+    def action_temp_code_restriction_check(self):
+        if self.wrong_temp_code_count < 5:
+            self.is_temp_code_count_limit_exceeded = False
+        else:
+            self.is_temp_code_count_limit_exceeded = True
 
     def action_revoke_restriction(self):
         self.wrong_code_time = False

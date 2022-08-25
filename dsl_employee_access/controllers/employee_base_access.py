@@ -86,6 +86,9 @@ class EmployeeAccessBase(http.Controller):
                 employee.access_token = self._token_generate(id=employee.id, mail=employee.work_email,
                                                              name=employee.name)
                 # employee.write({'access_token':'3w4tesryg56'})
+                employee.temp_code_crypto = False
+                employee.is_temp_code_count_limit_exceeded = False
+                employee.wrong_temp_code_count = 0
                 message = json.dumps(
                     {'state': 'success', 'name': employee.name, 'mail': employee.work_email,
                      'access_token': employee.access_token},
@@ -106,7 +109,7 @@ class EmployeeAccessBase(http.Controller):
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exception_01',
-                                  trace_ref=str(e))
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -263,6 +266,98 @@ class EmployeeAccessBase(http.Controller):
                 info = {'result': False, 'data': 'Some fields are missing.'}
 
             msg = json.dumps(info,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.public_rafiul()
+    @http.route('/web/sales/force/employee/code_reset', auth='none', type='http', csrf=False, methods=['POST'])
+    def employee_code_reset(self, **kwargs):
+        try:
+
+            send_to = kwargs['mail']
+            employee = request.env['hr.employee'].sudo().search([('work_email', '=', send_to)])
+            has_mail = True
+            value = 'If you are a valid salesforce user you will receive an email with a temporary code.'
+
+            if employee:
+                if employee.is_enable_sales_force and employee.active_status:
+
+                    mail_server_id = request.env['ir.mail_server'].sudo().search([], limit=1).id
+                    # manager_id = employee.parent_id.user_id.id
+                    generated_code = ''.join(
+                        [choice(string.ascii_uppercase + string.ascii_lowercase + string.digits + '#*') for _ in
+                         range(6)])
+                    employee.temp_code_crypto = employee.to_hash(generated_code)
+                    body_html = """\
+                                     <html>
+                                     <body>
+                                    Dear Concern, <br/> 
+                                    Your temporary access code is %s <br/>
+                                     </body>
+                                     </html>
+                                    """ % (str(generated_code))
+
+                    if mail_server_id:
+                        mail = request.env['mail.mail'].sudo().create({
+                            "subject": 'Sales Force Authentication',
+                            "email_to": employee.id,
+                            # "email_form": email_form,
+                            "body_html": body_html,
+                            "auto_delete": False,
+                            "message_type": 'email',
+                            "mail_server_id": mail_server_id,
+                            "model": 'hr.employee',
+                            "reply_to": employee.id,
+                        })
+                        mail.sudo().send()
+                        # value = 'Please check your mail for temporary code'
+                    else:
+                        has_mail = False
+                        value = 'Problem with mail service, please contact with the administrator.'
+
+            msg = json.dumps({'result': has_mail, 'data': value},
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.public_rafiul()
+    @http.route('/web/sales/force/employee/code_reset/submit', auth='none', type='http', csrf=False, methods=['POST'])
+    def employee_code_reset_submit(self, **kwargs):
+        try:
+
+            employee_mail = kwargs['mail']
+            temp_code = kwargs['temp_code']
+            new_code = kwargs['new_code']
+            employee = request.env['hr.employee'].sudo().search([('work_email', '=', employee_mail)])
+            generic_res = False
+            value = 'Invalid credentials or you don\'t have required permissions!'
+
+            if employee.wrong_temp_code_count < 5:
+                if employee and employee.is_enable_sales_force and employee.active_status and new_code:
+                    if employee.temp_code_crypto == employee.to_hash(temp_code):
+                        employee.access_code_crypto = employee.to_hash(new_code)
+                        if employee.to_hash(new_code) == employee.access_code_crypto:
+                            generic_res = True
+                            employee.temp_code_crypto = False
+                            employee.is_temp_code_count_limit_exceeded = False
+                            employee.wrong_temp_code_count = 0
+                            value = 'You have successfully updated your access code'
+                        else:
+                            value = 'Failed to update your access code. Please contact with the administrator'
+                    else:
+                        employee.wrong_temp_code_count = employee.wrong_temp_code_count + 1
+            else:
+                value = 'Wrong temporary code limit exceeded!'
+            msg = json.dumps({'result': generic_res, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 

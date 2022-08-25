@@ -35,20 +35,26 @@ class PrimarySales(http.Controller):
             start_date = datetime.strptime(kwargs["start_date"], '%Y-%m-%d')
             end_date = datetime.strptime(kwargs["end_date"], '%Y-%m-%d')
             modified_end_date = end_date + timedelta(days=1)
-            # _logger.warning(f' ============== ' + str(start_date) + ' -- ' + str(modified_date))
-            # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
-            my_sale_orders = request.env['sale.order'].sudo().search([('responsible.id', '=', kwargs['empl'])])
-            _logger.warning(f' ============== ' + str(len(my_sale_orders)))
-            my_orders = []
-            for order in my_sale_orders:
-                if start_date <= order.date_order < modified_end_date:
-                    # dt_obj = datetime.strptime(order.date_order,'%Y-%m-%d')
-                    millisec = order.date_order.timestamp() * 1000
-                    sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total, 'sate': order.state,
-                                 'customer': order.partner_id.name, 'date': order.date_order,
-                                 'date_long': int(millisec)}
-                    my_orders.append(sale_dict)
+            # my_sale_orders = request.env['sale.order'].sudo().search([('responsible.id', '=', kwargs['empl'])])
+            including_subordinates = []
+            employee = request.env['hr.employee'].sudo().browse(request.em_id)
+            including_subordinates.append(employee)
+            including_subordinates.extend(self.get_subordinates(employee))
+            _logger.warning(f' ============== ' + str(len(including_subordinates)))
+            # my_sale_orders = request.env['sale.order'].sudo().search([('responsible.id', '=', employee.id)])
 
+            my_orders = []
+            for rec in including_subordinates:
+                for order in rec.sale_ids:
+                    if start_date <= order.date_order < modified_end_date:
+                        # dt_obj = datetime.strptime(order.date_order,'%Y-%m-%d')
+                        millisec = order.date_order.timestamp() * 1000
+                        sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total,
+                                     'sate': order.state, 'responsible_id': order.responsible.id,
+                                     'customer': order.partner_id.name, 'date': order.date_order,
+                                     'date_long': int(millisec), 'responsible': order.responsible.name}
+                        my_orders.append(sale_dict)
+            my_orders.sort(key=lambda x: x['id'], reverse=True)
             msg = json.dumps(my_orders,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
@@ -78,6 +84,7 @@ class PrimarySales(http.Controller):
             order_details = {
                 'name': order.name,
                 'customer': order.partner_id.name,
+                'responsible': order.responsible.name,
                 # 'customer_address': order.partner_id.street,
                 'customer_address': order.address,
                 # 'customer_mobile': order.partner_id.mobile,
@@ -255,12 +262,16 @@ class PrimarySales(http.Controller):
     def delete_sale_order(self, **kwargs):
         try:
             order = request.env['sale.order'].sudo().search([('id', '=', kwargs['id'])])
-            if order.state == 'draft':
-                value = f'The order number {order.name} has been deleted successfully'
-                bol = order.unlink()
+            if order.responsible.id == request.em_id:
+                if order.state == 'draft':
+                    value = f'The order number {order.name} has been deleted successfully'
+                    bol = order.unlink()
+                else:
+                    bol = False
+                    value = 'You can\'t delete this order as it is not in Quotation state'
             else:
                 bol = False
-                value = 'This order is not in Quotation state'
+                value = 'You are not allowed to delete this sale order'
 
             msg = json.dumps({'result': bol, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
@@ -279,12 +290,16 @@ class PrimarySales(http.Controller):
                 'state': 'waiting_for_approval'
             }
             order = request.env['sale.order'].sudo().search([('id', '=', kwargs['id'])])
-            if order.state == 'draft':
-                bol = order.write(vals)
-                value = 'Now the order is waiting for approval.'
+            if order.responsible.id == request.em_id:
+                if order.state == 'draft':
+                    bol = order.write(vals)
+                    value = 'Now the order is waiting for approval'
+                else:
+                    bol = False
+                    value = 'This order is not in Quotation state'
             else:
                 bol = False
-                value = 'This order is not in Quotation state'
+                value = 'You are not allowed to confirm this sale order'
 
             msg = json.dumps({'result': bol, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
@@ -296,6 +311,16 @@ class PrimarySales(http.Controller):
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
     # @http.route('/web/test1', website=True, auth='none', type='http', csrf=False, methods=['GET'])
+
+    def get_subordinates(self, employee):
+        subordinate_list = []
+        subordinates = request.env['hr.employee'].sudo().search([('parent_id', '=', employee.id)])
+        subordinate_list.extend(subordinates)
+        for subordinate in subordinates:
+            subordinate_list.extend(self.get_subordinates(subordinate))
+
+        return subordinate_list
+
     def get_customer_balance(self, customer_id):
         try:
             # customer_id = request.env['res.partner'].sudo().browse(cus_id).id
