@@ -12,12 +12,18 @@
                     <table class="table table-condensed" style="width:100%; position:relative">
                         <tr>
                             <td>Product Category</td>
-                            <td> <t t-esc="label.product_id.categ_id.name"/> </td>
+                            <td> <t t-esc="label.product_id.categ_id.display_name"/> </td>
                         </tr>
                         <tr>
                             <td>Product Name</td>
                             <td>
                                 <t t-esc="label.product_id.name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Unit</td>
+                            <td>
+                                <t t-esc="label.product_id.uom_id.name"/>
                             </td>
                         </tr>
                         <tr>
