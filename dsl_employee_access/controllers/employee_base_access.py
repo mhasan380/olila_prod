@@ -56,9 +56,10 @@ class EmployeeAccessBase(http.Controller):
                 return Response(unauthorized_message, content_type='application/json;charset=utf-8', status=200)
 
             this_employee_res = request.env['hr.employee'].sudo().search([('work_email', '=', kwargs['mail'])])
-            _logger.warning('4444444444444444444444444')
+            # _logger.warning('4444444444444444444444444')
             # if self.is_employee_restricted(this_employee_res.id):
-
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_11',
+                                                 trace_ref='sign_in_' + str(kwargs['mail']))
             if this_employee_res:
                 # check if the employee is active and sales force is enabled
                 if this_employee_res.is_enable_sales_force == False or this_employee_res.active_status == False:
@@ -108,7 +109,7 @@ class EmployeeAccessBase(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exception_01',
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exc_eba_01',
                                                  trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
@@ -212,14 +213,15 @@ class EmployeeAccessBase(http.Controller):
             employee_dict['type'] = employee.type
             employee_dict['target'] = employee.target
             employee_dict['achievement'] = employee.archivement
-
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_11',
+                                                 trace_ref='expected_employee_data')
             msg = json.dumps(employee_dict,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exception_02',
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_eba_02',
                                                  trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
@@ -237,12 +239,16 @@ class EmployeeAccessBase(http.Controller):
             else:
                 info = {'result': False, 'data': "Can't Log out"}
 
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_07',
+                                                 trace_ref='expected_signout')
             msg = json.dumps(info,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_eba_03',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -264,13 +270,16 @@ class EmployeeAccessBase(http.Controller):
                     info = {'result': False, 'data': 'Wrong access code.'}
             else:
                 info = {'result': False, 'data': 'Some fields are missing.'}
-
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_10',
+                                                 trace_ref='expected_access_update')
             msg = json.dumps(info,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_eba_04',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -280,14 +289,15 @@ class EmployeeAccessBase(http.Controller):
         try:
 
             send_to = kwargs['mail']
-            employee = request.env['hr.employee'].sudo().search([('work_email', '=', send_to)])
+            employee = request.env['hr.employee'].sudo().search(
+                [('work_email', '=', send_to), ('is_enable_sales_force', '=', True)], limit=1)
             has_mail = True
             value = 'If you are a valid salesforce user you will receive an email with a temporary code.'
 
             if employee:
                 if employee.is_enable_sales_force and employee.active_status:
 
-                    mail_server_id = request.env['ir.mail_server'].sudo().search([], limit=1).id
+                    mail_server_id = request.env['ir.mail_server'].sudo().search([], limit=1)
                     # manager_id = employee.parent_id.user_id.id
                     generated_code = ''.join(
                         [choice(string.ascii_uppercase + string.ascii_lowercase + string.digits + '#*') for _ in
@@ -302,30 +312,43 @@ class EmployeeAccessBase(http.Controller):
                                      </html>
                                     """ % (str(generated_code))
 
+                    _logger.warning(f'mail-------------------{mail_server_id}')
                     if mail_server_id:
+                        sel_partner = request.env['res.partner'].sudo().search(
+                            [('email', '=', mail_server_id.smtp_user)], limit=1)
                         mail = request.env['mail.mail'].sudo().create({
-                            "subject": 'Sales Force Authentication',
-                            "email_to": employee.id,
-                            # "email_form": email_form,
-                            "body_html": body_html,
-                            "auto_delete": False,
-                            "message_type": 'email',
-                            "mail_server_id": mail_server_id,
-                            "model": 'hr.employee',
-                            "reply_to": employee.id,
+                            'body_html': body_html,
+                            'state': 'outgoing',
+                            # 'author_id': sel_partner.id,
+                            'email_from': mail_server_id.smtp_user,
+                            'email_to': employee.work_email,
+                            'subject': 'Sales Force Authentication'
+
+                            # "subject": 'Sales Force Authentication',
+                            # "email_to": employee.work_email,
+                            # # "email_form": email_form,
+                            # "body_html": body_html,
+                            # "auto_delete": False,
+                            # "message_type": 'email',
+                            # "mail_server_id": mail_server_id,
+                            # "model": 'hr.employee',
+                            # "reply_to": employee.work_email,
                         })
                         mail.sudo().send()
                         # value = 'Please check your mail for temporary code'
                     else:
                         has_mail = False
                         value = 'Problem with mail service, please contact with the administrator.'
-
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_09',
+                                                 trace_ref='expected_code_reset')
             msg = json.dumps({'result': has_mail, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exc_eba_05',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -337,12 +360,14 @@ class EmployeeAccessBase(http.Controller):
             employee_mail = kwargs['mail']
             temp_code = kwargs['temp_code']
             new_code = kwargs['new_code']
-            employee = request.env['hr.employee'].sudo().search([('work_email', '=', employee_mail)])
+            employee = request.env['hr.employee'].sudo().search([('work_email', '=', employee_mail),
+                                                                 ('is_enable_sales_force', '=', True)],
+                                                                limit=1)
             generic_res = False
             value = 'Invalid credentials or you don\'t have required permissions!'
-
-            if employee.wrong_temp_code_count < 5:
-                if employee and employee.is_enable_sales_force and employee.active_status and new_code:
+            if employee and employee.active_status and new_code:
+                if employee.wrong_temp_code_count < 5:
+                    employee.is_temp_code_count_limit_exceeded = False
                     if employee.temp_code_crypto == employee.to_hash(temp_code):
                         employee.access_code_crypto = employee.to_hash(new_code)
                         if employee.to_hash(new_code) == employee.access_code_crypto:
@@ -355,13 +380,18 @@ class EmployeeAccessBase(http.Controller):
                             value = 'Failed to update your access code. Please contact with the administrator'
                     else:
                         employee.wrong_temp_code_count = employee.wrong_temp_code_count + 1
-            else:
-                value = 'Wrong temporary code limit exceeded!'
+                else:
+                    employee.is_temp_code_count_limit_exceeded = True
+                    value = 'Wrong temporary code limit exceeded!'
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_08',
+                                                 trace_ref='expected_code_reset_submit')
             msg = json.dumps({'result': generic_res, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exc_eba_06',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)

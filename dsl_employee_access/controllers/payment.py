@@ -86,6 +86,8 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_04',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -120,6 +122,8 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_03',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -185,13 +189,16 @@ class EmployeeTargetAchievement(http.Controller):
             else:
                 created = False
                 value = 'You can not collect payment for this sale order'
-
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_01',
+                                                 trace_ref='excepted_payment_collect')
             msg = json.dumps({'result': created, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_02',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 

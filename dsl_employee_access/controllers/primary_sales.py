@@ -40,7 +40,7 @@ class PrimarySales(http.Controller):
             employee = request.env['hr.employee'].sudo().browse(request.em_id)
             including_subordinates.append(employee)
             including_subordinates.extend(self.get_subordinates(employee))
-            _logger.warning(f' ============== ' + str(len(including_subordinates)))
+            # _logger.warning(f' ============== ' + str(len(including_subordinates)))
             # my_sale_orders = request.env['sale.order'].sudo().search([('responsible.id', '=', employee.id)])
 
             my_orders = []
@@ -200,8 +200,7 @@ class PrimarySales(http.Controller):
         try:
             data = request.httprequest.data
             data_in_json = json.loads(data)
-            _logger.warning(f' ----- - {data_in_json}')
-
+            # _logger.warning(f' ----- - {data_in_json}')
             customer = request.env['res.partner'].sudo().search([('id', '=', data_in_json['customer_id'])])
 
             order_lines = []
@@ -248,12 +247,16 @@ class PrimarySales(http.Controller):
                 'id': order_id.id,
                 'name': order_id.name
             }
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_01',
+                                                 trace_ref='expected_primary_sale_order_create')
             msg = json.dumps(order_details,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_02',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -272,13 +275,16 @@ class PrimarySales(http.Controller):
             else:
                 bol = False
                 value = 'You are not allowed to delete this sale order'
-
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_03',
+                                                 trace_ref='expected_primary_sale_order_delete')
             msg = json.dumps({'result': bol, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_04',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -300,13 +306,16 @@ class PrimarySales(http.Controller):
             else:
                 bol = False
                 value = 'You are not allowed to confirm this sale order'
-
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_05',
+                                                 trace_ref='expected_primary_sale_order_confirm')
             msg = json.dumps({'result': bol, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_06',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 

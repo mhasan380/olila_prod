@@ -81,11 +81,11 @@ def check_token_validity(emp):
     #     "1996-05-16 23:59:45", "%Y-%m-%d %H:%M:%S")
 
     if time_n - time_ex > exp_time:
-        _logger.warning(f'========================= expired')
+        # _logger.warning(f'========================= expired')
         emp.access_token = False
         return False
     else:
-        _logger.warning(f'========================= not expired')
+        # _logger.warning(f'========================= not expired')
         return True
 
 
@@ -116,14 +116,14 @@ def protected_rafiul(operations=['read'], check_custom_routes=False, *args, **kw
             if token_verified and empl:
                 kwargs.update({'empl': empl, 'unauthorize': False})
                 http.request.em_id = empl
-                create_log_salesforce(http.request, access_type='protected', system_returns='functionality',
-                                      trace_ref='olila-OP-003')
+                # create_log_salesforce(http.request, access_type='protected', system_returns='functionality',
+                #                       trace_ref='olila-OP-003')
             else:
                 kwargs.update({'empl': False, 'unauthorize': True})
                 _logger.warning('------------------- test111')
-                create_log_salesforce(http.request, access_type='protected',
-                                      system_returns='functionality_unauthorized',
-                                      trace_ref='olila-OP-002')
+                # create_log_salesforce(http.request, access_type='protected',
+                #                       system_returns='functionality_unauthorized',
+                #                       trace_ref='olila-OP-002')
                 unauthorized_message = json.dumps({'state': 'failed', 'error': 'unauthorized access'},
                                                   sort_keys=True, indent=4, cls=ResponseEncoder)
                 return http.Response(unauthorized_message, content_type='application/json;charset=utf-8', status=401)
@@ -171,12 +171,12 @@ def public_rafiul(operations=['read'], check_custom_routes=False, *args, **kwarg
             token_verified = verify_public_token(header_token=headers['Authorization'], request=http.request)
             if token_verified:
                 kwargs.update({'unauthorize': False})
-                create_log_salesforce(http.request, access_type='public', system_returns='authorized_client',
-                                      trace_ref=trace_mail)
+                # create_log_salesforce(http.request, access_type='public', system_returns='authorized_client',
+                #                       trace_ref=trace_mail)
             else:
                 kwargs.update({'unauthorize': True})
-                create_log_salesforce(http.request, access_type='public', system_returns='unauthorized_client',
-                                      trace_ref=trace_mail)
+                # create_log_salesforce(http.request, access_type='public', system_returns='unauthorized_client',
+                #                       trace_ref=trace_mail)
                 unauthorized_message = json.dumps({'state': 'failed', 'error': 'unauthorized client'},
                                                   sort_keys=True, indent=4, cls=ResponseEncoder)
                 return http.Response(unauthorized_message, content_type='application/json;charset=utf-8', status=401)

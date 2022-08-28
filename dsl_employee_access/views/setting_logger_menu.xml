@@ -8,6 +8,9 @@
             <tree default_order='id desc'>
                 <field name="employee_id" decoration-bf="1"/>
                 <field name="name"/>
+                <field name="trace_ref"/>
+                <field name="access_credential" invisible="1"/>
+                <field name="system_returns"/>
                 <field name="trace_agent"/>
                 <field name="trace_ip_address"/>
                 <field name="trace_latlng"/>
