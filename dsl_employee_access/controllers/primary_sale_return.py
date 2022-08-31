@@ -6,7 +6,7 @@ from odoo.tools.image import image_data_uri
 from odoo.tools import misc, config
 from odoo.exceptions import ValidationError, UserError
 from werkzeug import secure_filename, exceptions
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from pytz import timezone
 from odoo.tools.float_utils import float_round
@@ -36,13 +36,14 @@ class SaleReturnPrimary(http.Controller):
         try:
             start_date = datetime.strptime(kwargs["start_date"], '%Y-%m-%d')
             end_date = datetime.strptime(kwargs["end_date"], '%Y-%m-%d')
+            modified_end_date = end_date + timedelta(days=1)
 
             my_sale_orders = request.env['sale.order'].sudo().search(
                 [('responsible.id', '=', request.em_id), ('state', '=', 'sale')])
             _logger.warning(f' ============== ' + str(len(my_sale_orders)))
             my_orders = []
             for order in my_sale_orders:
-                if start_date <= order.date_order < end_date and order.delivery_count > 0:
+                if start_date <= order.date_order < modified_end_date and order.delivery_count > 0:
                     millisec = order.date_order.timestamp() * 1000
                     sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total, 'sate': order.state,
                                  'customer': order.partner_id.name, 'date': order.date_order, 'date_long': int(millisec)}
@@ -50,6 +51,7 @@ class SaleReturnPrimary(http.Controller):
 
             tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_01',
                                                  trace_ref='expected_returnable_orders')
+            my_orders.sort(key=lambda x: x['id'], reverse=True)
             msg = json.dumps(my_orders,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)

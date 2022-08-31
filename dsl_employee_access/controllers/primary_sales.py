@@ -77,6 +77,7 @@ class PrimarySales(http.Controller):
                               'code': line.product_id.default_code,
                               'product_uom_qty': line.product_uom_qty,
                               'price_unit': line.price_unit,
+                              'delivered': line.qty_delivered,
                               'price_subtotal': line.price_subtotal,
                               }
                 order_lines.append(order_line)
@@ -164,6 +165,7 @@ class PrimarySales(http.Controller):
     def get_products_for_sale(self, **kwargs):
         try:
 
+            location = kwargs['location']
             products = request.env['product.product'].sudo().search(
                 # [('sale_ok', '=', True), ('purchase_ok', '=', True), ('type', '=', 'product'),
                 [('sale_ok', '=', True), ('type', '=', 'product'),
@@ -175,13 +177,20 @@ class PrimarySales(http.Controller):
                 if raw_code and '/' in raw_code:
                     x = raw_code.split('/')[1:]
                     raw_code = x[0]
+                available_qty = 0.0
+                # _logger.warning(f'--------------{product.id} ------ {len(product.stock_quant_ids)} ------{location}')
+                for quant_id in product.stock_quant_ids:
+
+                    if quant_id.location_id.wh_id.id == int(location):
+                        available_qty = quant_id.available_quantity
 
                 product_dict = {'id': product.id,
                                 'name': product.name,
                                 'price': product.list_price,
                                 'available': product.net_stock,
                                 'code': product.default_code,
-                                'reference': raw_code
+                                'reference': raw_code,
+                                'warehouse_available': available_qty
                                 }
                 product_records.append(product_dict)
 
@@ -202,6 +211,8 @@ class PrimarySales(http.Controller):
             data_in_json = json.loads(data)
             # _logger.warning(f' ----- - {data_in_json}')
             customer = request.env['res.partner'].sudo().search([('id', '=', data_in_json['customer_id'])])
+            latitude = data_in_json['lat']
+            longitude = data_in_json['lon']
 
             order_lines = []
             for product_data in data_in_json['products']:
@@ -238,6 +249,8 @@ class PrimarySales(http.Controller):
                 'warehouse_id': customer.deport_warehouse_id.id,
                 'state': 'draft',
                 'company_id': 1,
+                'create_latitude': str(latitude),
+                'create_longitude': str(longitude),
                 'order_line': order_lines
             }
 
@@ -319,8 +332,29 @@ class PrimarySales(http.Controller):
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
-    # @http.route('/web/test1', website=True, auth='none', type='http', csrf=False, methods=['GET'])
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/depo/product', auth='none', type='http', csrf=False, methods=['POST'])
+    def depo_wise_product(self, **kwargs):
+        try:
+            product = kwargs['product']
+            location = kwargs['location']
+            quant_line = request.env['stock.quant'].sudo().search(
+                [('product_id.id', '=', product), ('location_id.id', '=', location)], limit=1)
 
+            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_05',
+            #                                      trace_ref='expected_primary_sale_order_confirm')
+            msg = json.dumps({'product_id': quant_line.product_id.id, 'quant': quant_line.available_quantity},
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_06',
+            #                                      trace_ref=str(e))
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    # @http.route('/web/test1', website=True, auth='none', type='http', csrf=False, methods=['GET'])
     def get_subordinates(self, employee):
         subordinate_list = []
         subordinates = request.env['hr.employee'].sudo().search([('parent_id', '=', employee.id)])

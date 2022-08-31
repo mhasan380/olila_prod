@@ -16,11 +16,12 @@
     'author': 'Md. Rafiul Hassan',
     'company': 'DSL',
     'website': "https://daffodil.computer",
-    'depends': ['base', 'hr', 'dsl_road_plan'],
+    'depends': ['base', 'hr', 'dsl_road_plan', 'sale'],
     'data': [
         'security/access_security.xml',
         'security/ir.model.access.csv',
         'views/employee_res.xml',
+        'views/sale_order_other_tab.xml',
         'views/setting_logger_menu.xml'
 
     ],

@@ -109,6 +109,7 @@ class EmployeeTargetAchievement(http.Controller):
                     payment_dict = {}
                     payment_dict['id'] = payment.id
                     payment_dict['number'] = payment.name
+                    payment_dict['so'] = payment.sale_id.name
                     payment_dict['date'] = payment.date
                     payment_dict['method'] = payment.journal_id.name
                     payment_dict['amount'] = payment.amount

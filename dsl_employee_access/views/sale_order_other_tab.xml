@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record model="ir.ui.view" id="view_sale_order_form_location_button">
+        <field name="name">view.sale.order.form.location.button</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="create_latitude" invisible="1"/>
+                <field name="create_longitude" invisible="1"/>
+                <button name="open_so_create_location" string="Location" type="object"
+                        icon="fa-location-arrow text-success"
+                        attrs="{'invisible':['|',('create_latitude','=',False),('create_longitude','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
