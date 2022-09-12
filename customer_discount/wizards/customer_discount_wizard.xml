@@ -1,0 +1,38 @@
+<odoo>
+
+
+    <record model="ir.ui.view" id="customer_discount_update_wizard">
+        <field name="name">Customer Discount Wizard</field>
+        <field name="model">customer.discount.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Customer Discount Wizard">
+                <group>
+                   <group>
+                        <field name="customer_type"/>
+                    </group>
+                    <group>
+                        <field name="discount_percent"/>
+                    </group>
+
+
+                </group>
+                <footer>
+                    <button name="update_discount" string="Update Discount" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="customer_discount_update_action_wizard"
+                name="Update Discount"
+                res_model="customer.discount.wizard"
+                view_mode="form"
+                target="new"/>
+
+    <menuitem action="customer_discount_update_action_wizard"
+              id="menu_customer_discount_update_wizard"
+              name="Update Discount"
+              parent="contacts.res_partner_menu_contacts"/>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="account_move_form_view_corporate" model="ir.ui.view">
+            <field name="name">account.move.form.view.corporate</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='journal_div']" position="after">
+                    <field name="po_number"/>
+                    <field name="po_date"/>
+                </xpath>
+                <xpath expr="//field[@name='narration']" position="after">
+                    <field name="word_num"/>
+
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
