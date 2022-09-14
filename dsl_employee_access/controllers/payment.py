@@ -230,3 +230,35 @@ class EmployeeTargetAchievement(http.Controller):
             return customer_balance
         except Exception as e:
             return -999999
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/payment/update', auth='none', type='http', csrf=False, methods=['POST'])
+    def payment_update_amount(self, **kwargs):
+        try:
+            amount = float(kwargs['amount'])
+            vals = {
+                'amount': amount
+            }
+            payment_id = request.env['account.payment'].sudo().search([('id', '=', kwargs['id'])])
+
+            if payment_id.responsible_id.id == request.em_id:
+                if payment_id.state == 'draft':
+                    bol = payment_id.write(vals)
+                    value = 'Payment amount successfully updated'
+                else:
+                    bol = False
+                    value = 'This payment is not in Draft state'
+            else:
+                bol = False
+                value = 'You are not allowed to update this payment'
+
+            msg = json.dumps({'result': bol, 'data': value},
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_05',
+                                                 trace_ref=str(e))
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)

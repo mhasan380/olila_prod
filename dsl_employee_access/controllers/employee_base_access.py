@@ -14,6 +14,7 @@ from odoo.addons.dsl_employee_access.tools.json import ResponseEncoder
 import string
 from secrets import choice
 import random
+import requests
 
 import base64
 import json
@@ -307,7 +308,7 @@ class EmployeeAccessBase(http.Controller):
                                      <html>
                                      <body>
                                     Dear Concern, <br/> 
-                                    Your temporary access code is %s <br/>
+                                    Your Salesforce temporary access code is %s <br/>
                                      </body>
                                      </html>
                                     """ % (str(generated_code))
@@ -323,18 +324,11 @@ class EmployeeAccessBase(http.Controller):
                             'email_from': mail_server_id.smtp_user,
                             'email_to': employee.work_email,
                             'subject': 'Sales Force Authentication'
-
-                            # "subject": 'Sales Force Authentication',
-                            # "email_to": employee.work_email,
-                            # # "email_form": email_form,
-                            # "body_html": body_html,
-                            # "auto_delete": False,
-                            # "message_type": 'email',
-                            # "mail_server_id": mail_server_id,
-                            # "model": 'hr.employee',
-                            # "reply_to": employee.work_email,
                         })
                         mail.sudo().send()
+                        if employee.work_phone:
+                            self.notify_over_phone(employee.work_phone, str(generated_code))
+
                         # value = 'Please check your mail for temporary code'
                     else:
                         has_mail = False
@@ -351,6 +345,38 @@ class EmployeeAccessBase(http.Controller):
                                                  trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    def notify_over_phone(self, receiver, code):
+        request_url = 'https://gpcmp.grameenphone.com/ecmapigw/webresources/ecmapigw.v2'
+        headers = {
+            'Content-type': 'application/json',
+            # 'Accept': 'text/plain'
+        }
+        try:
+            if len(receiver) > 11:
+                receiver = receiver[-11:]
+            sms_temp = f'Your Salesforce Temporary Code is {code}'
+            req_data = {
+                'username': 'OGILadmin',
+                'password': 'Olila@hr22',
+                'apicode': '1',
+                'msisdn': receiver,
+                'countrycode': '880',
+                'cli': '',
+                'messagetype': '1',
+                'message': sms_temp,
+                'messageid': '0'
+            }
+
+            gp_response = requests.post(request_url, data=json.dumps(req_data, cls=ResponseEncoder), headers=headers)
+            if gp_response.status_code == 200:
+                response_dict = json.loads(gp_response.content)
+                _logger.warning(f'----------------------sms {response_dict}')
+        except Exception as e:
+            err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='public',
+                                                 system_returns='exc_eba_sms_request_error', trace_ref=str(e))
+            pass
 
     @tools.security.public_rafiul()
     @http.route('/web/sales/force/employee/code_reset/submit', auth='none', type='http', csrf=False, methods=['POST'])

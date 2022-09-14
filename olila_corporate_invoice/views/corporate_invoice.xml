@@ -213,7 +213,7 @@
 
                                 <div class="seller" style="float:left;">
                                     <p>Regards,  </p>
-                                    <p></p>
+                                    <p> </p>
                                     <P t-if="o.picking_id">
                                         <b>Riaz Mahmud </b> <br/>
                                         <b>Sr. Manager, Corporate Sales </b> <br/>

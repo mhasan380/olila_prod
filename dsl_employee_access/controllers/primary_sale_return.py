@@ -108,9 +108,11 @@ class SaleReturnPrimary(http.Controller):
                         quantity = float_round(quantity, precision_rounding=stock_move.product_id.uom_id.rounding)
                         move_line_dict = {}
                         move_line_dict['product_id'] = stock_move.product_id.id
+                        move_line_dict['product_code'] = stock_move.product_id.default_code
                         move_line_dict['move_id'] = stock_move.id
                         move_line_dict['product_name'] = stock_move.product_id.name
                         move_line_dict['quantity'] = quantity
+                        move_line_dict['quantity_done'] = stock_move.quantity_done
                         move_lines.append(move_line_dict)
                     picking_dict['move_lines'] = move_lines
 

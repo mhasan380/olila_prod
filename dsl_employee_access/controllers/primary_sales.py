@@ -72,10 +72,17 @@ class PrimarySales(http.Controller):
             order = request.env['sale.order'].sudo().search([('id', '=', kwargs['id'])])
             order_lines = []
             for line in order.order_line:
+                depo_qty = 0.0
+                for quant_id in line.product_id.stock_quant_ids:
+                    if quant_id.location_id.wh_id.id == line.warehouse_id.id:
+                        depo_qty = quant_id.available_quantity
+
                 order_line = {'id': line.product_id.id,
                               'name': line.product_id.name,
                               'code': line.product_id.default_code,
                               'product_uom_qty': line.product_uom_qty,
+                              'net': line.product_id.net_stock,
+                              'depo': depo_qty,
                               'price_unit': line.price_unit,
                               'delivered': line.qty_delivered,
                               'price_subtotal': line.price_subtotal,
@@ -85,6 +92,7 @@ class PrimarySales(http.Controller):
             order_details = {
                 'name': order.name,
                 'customer': order.partner_id.name,
+                'customer_discount': order.partner_id.discount,
                 'responsible': order.responsible.name,
                 # 'customer_address': order.partner_id.street,
                 'customer_address': order.address,
@@ -98,6 +106,7 @@ class PrimarySales(http.Controller):
                 'total_discount': order.total_discount,
                 'secondary_contact': order.secondary_contact_persion,
                 'warehouse': order.warehouse_id.name,
+                'warehouse_id': order.warehouse_id.id,
                 'date_order': order.date_order,
                 'order_lines': order_lines
             }
@@ -274,14 +283,84 @@ class PrimarySales(http.Controller):
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
     @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/sale_order/update', auth='none', type='http', csrf=False, methods=['POST'])
+    def update_order_lines(self, **kwargs):
+        try:
+            data = request.httprequest.data
+            data_in_json = json.loads(data)
+            # _logger.warning(f' ----- - {data_in_json}')
+            order = request.env['sale.order'].sudo().search([('id', '=', data_in_json['order_id'])])
+
+            order_lines = []
+            for product_data in data_in_json['products']:
+                product = request.env['product.product'].sudo().search([('id', '=', product_data['id'])])
+                order_line_dict = {
+                    'product_id': product.id,
+                    'shipping_partner_id': order.partner_id.id,
+                    'warehouse_id': order.partner_id.deport_warehouse_id.id,
+                    'name': product.name,
+                    'product_uom_qty': product_data['quantity'],
+                    'price_unit': product.lst_price,
+                    'discount': order.partner_id.discount,
+                    'company_id': order.company_id.id,
+                    'order_id': order.id,
+                    'currency_id': order.currency_id.id
+
+                }
+                # order_lines.append((0, 0, order_line_dict))
+                order_lines.append(order_line_dict)
+                # _logger.warning(f'---------------{order.currency_id.id}')
+            if order.state == 'draft':
+                order.order_line.unlink()
+                created_lines = request.env['sale.order.line'].with_user(1).create(order_lines)
+
+                # bol = request.env['sale.order'].with_user(1).update({'order_line': order_lines})
+                if created_lines:
+                    bol = True
+                    value = 'Sale order updated successfully'
+                else:
+                    bol = False
+                    value = 'Failed to update the sale order'
+            else:
+                bol = False
+                value='The sale order is not in draft state'
+
+            order_details = {
+                'result': bol, 'data': value
+            }
+            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_011',
+            #                                      trace_ref='expected_primary_sale_order_create')
+            msg = json.dumps(order_details,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_02',
+                                                 trace_ref=str(e))
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.protected_rafiul()
     @http.route('/web/sales/force/sale_order/delete', auth='none', type='http', csrf=False, methods=['POST'])
     def delete_sale_order(self, **kwargs):
         try:
             order = request.env['sale.order'].sudo().search([('id', '=', kwargs['id'])])
             if order.responsible.id == request.em_id:
+
                 if order.state == 'draft':
-                    value = f'The order number {order.name} has been deleted successfully'
-                    bol = order.unlink()
+                    pay_records = order.mapped('sale_payment_ids')
+                    payment_count = sum(pay_records.mapped('amount'))
+                    if len(order.picking_ids) > 0:
+                        value = f'You can\'t delete this order as it has been delivered'
+                        bol = False
+                    elif payment_count > 0:
+                        value = f'You can\'t delete this order as it has advance payments'
+                        bol = False
+                    else:
+                        value = f'The order number {order.name} has been deleted successfully'
+                        bol = order.unlink()
+                        # bol = True
                 else:
                     bol = False
                     value = 'You can\'t delete this order as it is not in Quotation state'
