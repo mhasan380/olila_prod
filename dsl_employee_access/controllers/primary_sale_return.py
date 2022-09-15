@@ -40,13 +40,14 @@ class SaleReturnPrimary(http.Controller):
 
             my_sale_orders = request.env['sale.order'].sudo().search(
                 [('responsible.id', '=', request.em_id), ('state', '=', 'sale')])
-            _logger.warning(f' ============== ' + str(len(my_sale_orders)))
+            # _logger.warning(f' ============== ' + str(len(my_sale_orders)))
             my_orders = []
             for order in my_sale_orders:
                 if start_date <= order.date_order < modified_end_date and order.delivery_count > 0:
                     millisec = order.date_order.timestamp() * 1000
                     sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total, 'sate': order.state,
-                                 'customer': order.partner_id.name, 'date': order.date_order, 'date_long': int(millisec)}
+                                 'customer': order.partner_id.name, 'date': order.date_order,
+                                 'date_long': int(millisec)}
                     my_orders.append(sale_dict)
 
             tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_01',
@@ -72,7 +73,7 @@ class SaleReturnPrimary(http.Controller):
 
             pickings = []
             for picking in returnable_order.picking_ids:
-                if picking.picking_type_id.code == 'outgoing':
+                if picking.picking_type_id.code == 'outgoing' and picking.state == 'done':
                     picking_dict = {}
                     picking_dict['id'] = picking.id
                     picking_dict['name'] = picking.name

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import werkzeug
 import requests
+from datetime import datetime
 from odoo import models, fields, api
 from odoo.addons import decimal_precision as dp
 
@@ -16,6 +17,7 @@ class CheckList(models.Model):
     _name = 'rode.list'
     name = fields.Char('Name')
     name_work = fields.Text('Task')
+    track_status = fields.Char('Track Stage Change', store=True, compute='_onchange_status')
     remarks = fields.Text('Remarks')
     customer = fields.Many2one('res.partner', string='Customer', required=True)
     street = fields.Char(related='customer.street', string='Street')
@@ -50,6 +52,15 @@ class CheckList(models.Model):
     check_out_map_link = fields.Char('Check Out Map',
                                      compute='_compute_check_out_map_url'
                                      )
+
+    @api.depends('status')
+    def _onchange_status(self):
+        now_time = datetime.strftime(fields.Datetime.context_timestamp(self, datetime.now()), "%Y-%m-%d %H:%M:%S")
+        for rec in self:
+            if rec.track_status:
+                rec.track_status = f'{rec.track_status} -> {rec.status} : {now_time}'
+            else:
+                rec.track_status = f'todo : {now_time}'
 
     @api.depends('check_in_latitude', 'check_in_longitude')
     def _compute_check_in_map_url(self):
