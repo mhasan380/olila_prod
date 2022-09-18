@@ -74,19 +74,24 @@ class DepotStockReport(models.AbstractModel):
                     discount = line.sale_line_id.discount
                     pending_amount += ((price_unit - (price_unit * discount) / 100) * quantity)
 
-            cancel_do_amount = 0.0
-            for transfer in canceled_delivery_orders:
-                for line in transfer.move_ids_without_package:
-                    product_id = line.product_id.id
-                    quantity = line.product_uom_qty
-                    price_unit = line.sale_line_id.price_unit if line.sale_line_id else line.product_id.lst_price
-                    discount = line.sale_line_id.discount
-                    cancel_do_amount += ((price_unit - (price_unit * discount) / 100) * quantity)
+            if canceled_delivery_orders:
+                for transfer in canceled_delivery_orders:
+                    cancel_do_amount = 0.0
+                    for line in transfer.move_ids_without_package:
+                        product_id = line.product_id.id
+                        quantity = line.product_uom_qty
+                        price_unit = line.sale_line_id.price_unit if line.sale_line_id else line.product_id.lst_price
+                        discount = line.sale_line_id.discount
+                        cancel_do_amount += ((price_unit - (price_unit * discount) / 100) * quantity)
+            elif len(canceled_delivery_orders) == 0 and pending_amount == 0:
+                cancel_do_amount = sale_amount - delivery_amount
+            else:
+                cancel_do_amount = 0.0
             if pending_amount == 0:
                 do_state = 'Done'
             else:
                 do_state = 'Pending'
-            so_balance = payment_amount - delivery_amount - pending_amount
+            so_balance = payment_amount - sale_amount + cancel_do_amount
             customer_balance += so_balance
             customer_balance_dict.setdefault(sale, {'order_nunmber': sale.name,
                                                          'order_date': sale.date_order,
