@@ -86,13 +86,14 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_04',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_01',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
     @tools.security.protected_rafiul()
-    @http.route('/web/sales/force/payment/collections', website=True, auth='none', type='http', csrf=False, methods=['GET'])
+    @http.route('/web/sales/force/payment/collections', website=True, auth='none', type='http', csrf=False,
+                methods=['GET'])
     def get_my_payment_collections(self, **kwargs):
         try:
             start_date = datetime.strptime(kwargs["start_date"], '%Y-%m-%d')
@@ -123,8 +124,8 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_03',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_02',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -190,16 +191,16 @@ class EmployeeTargetAchievement(http.Controller):
             else:
                 created = False
                 value = 'You can not collect payment for this sale order'
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_01',
-                                                 trace_ref='excepted_payment_collect')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_p_01',
+                                                 trace_ref='excepted_payment_collect', with_location=True)
             msg = json.dumps({'result': created, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_02',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_03',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -258,7 +259,7 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_05',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_04',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)

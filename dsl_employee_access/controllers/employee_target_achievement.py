@@ -32,7 +32,7 @@ class EmployeeTargetAchievement(http.Controller):
     @http.route('/web/sales/force/employee/team', website=True, auth='none', type='http', csrf=False, methods=['GET'])
     def get_team_target_achievement(self, **kwargs):
         try:
-            _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
+            # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
             employee = request.env['hr.employee'].sudo().search([('id', '=', kwargs['empl'])])
             employees = self.get_subordinates(employee)
 

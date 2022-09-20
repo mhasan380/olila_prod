@@ -4,3 +4,4 @@
 
 
 from . import customer_balance_report_wizard
+from . import partner_balance_report_wizard

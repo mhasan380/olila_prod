@@ -185,10 +185,9 @@ def public_rafiul(operations=['read'], check_custom_routes=False, *args, **kwarg
     return wrapper
 
 
-def create_log_salesforce(request, access_type, system_returns, trace_ref):
+def create_log_salesforce(request, access_type, system_returns, trace_ref, with_location):
     try:
         headers = request.httprequest.headers
-
         trace_ip_address = ""
         trace_mac = ""
 
@@ -201,24 +200,35 @@ def create_log_salesforce(request, access_type, system_returns, trace_ref):
         if not trace_ip_address:
             trace_ip_address = request.httprequest.environ.get('REMOTE_ADDR', '')
 
-        if trace_ip_address:
-            g = geocoder.ip(trace_ip_address)
+        if with_location:
+            if trace_ip_address:
+                g = geocoder.ip(trace_ip_address)
+            else:
+                g = geocoder.ip('me')
+            g_location = f'{str(g.city)}, {str(g.state)}, {str(g.country)}'
+            vals = {
+                'access_type': access_type,
+                'name': request.httprequest.url,
+                'access_credential': headers['Authorization'],
+                'employee_id': employee_id,
+                'trace_ip_address': trace_ip_address,
+                'trace_agent': trace_mac,
+                'trace_latlng': g.latlng,
+                'system_returns': system_returns,
+                'trace_location': g_location,
+                'trace_ref': trace_ref
+            }
         else:
-            g = geocoder.ip('me')
-        g_location = f'{str(g.city)}, {str(g.state)}, {str(g.country)}'
-
-        vals = {
-            'access_type': access_type,
-            'name': request.httprequest.url,
-            'access_credential': headers['Authorization'],
-            'employee_id': employee_id,
-            'trace_ip_address': trace_ip_address,
-            'trace_agent': trace_mac,
-            'trace_latlng': g.latlng,
-            'system_returns': system_returns,
-            'trace_location': g_location,
-            'trace_ref': trace_ref
-        }
+            vals = {
+                'access_type': access_type,
+                'name': request.httprequest.url,
+                'access_credential': headers['Authorization'],
+                'employee_id': employee_id,
+                'trace_ip_address': trace_ip_address,
+                'trace_agent': trace_mac,
+                'system_returns': system_returns,
+                'trace_ref': trace_ref
+            }
         created = request.env['employee.logger.salesforce'].sudo().create(vals)
         # _logger.warning(f'--------------------{str(created)}')
     except Exception as e:
