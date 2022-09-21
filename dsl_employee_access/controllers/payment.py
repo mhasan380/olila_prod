@@ -100,9 +100,15 @@ class EmployeeTargetAchievement(http.Controller):
             end_date = datetime.strptime(kwargs["end_date"], '%Y-%m-%d')
             modified_end_date = end_date + timedelta(days=1)
 
+            including_subordinates = []
             employee = request.env['hr.employee'].sudo().browse(request.em_id)
+            including_subordinates.append(employee)
+            including_subordinates.extend(self.get_subordinates(employee))
+            accessible_ids = []
+            for sub in including_subordinates:
+                accessible_ids.append(sub.id)
             payment_ids = request.env['account.payment'].sudo().search(
-                [('payment_type', '=', 'inbound'), ('responsible_id', '=', employee.id)], order='id desc')
+                [('payment_type', '=', 'inbound'), ('responsible_id', 'in', accessible_ids)], order='id desc')
 
             payment_collection = []
             for payment in payment_ids:
@@ -115,6 +121,8 @@ class EmployeeTargetAchievement(http.Controller):
                     payment_dict['method'] = payment.journal_id.name
                     payment_dict['amount'] = payment.amount
                     payment_dict['status'] = payment.state
+                    payment_dict['responsible'] = payment.responsible_id.name
+                    payment_dict['responsible_id'] = payment.responsible_id.id
                     payment_dict['customer'] = payment.partner_id.name
                     payment_collection.append(payment_dict)
 
@@ -263,3 +271,13 @@ class EmployeeTargetAchievement(http.Controller):
                                                  trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    def get_subordinates(self, employee):
+        subordinate_list = []
+        subordinates = request.env['hr.employee'].sudo().search(
+            [('parent_id', '=', employee.id), '|', ('active', '=', True), ('active', '=', False)])
+        subordinate_list.extend(subordinates)
+        for subordinate in subordinates:
+            subordinate_list.extend(self.get_subordinates(subordinate))
+
+        return subordinate_list

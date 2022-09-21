@@ -21,7 +21,7 @@
                 <field name="end_plan_date"/>
                 <field name="create_uid"/>
                 <field name="assigned_by"/>
-                <field name="state"/>
+<!--                <field name="state"/>-->
                 <field name="progress_rate" widget="progressbar"/>
             </tree>
         </field>
@@ -31,18 +31,18 @@
         <field name="model">sales.person.plan</field>
         <field name="arch" type="xml">
             <form string="Daily Sales Plan">
-                <header>
-                    <button name="action_progress" string="Planned" type="object"
-                            attrs="{'invisible':[('state', '!=', 'planned')]}"/>
-                    <button name="action_done" type="object"
-                            string="Done" class="oe_highlight"
-                            attrs="{'invisible':[('state', '!=', 'progress')]}"/>
-                    <button name="action_cancel" type="object"
-                            string="Cancel" class="oe_highlight"
-                            attrs="{'invisible':[('state', '!=', 'progress')]}"/>
-                    <field name="state" widget="statusbar"
-                           statusbar_visible="planned,progress,done,cancel"/>
-                </header>
+<!--                <header>-->
+<!--                    <button name="action_progress" string="Planned" type="object"-->
+<!--                            attrs="{'invisible':[('state', '!=', 'planned')]}"/>-->
+<!--                    <button name="action_done" type="object"-->
+<!--                            string="Done" class="oe_highlight"-->
+<!--                            attrs="{'invisible':[('state', '!=', 'progress')]}"/>-->
+<!--                    <button name="action_cancel" type="object"-->
+<!--                            string="Cancel" class="oe_highlight"-->
+<!--                            attrs="{'invisible':[('state', '!=', 'progress')]}"/>-->
+<!--&lt;!&ndash;                    <field name="state" widget="statusbar"&ndash;&gt;-->
+<!--&lt;!&ndash;                           statusbar_visible="planned,progress,done,cancel"/>&ndash;&gt;-->
+<!--                </header>-->
                 <sheet>
                     <div class="oe_title">
                         <h1>
@@ -65,8 +65,8 @@
                         </group>
                         <group>
 
-                            <field name="sales_plan_date" attrs="{'readonly':[('state','=','approve')]}"/>
-                            <field name="end_plan_date" attrs="{'readonly':[('state','=','approve')]}"/>
+                            <field name="sales_plan_date" />
+                            <field name="end_plan_date" />
 
                         </group>
                     </group>

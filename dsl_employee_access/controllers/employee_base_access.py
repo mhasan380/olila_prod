@@ -58,7 +58,7 @@ class EmployeeAccessBase(http.Controller):
 
             this_employee_res = request.env['hr.employee'].sudo().search([('work_email', '=', kwargs['mail'])])
 
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_01',
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_01',
                                                  trace_ref='sign_in_' + str(kwargs['mail']), with_location=True)
             if this_employee_res:
                 # check if the employee is active and sales force is enabled

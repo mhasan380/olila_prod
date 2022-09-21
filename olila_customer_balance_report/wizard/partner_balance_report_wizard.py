@@ -57,6 +57,7 @@ class PartnerBalanceReport(models.AbstractModel):
             for line in journals:
                 if (line.account_id.user_type_id.display_name == 'Receivable') and (line.move_id.state == 'posted'):
                     customer_balance = customer_balance + line.debit - line.credit
+            customer_balance = round(customer_balance,2)
             if customer_balance != 0:
                 customer_balance_dict.setdefault(customer, {'customer_code': customer.code,
                                                         'customer_name': customer.name,
