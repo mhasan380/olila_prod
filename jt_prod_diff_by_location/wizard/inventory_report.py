@@ -22,6 +22,7 @@
 ##############################################################################
 
 from odoo import api, fields, models
+from datetime import datetime, timedelta
 
 
 class InventoryReport(models.Model):
@@ -72,6 +73,7 @@ class InventoryReport(models.Model):
              @param self: The object pointer.
              @return: Report action
         """
+
         self.ensure_one()
         return self.env.ref('jt_prod_diff_by_location.inventory_report_stock').report_action(self.env.context.get('active_ids', []))
 
@@ -165,6 +167,7 @@ class InventoryReport(models.Model):
         if opening_out_qty[0] is not None:
             out_qty = opening_out_qty[0]
         opening_stock = (in_qty + ad_in_qty) - (out_qty + ad_out_qty)
+
         return opening_stock
 
     def _get_product_in_info(self, product_id, warehouse_id, start_date,
@@ -337,3 +340,5 @@ class InventoryReport(models.Model):
             return warehouse_obj.search([('id', 'in', warehouse_ids.ids),
                                          ('company_id', '=', company_id.id)])
         return warehouse_obj.search([('company_id', '=', company_id.id)])
+
+
