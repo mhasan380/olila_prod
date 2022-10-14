@@ -29,6 +29,7 @@
         'views/sale_status_report.xml',
         'views/sales_summary_report_view.xml',
         'views/undelivery_value_report.xml',
+        'views/undelivery_report.xml',
         'wizard/sales_summary_wizard.xml',
         'wizard/undelivery_stock_report_wizard_view.xml',
 

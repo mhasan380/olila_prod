@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="sale_backorder_Report_template_inherit_olila" inherit_id="olila_reports.sale_backorder_summary_report_template">
+            <xpath expr="//table[@class='table table-bordered mt32']" position="replace">
+                <table class="table table-bordered mt32">
+                    <tr style="background-color: black;color: white !important;">
+                        <th>Customer Code</th>
+                        <th>Customer Name</th>
+                        <th>7 Days</th>
+                        <th>10 Days</th>
+                        <th>15 Days</th>
+                        <th>20 Days</th>
+                        <th>30 Days</th>
+                        <th>Older than 30 Days</th>
+                        <th>Total Undelivered(Product Qty)</th>
+                    </tr>
+                    <tbody>
+<!--                        <t t-set="7daytotal" t-value="0"/>-->
+<!--                        <t t-set="10day_total" t-value="0"/>-->
+<!--                        <t t-set="15day_total" t-value="0"/>-->
+<!--                        <t t-set="20day_total" t-value="0"/>-->
+<!--                        <t t-set="30day_total" t-value="0"/>-->
+<!--                        <t t-set="30day_older_total" t-value="0"/>-->
+<!--                        <t t-set="grand_total" t-value="0"/>-->
+                        <t t-foreach="lines" t-as="line">
+                            <tr>
+                                <td class="text-left">
+                                    <span t-esc="line['customer_code']"/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['customer_name']"/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['days_7']" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['days_10']" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['days_15']" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['days_20']" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['days_30']" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['older_30']" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="line['total']" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+<!--                                <t t-set="7day_total" t-value= "7day_total + line['days_7']"/>-->
+<!--                                <t t-set="10day_total" t-value="10day_total + line['days_10']"/>-->
+<!--                                <t t-set="15day_total" t-value="15day_total + line['days_15']"/>-->
+<!--                                <t t-set="20day_total" t-value="20day_total + line['days_20']"/>-->
+<!--                                <t t-set="30day_total" t-value="30day_total + line['days_30']"/>-->
+<!--                                <t t-set="30day_older_total" t-value="30day_older_total + line['older_30']"/>-->
+<!--                                <t t-set="grand_total" t-value="grand_total + line['total']"/>-->
+                            </tr>
+
+                        </t>
+                        <tr>
+                                <td colspan="2" class="text-center">
+                                    <strong>
+                                        <span>Total</span>
+                                    </strong>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="total_day7" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="total_day10" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="total_day15" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="total_day20" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="total_day30" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="total_older_day30" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-esc="grand_total" t-options='{"widget": "float", "precision": 2}'/>
+                                </td>
+                            </tr>
+                    </tbody>
+                </table>
+            </xpath>
+        </template>
+    </data>
+</odoo>
