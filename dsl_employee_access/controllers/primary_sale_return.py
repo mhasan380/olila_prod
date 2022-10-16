@@ -9,6 +9,7 @@ from werkzeug import secure_filename, exceptions
 from datetime import date, datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from pytz import timezone
+import pytz
 from odoo.tools.float_utils import float_round
 from odoo.addons.dsl_employee_access import tools
 from odoo.addons.dsl_employee_access.tools.json import ResponseEncoder
@@ -40,17 +41,20 @@ class SaleReturnPrimary(http.Controller):
 
             my_sale_orders = request.env['sale.order'].sudo().search(
                 [('responsible.id', '=', request.em_id), ('state', '=', 'sale')])
-            _logger.warning(f' ============== ' + str(len(my_sale_orders)))
+            # _logger.warning(f' ============== ' + str(len(my_sale_orders)))
             my_orders = []
             for order in my_sale_orders:
                 if start_date <= order.date_order < modified_end_date and order.delivery_count > 0:
                     millisec = order.date_order.timestamp() * 1000
+                    localized_date_time = order.date_order.astimezone(pytz.timezone("Asia/Dhaka")).strftime(
+                        "%Y-%m-%d %I:%M %p")
                     sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total, 'sate': order.state,
-                                 'customer': order.partner_id.name, 'date': order.date_order, 'date_long': int(millisec)}
+                                 'customer': order.partner_id.name, 'date': localized_date_time,
+                                 'date_long': int(millisec)}
                     my_orders.append(sale_dict)
 
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_01',
-                                                 trace_ref='expected_returnable_orders')
+            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_01',
+            #                                      trace_ref='expected_returnable_orders',with_location = False)
             my_orders.sort(key=lambda x: x['id'], reverse=True)
             msg = json.dumps(my_orders,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
@@ -58,8 +62,8 @@ class SaleReturnPrimary(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_02',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_01',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -72,7 +76,7 @@ class SaleReturnPrimary(http.Controller):
 
             pickings = []
             for picking in returnable_order.picking_ids:
-                if picking.picking_type_id.code == 'outgoing':
+                if picking.picking_type_id.code == 'outgoing' and picking.state == 'done':
                     picking_dict = {}
                     picking_dict['id'] = picking.id
                     picking_dict['name'] = picking.name
@@ -126,16 +130,16 @@ class SaleReturnPrimary(http.Controller):
                 'customer_code': returnable_order.partner_id.code,
                 'delivery_pickings': pickings
             }
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_03',
-                                                 trace_ref='expected_returnable_order_info')
+            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_03',
+            #                                      trace_ref='expected_returnable_order_info',with_location = False)
             msg = json.dumps(return_details,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_04',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_02',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -198,15 +202,15 @@ class SaleReturnPrimary(http.Controller):
                 'id': newly_created.id,
                 'name': newly_created.name
             }
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_05',
-                                                 trace_ref='expected_sale_return')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_psr_01',
+                                                 trace_ref='expected_sale_return', with_location=False)
             msg = json.dumps(picking_details,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_06',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_psr_03',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)

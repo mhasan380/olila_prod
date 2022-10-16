@@ -9,9 +9,9 @@
 ###################################################################################
 {
     'name': 'DSL Employee Access',
-    'version': '14.0.4.0.0',
+    'version': '14.0.8.0.0',
     'summary': """DSL Employee Access""",
-    'description': 'This module enables invoice auto fill features',
+    'description': 'This module enables employee based salesforce management',
     'category': 'hr',
     'author': 'Md. Rafiul Hassan',
     'company': 'DSL',

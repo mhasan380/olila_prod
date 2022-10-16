@@ -57,10 +57,9 @@ class EmployeeAccessBase(http.Controller):
                 return Response(unauthorized_message, content_type='application/json;charset=utf-8', status=200)
 
             this_employee_res = request.env['hr.employee'].sudo().search([('work_email', '=', kwargs['mail'])])
-            # _logger.warning('4444444444444444444444444')
-            # if self.is_employee_restricted(this_employee_res.id):
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_11',
-                                                 trace_ref='sign_in_' + str(kwargs['mail']))
+
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_01',
+                                                 trace_ref='sign_in_' + str(kwargs['mail']), with_location=True)
             if this_employee_res:
                 # check if the employee is active and sales force is enabled
                 if this_employee_res.is_enable_sales_force == False or this_employee_res.active_status == False:
@@ -68,7 +67,7 @@ class EmployeeAccessBase(http.Controller):
                                          sort_keys=True,
                                          indent=4, cls=ResponseEncoder)
                     return Response(message, content_type='application/json;charset=utf-8', status=200)
-                _logger.warning('33333333333333333333333333333')
+                # _logger.warning('33333333333333333333333333333')
                 if this_employee_res.is_wrong_code_limit_exceeded and self.make_wrong_code_limit_invalid(
                         this_employee_res.id):
                     # if self.make_wrong_code_limit_invalid(this_employee_res.id):
@@ -111,7 +110,7 @@ class EmployeeAccessBase(http.Controller):
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exc_eba_01',
-                                                 trace_ref=str(e))
+                                                 trace_ref=str(e), with_location=True)
             error = json.dumps(err, sort_keys=True, indent=4)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -198,7 +197,7 @@ class EmployeeAccessBase(http.Controller):
     @http.route('/web/sales/force/employee/data', website=True, auth='none', type='http', csrf=False, methods=['GET'])
     def get_employee(self, **kwargs):
         try:
-            _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
+            # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
             employee = request.env['hr.employee'].sudo().search([('id', '=', kwargs['empl'])])
             employee_dict = {}
             employee_dict['id'] = employee.id
@@ -214,8 +213,8 @@ class EmployeeAccessBase(http.Controller):
             employee_dict['type'] = employee.type
             employee_dict['target'] = employee.target
             employee_dict['achievement'] = employee.archivement
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_11',
-                                                 trace_ref='expected_employee_data')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_02',
+                                                 trace_ref='expected_employee_data', with_location=False)
             msg = json.dumps(employee_dict,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
@@ -223,7 +222,7 @@ class EmployeeAccessBase(http.Controller):
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_eba_02',
-                                                 trace_ref=str(e))
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -240,8 +239,8 @@ class EmployeeAccessBase(http.Controller):
             else:
                 info = {'result': False, 'data': "Can't Log out"}
 
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_07',
-                                                 trace_ref='expected_signout')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_03',
+                                                 trace_ref='expected_signout', with_location=True)
             msg = json.dumps(info,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
@@ -249,7 +248,7 @@ class EmployeeAccessBase(http.Controller):
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_eba_03',
-                                                 trace_ref=str(e))
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -271,8 +270,8 @@ class EmployeeAccessBase(http.Controller):
                     info = {'result': False, 'data': 'Wrong access code.'}
             else:
                 info = {'result': False, 'data': 'Some fields are missing.'}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_10',
-                                                 trace_ref='expected_access_update')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_eba_04',
+                                                 trace_ref='expected_access_update', with_location=True)
             msg = json.dumps(info,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
@@ -280,7 +279,7 @@ class EmployeeAccessBase(http.Controller):
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_eba_04',
-                                                 trace_ref=str(e))
+                                                 trace_ref=str(e), with_location=True)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -313,7 +312,7 @@ class EmployeeAccessBase(http.Controller):
                                      </html>
                                     """ % (str(generated_code))
 
-                    _logger.warning(f'mail-------------------{mail_server_id}')
+                    # _logger.warning(f'mail-------------------{mail_server_id}')
                     if mail_server_id:
                         sel_partner = request.env['res.partner'].sudo().search(
                             [('email', '=', mail_server_id.smtp_user)], limit=1)
@@ -333,8 +332,8 @@ class EmployeeAccessBase(http.Controller):
                     else:
                         has_mail = False
                         value = 'Problem with mail service, please contact with the administrator.'
-            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_09',
-                                                 trace_ref='expected_code_reset')
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_05',
+                                                 trace_ref=f'expected_code_reset_{send_to}', with_location=True)
             msg = json.dumps({'result': has_mail, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
@@ -342,7 +341,7 @@ class EmployeeAccessBase(http.Controller):
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exc_eba_05',
-                                                 trace_ref=str(e))
+                                                 trace_ref=str(e), with_location=True)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -371,11 +370,12 @@ class EmployeeAccessBase(http.Controller):
             gp_response = requests.post(request_url, data=json.dumps(req_data, cls=ResponseEncoder), headers=headers)
             if gp_response.status_code == 200:
                 response_dict = json.loads(gp_response.content)
-                _logger.warning(f'----------------------sms {response_dict}')
+                # _logger.warning(f'----------------------sms {response_dict}')
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='public',
-                                                 system_returns='exc_eba_sms_request_error', trace_ref=str(e))
+                                                 system_returns='exc_eba_sms_request_error', trace_ref=str(e),
+                                                 with_location=False)
             pass
 
     @tools.security.public_rafiul()
@@ -409,8 +409,8 @@ class EmployeeAccessBase(http.Controller):
                 else:
                     employee.is_temp_code_count_limit_exceeded = True
                     value = 'Wrong temporary code limit exceeded!'
-            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_08',
-                                                 trace_ref='expected_code_reset_submit')
+            tools.security.create_log_salesforce(http.request, access_type='public', system_returns='fun_eba_06',
+                                                 trace_ref=f'expected_code_reset_submit_{employee_mail}', with_location=True)
             msg = json.dumps({'result': generic_res, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
@@ -418,6 +418,6 @@ class EmployeeAccessBase(http.Controller):
         except Exception as e:
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='public', system_returns='exc_eba_06',
-                                                 trace_ref=str(e))
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)

@@ -9,6 +9,7 @@ from werkzeug import secure_filename, exceptions
 from datetime import date, datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from pytz import timezone
+import pytz
 from odoo.addons.dsl_employee_access import tools
 from odoo.addons.dsl_employee_access.tools.json import ResponseEncoder
 import string
@@ -35,13 +36,10 @@ class PrimarySales(http.Controller):
             start_date = datetime.strptime(kwargs["start_date"], '%Y-%m-%d')
             end_date = datetime.strptime(kwargs["end_date"], '%Y-%m-%d')
             modified_end_date = end_date + timedelta(days=1)
-            # my_sale_orders = request.env['sale.order'].sudo().search([('responsible.id', '=', kwargs['empl'])])
             including_subordinates = []
             employee = request.env['hr.employee'].sudo().browse(request.em_id)
             including_subordinates.append(employee)
             including_subordinates.extend(self.get_subordinates(employee))
-            # _logger.warning(f' ============== ' + str(len(including_subordinates)))
-            # my_sale_orders = request.env['sale.order'].sudo().search([('responsible.id', '=', employee.id)])
 
             my_orders = []
             for rec in including_subordinates:
@@ -49,9 +47,16 @@ class PrimarySales(http.Controller):
                     if start_date <= order.date_order < modified_end_date:
                         # dt_obj = datetime.strptime(order.date_order,'%Y-%m-%d')
                         millisec = order.date_order.timestamp() * 1000
+                        # print(order.date_order.astimezone(pytz.timezone("Asia/Dhaka")).strftime("%a,%b %d,%Y %I:%M %p %Z"))
+                        # localized_date_time = order.date_order.astimezone(pytz.timezone("Asia/Dhaka")).strftime("%Y-%m-%d %H:%M:%S")
+                        localized_date_time = order.date_order.astimezone(pytz.timezone("Asia/Dhaka")).strftime(
+                            "%Y-%m-%d %I:%M %p")
+                        _logger.warning(f' 1st============== {order.date_order}')
+                        _logger.warning(f' 2nd============== {localized_date_time}')
+
                         sale_dict = {'id': order.id, 'name': order.name, 'total': order.amount_total,
                                      'sate': order.state, 'responsible_id': order.responsible.id,
-                                     'customer': order.partner_id.name, 'date': order.date_order,
+                                     'customer': order.partner_id.name, 'date': localized_date_time,
                                      'date_long': int(millisec), 'responsible': order.responsible.name}
                         my_orders.append(sale_dict)
             my_orders.sort(key=lambda x: x['id'], reverse=True)
@@ -60,8 +65,9 @@ class PrimarySales(http.Controller):
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
-
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_01',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -76,7 +82,7 @@ class PrimarySales(http.Controller):
                 for quant_id in line.product_id.stock_quant_ids:
                     if quant_id.location_id.wh_id.id == line.warehouse_id.id:
                         depo_qty = quant_id.available_quantity
-
+                price_subtotal = line.price_unit * line.product_uom_qty
                 order_line = {'id': line.product_id.id,
                               'name': line.product_id.name,
                               'code': line.product_id.default_code,
@@ -85,7 +91,7 @@ class PrimarySales(http.Controller):
                               'depo': depo_qty,
                               'price_unit': line.price_unit,
                               'delivered': line.qty_delivered,
-                              'price_subtotal': line.price_subtotal,
+                              'price_subtotal': price_subtotal,
                               }
                 order_lines.append(order_line)
 
@@ -117,6 +123,8 @@ class PrimarySales(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_02',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -165,6 +173,8 @@ class PrimarySales(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_03',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -209,6 +219,8 @@ class PrimarySales(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_04',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -269,16 +281,16 @@ class PrimarySales(http.Controller):
                 'id': order_id.id,
                 'name': order_id.name
             }
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_01',
-                                                 trace_ref='expected_primary_sale_order_create')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_01',
+                                                 trace_ref='expected_primary_sale_order_create', with_location=False)
             msg = json.dumps(order_details,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_02',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_05',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -290,54 +302,56 @@ class PrimarySales(http.Controller):
             data_in_json = json.loads(data)
             # _logger.warning(f' ----- - {data_in_json}')
             order = request.env['sale.order'].sudo().search([('id', '=', data_in_json['order_id'])])
+            if order.responsible.id == request.em_id:
+                order_lines = []
+                for product_data in data_in_json['products']:
+                    product = request.env['product.product'].sudo().search([('id', '=', product_data['id'])])
+                    order_line_dict = {
+                        'product_id': product.id,
+                        'shipping_partner_id': order.partner_id.id,
+                        'warehouse_id': order.partner_id.deport_warehouse_id.id,
+                        'name': product.name,
+                        'product_uom_qty': product_data['quantity'],
+                        'price_unit': product.lst_price,
+                        'discount': order.partner_id.discount,
+                        'company_id': order.company_id.id,
+                        'order_id': order.id,
+                        'currency_id': order.currency_id.id
 
-            order_lines = []
-            for product_data in data_in_json['products']:
-                product = request.env['product.product'].sudo().search([('id', '=', product_data['id'])])
-                order_line_dict = {
-                    'product_id': product.id,
-                    'shipping_partner_id': order.partner_id.id,
-                    'warehouse_id': order.partner_id.deport_warehouse_id.id,
-                    'name': product.name,
-                    'product_uom_qty': product_data['quantity'],
-                    'price_unit': product.lst_price,
-                    'discount': order.partner_id.discount,
-                    'company_id': order.company_id.id,
-                    'order_id': order.id,
-                    'currency_id': order.currency_id.id
+                    }
+                    # order_lines.append((0, 0, order_line_dict))
+                    order_lines.append(order_line_dict)
+                    # _logger.warning(f'---------------{order.currency_id.id}')
+                if order.state == 'draft':
+                    order.order_line.unlink()
+                    created_lines = request.env['sale.order.line'].with_user(1).create(order_lines)
 
-                }
-                # order_lines.append((0, 0, order_line_dict))
-                order_lines.append(order_line_dict)
-                # _logger.warning(f'---------------{order.currency_id.id}')
-            if order.state == 'draft':
-                order.order_line.unlink()
-                created_lines = request.env['sale.order.line'].with_user(1).create(order_lines)
-
-                # bol = request.env['sale.order'].with_user(1).update({'order_line': order_lines})
-                if created_lines:
-                    bol = True
-                    value = 'Sale order updated successfully'
+                    # bol = request.env['sale.order'].with_user(1).update({'order_line': order_lines})
+                    if created_lines:
+                        bol = True
+                        value = 'Sale order updated successfully'
+                    else:
+                        bol = False
+                        value = 'Failed to update the sale order'
                 else:
                     bol = False
-                    value = 'Failed to update the sale order'
+                    value = 'The sale order is not in draft state'
             else:
                 bol = False
-                value='The sale order is not in draft state'
-
+                value = 'You are not allowed to update this sale order.'
             order_details = {
                 'result': bol, 'data': value
             }
-            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_011',
-            #                                      trace_ref='expected_primary_sale_order_create')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_06',
+                                                 trace_ref='expected_sale_order_update', with_location=False)
             msg = json.dumps(order_details,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_02',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_06',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -367,16 +381,16 @@ class PrimarySales(http.Controller):
             else:
                 bol = False
                 value = 'You are not allowed to delete this sale order'
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_03',
-                                                 trace_ref='expected_primary_sale_order_delete')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_03',
+                                                 trace_ref='expected_primary_sale_order_delete', with_location=False)
             msg = json.dumps({'result': bol, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_04',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_07',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -398,16 +412,16 @@ class PrimarySales(http.Controller):
             else:
                 bol = False
                 value = 'You are not allowed to confirm this sale order'
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_05',
-                                                 trace_ref='expected_primary_sale_order_confirm')
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_04',
+                                                 trace_ref='expected_primary_sale_order_confirm', with_location=True)
             msg = json.dumps({'result': bol, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_06',
-                                                 trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_08',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -428,15 +442,16 @@ class PrimarySales(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_06',
-            #                                      trace_ref=str(e))
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_09',
+                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
     # @http.route('/web/test1', website=True, auth='none', type='http', csrf=False, methods=['GET'])
     def get_subordinates(self, employee):
         subordinate_list = []
-        subordinates = request.env['hr.employee'].sudo().search([('parent_id', '=', employee.id)])
+        subordinates = request.env['hr.employee'].sudo().search(
+            [('parent_id', '=', employee.id), '|', ('active', '=', True), ('active', '=', False)])
         subordinate_list.extend(subordinates)
         for subordinate in subordinates:
             subordinate_list.extend(self.get_subordinates(subordinate))
