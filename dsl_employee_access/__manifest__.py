@@ -9,7 +9,7 @@
 ###################################################################################
 {
     'name': 'DSL Employee Access',
-    'version': '14.0.7.0.0',
+    'version': '14.0.4.0.0',
     'summary': """DSL Employee Access""",
     'description': 'This module enables invoice auto fill features',
     'category': 'hr',

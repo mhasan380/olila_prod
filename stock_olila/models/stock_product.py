@@ -26,10 +26,15 @@ class ProductTemplate(models.Model):
     net_value = fields.Float(compute="_compute_net_value", string='Net value', search='_search_net_value')
     safety_qty = fields.Float('Safety Stock')
 
-    @api.depends('lst_price', 'net_stock')
+    @api.depends('lst_price', 'net_stock','qty_available','outgoing_qty')
     def _compute_net_value(self):
         for product in self:
-            product.net_value = product.lst_price * product.net_stock
+            if product.fs_type == 'master':
+                product.net_value = product.lst_price * product.net_stock
+            elif product.fs_type == 'pcs' or product.fs_type == 'inner':
+                product.net_value = (product.lst_price * product.qty_available) - (product.outgoing_qty * product.lst_price)
+            else :
+                product.net_value = 0
 
     @api.depends('qty_available', 'weight')
     def _compute_total_weight(self):

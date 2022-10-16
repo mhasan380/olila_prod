@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from datetime import datetime, date, timedelta
 
 
 class account_journal(models.Model):
@@ -123,6 +124,7 @@ class LCDirectTransfer(models.Model):
     cheque_date = fields.Date('Cheque Date')
     state = fields.Selection([('draft', 'Draft'), ('confirm', 'Confirm'),('journal', 'Journal Entry'), ('paid', 'Paid'), ('cancel', 'Cancel')],
                              string='Status', required=True, readonly=True, copy=False, tracking=True, default='draft')
+    date = fields.Date(string="Date", default=datetime.today(), required=True)
 
 
 

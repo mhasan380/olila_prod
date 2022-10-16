@@ -65,8 +65,6 @@ class SaleReturnPrimary(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_rp_01',
-                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -74,6 +72,7 @@ class SaleReturnPrimary(http.Controller):
     @http.route('/web/sales/force/route/plan/create', auth='none', type='http', csrf=False, methods=['POST'])
     def route_plan_create(self, **kwargs):
         try:
+
             data = request.httprequest.data
             data_in_json = json.loads(data)
             plan_name = data_in_json['name']
@@ -118,8 +117,6 @@ class SaleReturnPrimary(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_rp_02',
-                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -159,8 +156,6 @@ class SaleReturnPrimary(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_rp_03',
-                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -210,8 +205,6 @@ class SaleReturnPrimary(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_rp_04',
-                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -266,15 +259,12 @@ class SaleReturnPrimary(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_rp_05',
-                                                 trace_ref=str(e), with_location=False)
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
     def get_subordinates(self, employee):
         subordinate_list = []
-        subordinates = request.env['hr.employee'].sudo().search(
-            [('parent_id', '=', employee.id), '|', ('active', '=', True), ('active', '=', False)])
+        subordinates = request.env['hr.employee'].sudo().search([('parent_id', '=', employee.id)])
         subordinate_list.extend(subordinates)
         for subordinate in subordinates:
             subordinate_list.extend(self.get_subordinates(subordinate))

@@ -86,29 +86,22 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_01',
-                                                 trace_ref=str(e), with_location=False)
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_04',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
     @tools.security.protected_rafiul()
-    @http.route('/web/sales/force/payment/collections', website=True, auth='none', type='http', csrf=False,
-                methods=['GET'])
+    @http.route('/web/sales/force/payment/collections', website=True, auth='none', type='http', csrf=False, methods=['GET'])
     def get_my_payment_collections(self, **kwargs):
         try:
             start_date = datetime.strptime(kwargs["start_date"], '%Y-%m-%d')
             end_date = datetime.strptime(kwargs["end_date"], '%Y-%m-%d')
             modified_end_date = end_date + timedelta(days=1)
 
-            including_subordinates = []
             employee = request.env['hr.employee'].sudo().browse(request.em_id)
-            including_subordinates.append(employee)
-            including_subordinates.extend(self.get_subordinates(employee))
-            accessible_ids = []
-            for sub in including_subordinates:
-                accessible_ids.append(sub.id)
             payment_ids = request.env['account.payment'].sudo().search(
-                [('payment_type', '=', 'inbound'), ('responsible_id', 'in', accessible_ids)], order='id desc')
+                [('payment_type', '=', 'inbound'), ('responsible_id', '=', employee.id)], order='id desc')
 
             payment_collection = []
             for payment in payment_ids:
@@ -121,8 +114,6 @@ class EmployeeTargetAchievement(http.Controller):
                     payment_dict['method'] = payment.journal_id.name
                     payment_dict['amount'] = payment.amount
                     payment_dict['status'] = payment.state
-                    payment_dict['responsible'] = payment.responsible_id.name
-                    payment_dict['responsible_id'] = payment.responsible_id.id
                     payment_dict['customer'] = payment.partner_id.name
                     payment_collection.append(payment_dict)
 
@@ -132,8 +123,8 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_02',
-                                                 trace_ref=str(e), with_location=False)
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_03',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -199,16 +190,16 @@ class EmployeeTargetAchievement(http.Controller):
             else:
                 created = False
                 value = 'You can not collect payment for this sale order'
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_p_01',
-                                                 trace_ref='excepted_payment_collect', with_location=True)
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_01',
+                                                 trace_ref='excepted_payment_collect')
             msg = json.dumps({'result': created, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(msg, content_type='application/json;charset=utf-8', status=200)
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_03',
-                                                 trace_ref=str(e), with_location=False)
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_02',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
@@ -267,17 +258,7 @@ class EmployeeTargetAchievement(http.Controller):
 
         except Exception as e:
             err = {'error': str(e)}
-            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_p_04',
-                                                 trace_ref=str(e), with_location=False)
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_payment_05',
+                                                 trace_ref=str(e))
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
-
-    def get_subordinates(self, employee):
-        subordinate_list = []
-        subordinates = request.env['hr.employee'].sudo().search(
-            [('parent_id', '=', employee.id), '|', ('active', '=', True), ('active', '=', False)])
-        subordinate_list.extend(subordinates)
-        for subordinate in subordinates:
-            subordinate_list.extend(self.get_subordinates(subordinate))
-
-        return subordinate_list
