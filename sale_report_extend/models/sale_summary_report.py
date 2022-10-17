@@ -9,6 +9,9 @@ type_list = {'corporater': 'Corporate', 'distributor': 'Distributor', 'dealer': 
 class SaleSummaryWizard(models.TransientModel):
     _inherit = 'sale.summary.wizard'
     sort_type = fields.Selection([('asc', 'Ascending'), ('desc', 'Descending')], string='Sort Type')
+    # sale_type = fields.Selection(
+    #     [('primary_sales', 'Primary Sales'), ('corporate_sales', 'Corporate Sales'), ('all', 'All Sales')],
+    #     default='primary_sales')
     def action_print_report(self):
         data = {
             'date_from': self.date_from,
@@ -17,7 +20,8 @@ class SaleSummaryWizard(models.TransientModel):
             'partner_id': self.partner_id and self.partner_id.id or False,
             'zone_ids': self.zone_ids.ids,
             'product_ids': self.product_ids.ids,
-            'sort_type' : self.sort_type
+            'sort_type' : self.sort_type,
+            # 'sale_type': self.sale_type
         }
         if self.report_type == 'customer':
             return self.env.ref('olila_reports.sale_summary_customer_wise_report').report_action(self, data=data)
@@ -192,3 +196,67 @@ class SaleSummaryCustomerWiseReport(models.AbstractModel):
                 'customer_type': type_list.get(olila_type) or '',
                 'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
             }
+
+
+# class SaleSummaryProductWiseReport(models.AbstractModel):
+#     _inherit = 'report.olila_reports.sale_summary_product_wise_template'
+#
+#     @api.model
+#     def _get_report_values(self, docids, data=None):
+#         model = self.env.context.get('active_model')
+#         docs = self.env[model].browse(self.env.context.get('active_id'))
+#         date_from = data['date_from']
+#         date_to = data['date_to']
+#         olila_type = data.get('olila_type')
+#         partner_id = data.get('partner_id')
+#         partners = self.env['res.partner']
+#         zone_ids = data.get('zone_ids')
+#         product_ids = data.get('product_ids')
+#         sale_type = data.get('sale_type')
+#         if olila_type and not partner_id:
+#             partners = self.env['res.partner'].sudo().search([('olila_type', '=', olila_type)])
+#         if partner_id:
+#             partners = self.env['res.partner'].browse(partner_id)
+#         if not partners and not olila_type:
+#             partners = self.env['res.partner'].search([])
+#
+#         domain = [('state', 'in', ('sale', 'done')), ('partner_id', 'in', partners.ids),
+#                   ('date_order', '>=', date_from), ('date_order', '<=', date_to)]
+#         if zone_ids:
+#             domain.append(('zone_id', 'in', zone_ids))
+#         if sale_type == 'primary_sales' or sale_type == 'corporate_sales':
+#             domain.append(('sale_type', '=', sale_type))
+#
+#         sale_orders = self.env['sale.order'].search(domain)
+#         lines = []
+#
+#         list2 = []
+#         product_wise_lines = {}
+#         for line in sale_orders.mapped('order_line'):
+#             if line.product_id in product_wise_lines:
+#                 product_wise_lines[line.product_id] |= line
+#             else:
+#                 product_wise_lines[line.product_id] = line
+#
+#         total_qty = 0.0
+#         total_invoice_value = 0.0
+#         for product, lines in product_wise_lines.items():
+#             list2.append({
+#                 'product_code': product.default_code or '',
+#                 'product_name': product.name,
+#                 'product_qty': sum(lines.mapped('product_uom_qty')),
+#                 'invoice_value': float_repr(sum(lines.mapped('price_subtotal')), precision_digits=2)
+#             })
+#             total_qty += sum(lines.mapped('product_uom_qty'))
+#             total_invoice_value += sum(lines.mapped('price_subtotal'))
+#
+#         return {
+#             'docs': docs,
+#             'doc_ids': data.get('ids'),
+#             'doc_model': data.get('model'),
+#             'lines': list2,
+#             'total_qty': round(total_qty, 2),
+#             'total_invoice_value': round(total_invoice_value, 2),
+#             'customer_type': type_list.get(olila_type) or '',
+#             'customer_name': self.env['res.partner'].browse(data.get('partner_id')).name or '',
+#         }
