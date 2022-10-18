@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='zone_ids']" position="after">
                     <field name="sort_type"/>
+                    <field name="sale_type" attrs="{'invisible':[('report_type', '!=', 'product')]}"/>
                 </xpath>
             </field>
         </record>
@@ -57,6 +58,8 @@
          </template>
 
          <template id="sale_summary_Report_customer_template_inherit_olila" inherit_id="olila_reports.sale_summary_customer_wise_template">
+
+
           <xpath expr="//table[@class='table table-bordered mt32']" position="replace">
 
           <table class="table table-bordered mt32">
@@ -111,5 +114,49 @@
           </xpath>
 
          </template>
+
+        <template id="sale_summary_Report_product_template_inherit_olila" inherit_id="olila_reports.sale_summary_product_wise_template">
+        <xpath expr="//table[@class='table table-bordered mt32']" position="replace">
+            <table class="table table-bordered mt32">
+                            <tr style="background-color: black;color: white !important;">
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>Qty</th>
+                                <th>Invoice Value</th>
+                            </tr>
+                            <tbody>
+                                <t t-foreach="lines" t-as="line">
+                                    <tr>
+                                        <td class="text-left">
+                                             <span t-esc="line['product_code']"/>
+                                        </td>
+                                        <td class="text-left">
+                                             <span t-esc="line['product_name']"/>
+                                        </td>
+                                        <td class="text-left">
+                                             <span t-esc="line['product_qty']"/>
+                                        </td>
+                                        <td class="text-left">
+                                             <span t-esc="line['invoice_value']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td class="text-left" colspan="2"><strong><span>Total</span></strong></td>
+                                    <td class="text-left"><strong><span t-esc="total_qty"/></strong></td>
+                                    <td class="text-left"><strong><span t-esc="total_invoice_value" t-options='{"widget": "float", "precision": 2}'/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+        </xpath>
+
+            <xpath expr="//div[@id='informations']" position="inside">
+            <div t-if="zones" class="col-auto col-3 mw-100 mb-2">
+                                <strong>Zones:</strong>
+                                <p class="m-0" t-esc="zones"/>
+                            </div>
+
+            </xpath>
+        </template>
     </data>
 </odoo>
