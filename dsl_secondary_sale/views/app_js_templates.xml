@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template
+            id="assets_backend"
+            name="dsl_secondary_sale assets"
+            inherit_id="web.assets_backend">
+<!--        <xpath expr="script[last()]" position="inside">-->
+        <xpath expr="." position="inside">
+            <script
+                    type="text/javascript"
+                    src="/dsl_secondary_sale/static/src/js/edit_button_hide.js"
+            />
+        </xpath>
+    </template>
+
+</odoo>

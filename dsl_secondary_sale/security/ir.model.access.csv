@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_secondary_sale,dsl.secondary.sale,model_sale_secondary,base.group_user,1,1,1,1
+access_secondary_customer,dsl.secondary.customer,model_customer_secondary,base.group_user,1,1,1,1
+access_primary_customer_stocks,assess.primary.customer.stocks,model_primary_customer_stocks,base.group_user,1,1,1,1
+access_product_line_secondary,assess.product.line.secondary,model_product_line_secondary,base.group_user,1,1,1,1
+access_sale_secondary_line,assess.sale.secondary.line,model_sale_secondary_line,base.group_user,1,1,1,1
+access_stock_move_secondary,assess.stock.move.secondary,model_stock_move_secondary,base.group_user,1,1,1,1
+access_stock_move_secondary_multi,assess.stock.move.secondary.multi,model_stock_move_secondary_multi,base.group_user,1,1,1,1

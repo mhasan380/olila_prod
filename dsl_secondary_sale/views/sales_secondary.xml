@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="action_sales_secondary_menu" model="ir.actions.act_window">
+        <field name="name">Secondary Sale</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.secondary</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click here to create a record
+            </p>
+        </field>
+    </record>
+
+    <record id="action_customer_secondary_menu" model="ir.actions.act_window">
+        <field name="name">Secondary Customer</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">customer.secondary</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click here to create a record
+            </p>
+        </field>
+    </record>
+
+    <record id="action_primary_customer_stocks_menu" model="ir.actions.act_window">
+        <field name="name">Primary Customer Stocks</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">primary.customer.stocks</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click here to create a record
+            </p>
+        </field>
+    </record>
+
+     <record id="action_stock_move_secondary_menu" model="ir.actions.act_window">
+        <field name="name">Secondary Stock Moves</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.move.secondary</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click here to create a record
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_sales_secondary_root" name="Secondary Sale"
+              action="action_sales_secondary_menu"
+              sequence="10"/>
+
+    <menuitem id="menu_sales_secondary_root_two" name="Orders"
+              parent="menu_sales_secondary_root"
+              sequence="10"/>
+
+    <menuitem id="menu_sales_orders_secondary" name="Sale Orders"
+              parent="menu_sales_secondary_root_two"
+              action="action_sales_secondary_menu"
+              sequence="10"/>
+
+    <menuitem id="menu_customer_secondary" name="Secondary Customers"
+              action="action_customer_secondary_menu"
+              parent="menu_sales_secondary_root_two"
+              sequence="20"/>
+
+    <menuitem id="menu_stock_move_secondary" name="Secondary Stock Moves"
+              action="action_stock_move_secondary_menu"
+              parent="menu_sales_secondary_root_two"
+              sequence="20"/>
+
+    <menuitem id="menu_primary_customer_stocks" name="Primary Customer Stocks"
+              action="action_primary_customer_stocks_menu"
+              parent="menu_sales_secondary_root"
+              sequence="20"/>
+
+
+</odoo>
+
+
+
