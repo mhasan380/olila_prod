@@ -8,4 +8,12 @@
         <field name="report_file">sale_report_extend.report_sale_value_perform_xls</field>
         <field name="binding_type">report</field>
     </record>
+    <record id="report_sale_monthly_comparison_xlsx" model="ir.actions.report">
+        <field name="name">Month on Month Comparison Report</field>
+        <field name="model">monthly.comparison.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">sale_report_extend.report_sale_monthly_comparison_xls</field>
+        <field name="report_file">sale_report_extend.report_sale_monthly_comparison_xls</field>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>

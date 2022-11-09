@@ -34,6 +34,7 @@ class SalesPerformReport(models.AbstractModel):
             target = 0
             achievement = 0
             shortfall = 0
+            child_so = self.env['hr.employee'].search([('id', 'child_of', emp.id)])
 
             target_lines = self.env['target.history'].search([('emp_id','=', emp.id),('create_date', '>=', date_start),
                                                               ('create_date', '<=', date_end)])

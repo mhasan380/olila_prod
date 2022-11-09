@@ -63,6 +63,7 @@ class SalesValuePerformance(models.TransientModel):
             target = 0
             achievement = 0
             shortfall = 0
+            child_so = self.env['hr.employee'].search([('parent_id', '=', emp.id)])
 
             target_lines = self.env['target.history'].search(
                 [('emp_id', '=', emp.id), ('create_date', '>=', self.from_date),
@@ -90,7 +91,8 @@ class SalesValuePerformance(models.TransientModel):
                 'achievement': ('{:,.2f}').format(float(achievement)),
                 'ach_percent': ach_percent,
                 'short_percent': short_percent,
-                'shortfall': ('{:,.2f}').format(float(shortfall))
+                'shortfall': ('{:,.2f}').format(float(shortfall)),
+                'so_number': len(child_so)
 
             })
         data = {
@@ -100,7 +102,8 @@ class SalesValuePerformance(models.TransientModel):
                 'from_date': self.from_date,
                 'to_date': self.to_date,
                 'designation': self.designation,
-                'department_id' : self.department_id
+                'department_id' : self.department_id,
+
 
         }
 

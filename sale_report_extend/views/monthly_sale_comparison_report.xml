@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report id="monthly_sale_comparison_report" menu="False" model="monthly.comparison.wizard" name="sale_report_extend.monthly_comparison_report_template"  report_type="qweb-pdf" string="Month on Month Comparison Report"/>
+        <template id="monthly_comparison_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:5px;">
+                            <div class="text-center">
+                                <h4>Month on Month Comparison Report</h4>
+                            </div>
+                            <div class="customer_info">
+                                <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                    <p>
+                                        <b> From Date : </b>
+                                        <span t-esc="date_start" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                        <b> To Date : </b>
+                                        <span t-esc="date_end" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                    </p>
+
+                                </div>
+                                <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                    <t t-if="designation">
+                                        <b>Designation : </b>
+                                   <span t-esc="designation"/>
+                                     <br/>
+                                    </t>
+                                     <t t-if="department_name">
+                                        <b>Department : </b>
+                                   <span t-esc="department_name"/>
+                                     <br/>
+                                    </t>
+                                </div>
+                            </div>
+                            <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                            <table  class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" >SL</th>
+                                        <th class="text-left">Name</th>
+                                        <th class="text-left">Designation</th>
+                                        <th class="text-left">Total Bank Days</th>
+                                        <th class="text-left">Passed Bank Days</th>
+                                        <th class="text-left">Remaining Bank Days</th>
+                                        <th class="text-left">Target</th>
+                                        <th class="text-left">MTD Ach.</th>
+                                        <th class="text-left">MTD Average Daily Sales</th>
+                                        <th class="text-left">Required Average Daily Sales</th>
+                                        <th class="text-left">Productivity/ Sales Personnel</th>
+                                        <th class="text-left">Last Month MTD Ach.</th>
+                                        <th class="text-left">Month on Month Growth %</th>
+
+
+                                    </tr>
+<!--                                    <tr>-->
+<!--                                        <th> </th>-->
+<!--                                        <th></th>-->
+<!--                                        <th ></th>-->
+<!--                                        <th ></th>-->
+<!--                                        <th ></th>-->
+<!--                                        <th ></th>-->
+<!--                                        <th ></th>-->
+<!--                                        <th class="text-left">Value</th>-->
+<!--                                        <th class="text-left">%</th>-->
+<!--                                    </tr>-->
+                                </thead>
+                                <tbody>
+                                    <t t-set="i" t-value="1"/>
+                                    <tr t-foreach='emp_list' t-as='emp'>
+                                        <td>
+                                            <t t-esc="i" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['employee_name']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['designation']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['total_bank_day']" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['passed_bank_day']" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['remain_days']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['target']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['achievement']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['mtd_avg_sale']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['req_avg_sale']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['productivity']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['last_achivement']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['growth_percent']"/>
+                                        </td>
+
+                                        <t t-set="i" t-value="i+1"/>
+
+                                    </tr>
+<!--                                    <tr style="font-weight: bold; color: blue;">-->
+<!--                                        <td colspan="4" class="text-center">-->
+<!--                                            <b>Total </b>-->
+<!--                                        </td>-->
+
+<!--                                        <td>-->
+<!--                                            <span t-esc="total_target" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <td>-->
+<!--                                            <span t-esc="total_achievement" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <th></th>-->
+<!--                                        <td>-->
+<!--                                            <span t-esc="total_short" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <th></th>-->
+<!--                                    </tr>-->
+                                </tbody>
+                                <style>
+                        td {border: 1px solid #000; }
+                        th {
+
+                            text-align: center;
+                         }
+
+                        </style>
+                            </table>
+
+
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -6,3 +6,5 @@ from . import sale_status_report
 from . import undelivery_sale_report
 from . import sale_value_report
 from . import sale_value_report_xls
+from . import monthly_comparison_report
+from . import monthly_comparison_xls

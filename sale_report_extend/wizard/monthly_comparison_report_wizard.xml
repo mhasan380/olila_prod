@@ -1,0 +1,42 @@
+<odoo>
+    <record id="monthly_sale_comparison_wizard_view" model="ir.ui.view">
+        <field name="name">monthly.comparison.wizard.form</field>
+        <field name="model">monthly.comparison.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Month on Month Comparison Report">
+                <group>
+                    <group>
+                        <field name="from_date" required="1">From date</field>
+                        <field name="to_date" required="1">To date</field>
+                        <field name="total_bank_day" required="1"> </field>
+                        <field name="passed_bank_day" required="1"> </field>
+                    </group>
+                    <group>
+                        <field name="designation"> </field>
+                        <field name="department_id" widget='selection'> </field>
+                        <field name="employee_ids" options="{'no_create_edit': True}" widget='many2many_tags'> </field>
+                    </group>
+
+                </group>
+
+                <footer>
+                    <button name="get_pdf_report" type="object" string="Print PDF" class="btn-primary"/>
+                    <button name="get_xls_report" type="object" string="Print XLS" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_monthly_sale_comparison" model="ir.actions.act_window">
+        <field name="name">Month on Month Comparison Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">monthly.comparison.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="monthly_sale_comparison_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem name="Month on Month Comparison Report" id="menu_monthly_sale_comparison_report"
+              parent="olila_reports.menu_olila_reports" action="action_monthly_sale_comparison" sequence="8"/>
+</odoo>
