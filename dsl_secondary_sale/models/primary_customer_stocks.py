@@ -15,7 +15,7 @@ class PrimaryCustomerStocks(models.Model):
         ('customer_id_unique', 'unique(customer_id)', 'Stocks for the selected customer already exists!')
     ]
     name = fields.Char('Name', index=True, copy=False, default="New")
-    customer_id = fields.Many2one('res.partner', string='Customer', required=True, index=True,
+    customer_id = fields.Many2one('res.partner', string='Distributor', required=True, index=True,
                                   domain="[('is_customer', '=', True),('responsible', '!=', False)]")
     customer_street = fields.Char('Address', related='customer_id.street')
     customer_city = fields.Char('', related='customer_id.city')

@@ -26,7 +26,7 @@
     </record>
 
     <record id="action_primary_customer_stocks_menu" model="ir.actions.act_window">
-        <field name="name">Primary Customer Stocks</field>
+        <field name="name">Distributor Stocks</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">primary.customer.stocks</field>
         <field name="view_mode">tree,form</field>
@@ -72,7 +72,7 @@
               parent="menu_sales_secondary_root_two"
               sequence="20"/>
 
-    <menuitem id="menu_primary_customer_stocks" name="Primary Customer Stocks"
+    <menuitem id="menu_primary_customer_stocks" name="Distributor Stocks"
               action="action_primary_customer_stocks_menu"
               parent="menu_sales_secondary_root"
               sequence="20"/>

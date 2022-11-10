@@ -14,7 +14,7 @@ class SaleSecondary(models.Model):
     _name = 'sale.secondary'
 
     name = fields.Char('Name', index=True, copy=False, default="New")
-    primary_customer_id = fields.Many2one('res.partner', string='Primary Customer', required=True, index=True,
+    primary_customer_id = fields.Many2one('res.partner', string='Distributor', required=True, index=True,
                                           domain="[('is_customer', '=', True),('responsible', '!=', False)]")
     distributor_mobile = fields.Char('Contact', related='primary_customer_id.mobile')
     distributor_address = fields.Char('Address', related='primary_customer_id.street')
@@ -25,8 +25,8 @@ class SaleSecondary(models.Model):
     secondary_customer_mobile = fields.Char(string='Mobile', related='secondary_customer_id.mobile')
     sale_line_ids = fields.One2many(comodel_name='sale.secondary.line', inverse_name='secondary_sale_id',
                                     string='Products')
-    latitude = fields.Char('Name', copy=False)
-    longitude = fields.Char('Name', copy=False)
+    latitude = fields.Char('Lat', copy=False)
+    longitude = fields.Char('Long', copy=False)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('confirmed', 'Confirmed')
