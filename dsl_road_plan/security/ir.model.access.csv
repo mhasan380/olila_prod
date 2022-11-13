@@ -4,3 +4,7 @@ access_sales_person_plan_rode,sales.plan.rode,model_rode_list,base.group_user,1,
 access_route_area,route.area,model_route_area,,1,1,1,1
 access_area_customer_line,area.customer.line,model_area_customer_line,,1,1,1,1
 access_route_territory,route.territory,model_route_territory,,1,1,1,1
+access_route_day,route.day,model_route_day,,1,1,1,1
+access_route_master,route.master,model_route_master,base.group_user,1,1,1,1
+access_primary_customer_line,primary.customer.line,model_primary_customer_line,base.group_user,1,1,1,1
+access_corporate_customer_line,corporate.customer.line,model_corporate_customer_line,base.group_user,1,1,1,1

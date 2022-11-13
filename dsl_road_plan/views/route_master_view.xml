@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="ir.ui.view" id="route_master_tree_view">
+        <field name="name">route.master.tree</field>
+        <field name="model">route.master</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="route_id"/>
+                <field name="name"/>
+                <field name="area_id"/>
+                <field name="territory_id"/>
+                <field name="zone_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- form veiw -->
+    <record model="ir.ui.view" id="route_master_form_view">
+        <field name="name">route.master.form.view</field>
+        <field name="model">route.master</field>
+        <field name="arch" type="xml">
+            <form string="Route Master">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" required="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="route_id"/>
+                            <field name="area_id"/>
+                            <field name="territory_id"/>
+                            <field name="zone_id"/>
+                        </group>
+                         <group>
+                             <field name="route_type" required="1"/>
+                            <field name="remarks"/>
+                             <field name="coverage"/>
+                        </group>
+
+                    </group>
+                     <notebook>
+                        <page string="Primary Customers" attrs=" {'invisible': [('route_type', '!=', 'primary')]}">
+                             <field name="primary_customer_ids">
+                                <tree editable="bottom">
+                                    <field name="customer_id"/>
+                                    <field name="customer_code"/>
+                                </tree>
+                        </field>
+                        </page>
+                         <page string="Corporate Customers" attrs=" {'invisible': [('route_type', '!=', 'corporate')]}">
+                             <field name="corporate_customer_ids">
+                                <tree editable="bottom">
+                                    <field name="customer_id"/>
+                                    <field name="customer_code"/>
+                                </tree>
+                        </field>
+                        </page>
+<!--                         <page string="Secondary Customers" attrs=" {'invisible': [('route_type', '!=', 'corporate')]}">-->
+<!--                             <field name="secondary_customer_ids">-->
+<!--                                <tree editable="bottom">-->
+<!--                                    <field name="customer_id"/>-->
+<!--                                    <field name="customer_code"/>-->
+<!--                                </tree>-->
+<!--                        </field>-->
+<!--                        </page>-->
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record model="ir.actions.act_window" id="action_route_master">
+        <field name="name">Routes</field>
+        <field name="res_model">route.master</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="action_route_master_menu"
+        name="Routes"
+        sequence="102"
+        parent="main_menu_sales_plan_view"
+        action="action_route_master"/>
+    </data>
+</odoo>

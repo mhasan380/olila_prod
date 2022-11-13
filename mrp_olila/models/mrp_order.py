@@ -9,7 +9,7 @@ class MrpProduction(models.Model):
     production_type = fields.Selection([('pcs', 'PCS'), ('ei', 'Empty Inner'), ('emm', 'Empty Master'),('fgi', 'FG Inner'),
                 ('fgm', 'FG Master'), ('cullet', 'Cullet'), ('converstion', 'Conversion')],string='Production Type')
     cullet_type = fields.Selection(
-        [('gob', 'GOB Cullet'), ('qc', 'QC Cullet'),('fg', 'FG Cullet')], string='Cullet Type')
+        [('gob', 'GOB Cullet'), ('qc', 'QC Cullet'),('fg', 'FG Cullet'),('decal', 'Decal Cullet')], string='Cullet Type')
 
     @api.onchange('average_weight','product_qty')
     def onchange_average_weight(self):
