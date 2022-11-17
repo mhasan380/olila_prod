@@ -16,4 +16,20 @@
         <field name="report_file">sale_report_extend.report_sale_monthly_comparison_xls</field>
         <field name="binding_type">report</field>
     </record>
+    <record id="report_productivity_performance_xlsx" model="ir.actions.report">
+        <field name="name">Productivity Performance Report</field>
+        <field name="model">productive.performance.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">sale_report_extend.report_productivity_performance_xls</field>
+        <field name="report_file">sale_report_extend.report_productivity_performance_xls</field>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="report_customer_retention_xlsx" model="ir.actions.report">
+        <field name="name">Customer Retention Performance Report</field>
+        <field name="model">productive.performance.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">sale_report_extend.report_customer_retention_xls</field>
+        <field name="report_file">sale_report_extend.report_customer_retention_xls</field>
+        <field name="binding_type">report</field>
+    </record>
 </odoo>

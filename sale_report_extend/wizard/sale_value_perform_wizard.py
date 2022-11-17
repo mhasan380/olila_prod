@@ -69,7 +69,25 @@ class SalesValuePerformance(models.TransientModel):
                 [('emp_id', '=', emp.id), ('create_date', '>=', self.from_date),
                  ('create_date', '<=', self.to_date)])
             target = sum(target_lines.mapped('target'))
-            achievement = sum(target_lines.mapped('archivement'))
+            if emp.type == 'so':
+                current_pay_ids = self.env['account.payment'].search(
+                    [('responsible_id', '=', emp.id), ('date', '>=', self.from_date), ('date', '<=', self.to_date),
+                     ('state', '=', 'posted')])
+                achievement = sum(current_pay_ids.mapped('amount'))
+
+
+            elif emp.type != 'so':
+                child_so = self.env['hr.employee'].sudo().search([('id', 'child_of', emp.id), ('type', '=', 'so'), "|",
+                                                                  ("active", "=", True),
+                                                                  ("active", "=", False), ])
+                so_achiement = 0
+                so_last = 0
+                for so in child_so:
+                    current_pay_ids = self.env['account.payment'].search(
+                        [('responsible_id', '=', so.id), ('date', '>=', self.from_date), ('date', '<=', self.to_date),
+                         ('state', '=', 'posted')])
+                    so_achiement = sum(current_pay_ids.mapped('amount'))
+                    achievement += so_achiement
             if target > 0:
                 percent = float(achievement / target) * 100
                 ach_percent = ('{:.2f} %').format(float(percent))

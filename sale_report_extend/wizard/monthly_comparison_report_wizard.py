@@ -8,6 +8,8 @@ from odoo import api, fields, models, _
 from odoo.tools import date_utils
 from dateutil.relativedelta import relativedelta
 from odoo.exceptions import ValidationError
+
+
 try:
     from odoo.tools.misc import xlsxwriter
 except ImportError:

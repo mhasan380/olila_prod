@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report id="customer_retention_report" menu="False" model="customer.retention.wizard" name="sale_report_extend.customer_retention_report_template"  report_type="qweb-pdf" string="Customer Retention Performance Report"/>
+        <template id="customer_retention_report_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:5px;">
+                            <div class="text-center">
+                                <h4>Customer Retention Performance Report</h4>
+                            </div>
+                            <div class="customer_info">
+                                <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                    <p>
+                                        <b> From Date : </b>
+                                        <span t-esc="date_start" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                        <b> To Date : </b>
+                                        <span t-esc="date_end" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                    </p>
+
+                                </div>
+                                <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                    <t t-if="designation">
+                                        <b>Designation : </b>
+                                   <span t-esc="designation"/>
+                                     <br/>
+                                    </t>
+                                     <t t-if="department_name">
+                                        <b>Department : </b>
+                                   <span t-esc="department_name"/>
+                                     <br/>
+                                    </t>
+                                </div>
+                            </div>
+                            <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                            <table  class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" >SL</th>
+                                        <th class="text-left">Name</th>
+                                        <th class="text-left">Designation</th>
+                                        <th class="text-left">Last Month Order from No. of Customer</th>
+                                        <th class="text-left">MTD Repeat Order from No. of Customer</th>
+                                        <th class="text-left">Customer Retention %</th>
+
+
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                                    <t t-set="i" t-value="1"/>
+                                    <tr t-foreach='emp_list' t-as='emp'>
+                                        <td>
+                                            <t t-esc="i" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['employee_name']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['designation']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['last_outlet']" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['repeat_customer']" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['retention_percent']"/>
+                                        </td>
+                                        <t t-set="i" t-value="i+1"/>
+
+                                    </tr>
+
+                                </tbody>
+                                <style>
+                        td {border: 1px solid #000; }
+                        th {
+
+                            text-align: center;
+                         }
+
+                        </style>
+                            </table>
+
+
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

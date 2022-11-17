@@ -32,11 +32,15 @@
         'views/undelivery_report.xml',
         'views/sale_value_performance_report.xml',
         'views/monthly_sale_comparison_report.xml',
+        'views/productivity_performance_report.xml',
+        'views/customer_retention_report.xml',
         'views/reports.xml',
         'wizard/sales_summary_wizard.xml',
         'wizard/undelivery_stock_report_wizard_view.xml',
         'wizard/sale_value_perform_report_wizard.xml',
         'wizard/monthly_comparison_report_wizard.xml',
+        'wizard/productivity_performance_report.xml',
+        'wizard/monthly_customer_retention_wizard.xml',
 
     ],
     # only loaded in demonstration mode

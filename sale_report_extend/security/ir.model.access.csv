@@ -3,3 +3,5 @@ access_undeliverd_value_wizard,undeliverd.value.wizard,model_undeliverd_value_wi
 access_sales_summary_wizard,sales.summary.wizard,model_sales_summary_wizard,,1,1,1,0
 access_sales_value_performance,sales.value.performance,model_sales_value_performance,,1,1,1,0
 access_monthly_comparison_wizard,monthly.comparison.wizard,model_monthly_comparison_wizard,,1,1,1,0
+access_productive_performance_wizard,productive.performance.wizard,model_productive_performance_wizard,,1,1,1,0
+access_customer_retention_wizard,customer.retention.wizard,model_customer_retention_wizard,,1,1,1,0

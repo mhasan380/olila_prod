@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report id="productivity_performance_report" menu="False" model="productive.performance.wizard" name="sale_report_extend.productivity_performance_template"  report_type="qweb-pdf" string="Productivity Perormance Report"/>
+        <template id="productivity_performance_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="padding-top:5px;">
+                            <div class="text-center">
+                                <h4>Productivity Perormance Report</h4>
+                            </div>
+                            <div class="customer_info">
+                                <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                    <p>
+                                        <b> From Date : </b>
+                                        <span t-esc="date_start" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                        <b> To Date : </b>
+                                        <span t-esc="date_end" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                    </p>
+
+                                </div>
+                                <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                    <t t-if="designation">
+                                        <b>Designation : </b>
+                                   <span t-esc="designation"/>
+                                     <br/>
+                                    </t>
+                                     <t t-if="department_name">
+                                        <b>Department : </b>
+                                   <span t-esc="department_name"/>
+                                     <br/>
+                                    </t>
+                                </div>
+                            </div>
+                            <style>.customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                            <table  class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" >SL</th>
+                                        <th class="text-left">Name</th>
+                                        <th class="text-left">Designation</th>
+                                        <th class="text-left">Productive Outlet</th>
+                                        <th class="text-left">Productivity %</th>
+                                        <th class="text-left">Billing SKU</th>
+                                        <th class="text-left">Sales Order</th>
+                                        <th class="text-left">LPC</th>
+                                        <th class="text-left">Order Value/ Invoice</th>
+                                        <th class="text-left">Unique SKU</th>
+                                        <th class="text-left">Product Assortment</th>
+                                        <th class="text-left">Product Assortment %</th>
+
+
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                                    <t t-set="i" t-value="1"/>
+                                    <tr t-foreach='emp_list' t-as='emp'>
+                                        <td>
+                                            <t t-esc="i" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['employee_name']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['designation']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['outlet']" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['productivity_percent']" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['billing_sku']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['total_order']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['lpc']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['order_value']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['unique_sku']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['assortment']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="emp['assort_percent']" />
+                                        </td>
+
+
+                                        <t t-set="i" t-value="i+1"/>
+
+                                    </tr>
+<!--                                    <tr style="font-weight: bold; color: blue;">-->
+<!--                                        <td colspan="4" class="text-center">-->
+<!--                                            <b>Total </b>-->
+<!--                                        </td>-->
+
+<!--                                        <td>-->
+<!--                                            <span t-esc="total_target" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <td>-->
+<!--                                            <span t-esc="total_achievement" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <th></th>-->
+<!--                                        <td>-->
+<!--                                            <span t-esc="total_short" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <th></th>-->
+<!--                                    </tr>-->
+                                </tbody>
+                                <style>
+                        td {border: 1px solid #000; }
+                        th {
+
+                            text-align: center;
+                         }
+
+                        </style>
+                            </table>
+
+
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
