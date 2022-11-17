@@ -102,7 +102,7 @@ class ProductivityPerformanceReport(models.AbstractModel):
                 assort_percent = ('{:.2f} %').format(float(assort))
             else:
                 assort_percent = 0
-            if outlet > 0:
+            if total_outlets > 0:
                 productivity = float(outlet/total_outlets) * 100
                 productivity_percent = ('{:.2f} %').format(float(productivity))
             else:

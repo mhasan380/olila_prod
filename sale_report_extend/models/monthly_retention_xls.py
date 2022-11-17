@@ -24,7 +24,7 @@ class CustomerRetentionReportXLS(models.AbstractModel):
         sheet.set_column('C:C', 12)
         sheet.set_column('D:D', 12)
         sheet.set_column('E:E', 12)
-        sheet.merge_range(1, 1, 2, 6, 'Month on Month Comparison Report', format0)
+        sheet.merge_range(1, 1, 2, 6, 'Customer Retention Performance Report', format0)
         sheet.merge_range(4, 0, 4, 1, 'From Date:  '+ data['from_date'], format11)
         sheet.merge_range(4, 5, 4, 6, 'To Date:  ' + data['to_date'], format11)
         sheet.write(row, col, 'NAME', format21)
