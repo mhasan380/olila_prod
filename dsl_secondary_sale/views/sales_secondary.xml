@@ -51,6 +51,7 @@
 
     <menuitem id="menu_sales_secondary_root" name="Secondary Sale"
               action="action_sales_secondary_menu"
+              web_icon="dsl_secondary_sale,static/description/ss_icon.png"
               sequence="10"/>
 
     <menuitem id="menu_sales_secondary_root_two" name="Orders"

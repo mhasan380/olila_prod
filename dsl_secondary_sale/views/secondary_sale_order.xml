@@ -7,10 +7,12 @@
         <field name="priority">2</field>
         <field name="arch" type="xml">
             <tree string="Sale Orders" default_order='create_date desc'>
+                <field name="create_date"/>
                 <field name="name"/>
                 <field name="primary_customer_id"/>
                 <field name="responsible_id"/>
                 <field name="secondary_customer_id"/>
+                <field name="price_total" widget="monetary" sum="Sum of Total Price"/>
                 <!--                <field name="create_date"/>-->
             </tree>
         </field>
@@ -24,8 +26,8 @@
                 <!--                <field name="btn_css" invisible="1"/>-->
                 <header>
                     <button name="action_confirm_secondary_sale" string="Confirm" type="object" class="btn btn-primary"
-                            confirm="Do you want to confirm the order?">
-                        <!--                            attrs="{'invisible': [('state', '=', 'confirmed')]}">-->
+                            confirm="Do you want to confirm the order?"
+                            attrs="{'invisible': [('state', '=', 'confirmed')]}">
                         <!--                            attrs="{'invisible': [('state', '!=', 'draft')]}">-->
 
                     </button>
@@ -68,6 +70,7 @@
                             <field name="secondary_customer_id" options="{'no_create': True, 'no_create_edit' : True}"/>
                             <field name="secondary_customer_address"/>
                             <field name="secondary_customer_mobile"/>
+                            <field name="channel_commission"/>
                         </group>
                     </group>
 
@@ -106,7 +109,12 @@
                                   string="Other Info">
                                 <group col="6" class="mt-2 mt-md-0">
                                     <group colspan="4">
+                                        <field name="latitude" invisible="1"/>
+                                        <field name="longitude" invisible="1"/>
                                         <field name="responsible_id"/>
+                                        <button name="open_so_create_location" string="Location" type="object"
+                                                icon="fa-location-arrow text-success"
+                                                attrs="{'invisible':['|',('latitude','=',False),('longitude','=',False)]}"/>
                                     </group>
 
                                 </group>

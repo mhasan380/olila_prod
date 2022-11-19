@@ -69,6 +69,7 @@ class SecondaryCustomer(http.Controller):
                             'outlet_code': s_customer.outlet_code,
                             'address': s_customer.address,
                             'mobile': s_customer.mobile,
+                            'zone': s_customer.zone_id.name,
                             'reference_code': reference_code
                         }
                         secondary_customers.append(sc_dict)
@@ -98,15 +99,20 @@ class SecondaryCustomer(http.Controller):
                 [('responsible', '=', employee.id), ('is_customer', '=', True)])
             records = []
             for customer in customers:
-                stock = request.env['primary.customer.stocks'].sudo().browse([('customer_id', '=', customer.id)])
+                stock = request.env['primary.customer.stocks'].sudo().search([('customer_id', '=', customer.id)])
+
                 if stock:
+                    print(f'-----------------{stock}')
                     reference_code = customer.code
                     if reference_code and '/' in reference_code:
                         x = reference_code.split('/')[1:]
                         reference_code = x[0]
                     customer_dict = {'id': customer.id,
                                      'name': customer.name,
+                                     'address': customer.street,
+                                     'mobile': customer.mobile,
                                      'reference': reference_code,
+                                     'commission': stock.channel_commission,
                                      # 'stock_products': stock_products,
                                      'code': customer.code}
                     records.append(customer_dict)
@@ -142,6 +148,7 @@ class SecondaryCustomer(http.Controller):
                     'product_id': product.id,
                     'quantity': product_data['quantity'],
                     'sale_price_unit': product_data['price'],
+                    # 'price_total': product_data['total_price'],
                     'stock_id': distributor_stock.id,
                 }
                 order_lines.append((0, 0, order_line_dict))
@@ -159,6 +166,64 @@ class SecondaryCustomer(http.Controller):
             order_details = {
                 'id': order_id.id,
                 'name': order_id.name
+            }
+            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_01',
+            #                                      trace_ref='expected_primary_sale_order_create', with_location=False)
+            msg = json.dumps(order_details,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_05',
+            #                                      trace_ref=str(e), with_location=False)
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales_secondary/order/update', auth='none', type='http', csrf=False, methods=['POST'])
+    def update_order(self, **kwargs):
+        try:
+            data = request.httprequest.data
+            data_in_json = json.loads(data)
+
+            order_id = request.env['sale.secondary'].sudo().search([('id', '=', data_in_json['order_id'])])
+            distributor_stock = request.env['primary.customer.stocks'].sudo().search(
+                [('customer_id', '=', order_id.primary_customer_id.id)])
+
+            if order_id and order_id.responsible_id.id == request.em_id:
+                order_lines = []
+                for product_data in data_in_json['products']:
+                    product = request.env['product.product'].sudo().search([('id', '=', product_data['id'])])
+                    order_line_dict = {
+                        'product_id': product.id,
+                        'quantity': product_data['quantity'],
+                        'sale_price_unit': product_data['price'],
+                        # 'price_total': product_data['total_price'],
+                        'secondary_sale_id': order_id.id,
+                        'stock_id': distributor_stock.id,
+                    }
+                    order_lines.append(order_line_dict)
+
+                if order_id.state == 'draft':
+                    order_id.sale_line_ids.unlink()
+                    created_lines = request.env['sale.secondary.line'].with_user(1).create(order_lines)
+
+                    if created_lines:
+                        bol = True
+                        value = 'Sale order updated successfully'
+                    else:
+                        bol = False
+                        value = 'Failed to update the sale order'
+                else:
+                    bol = False
+                    value = 'The sale order is not in draft state'
+            else:
+                bol = False
+                value = 'You are not allowed to update this sale order.'
+
+            order_details = {
+                'result': bol, 'data': value
             }
             # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_01',
             #                                      trace_ref='expected_primary_sale_order_create', with_location=False)
@@ -274,9 +339,13 @@ class SecondaryCustomer(http.Controller):
     def get_secondary_sale_order_info(self, **kwargs):
         try:
             order_id = request.env['sale.secondary'].sudo().search([('id', '=', kwargs['order_id'])])
+            stock_id = request.env['primary.customer.stocks'].sudo().search(
+                [('customer_id', '=', order_id.primary_customer_id.id)])
             if order_id:
                 lines = []
                 for sale_line in order_id.sale_line_ids:
+                    stock_line = request.env['product.line.secondary'].sudo().search(
+                        [('primary_customer_stock_id', '=', stock_id.id), ('product_id', '=', sale_line.product_id.id)])
                     order_line_dict = {
                         'id': sale_line.id,
                         'product_id': sale_line.product_id.id,
@@ -284,6 +353,7 @@ class SecondaryCustomer(http.Controller):
                         'product_code': sale_line.product_id.default_code,
                         'quantity': sale_line.quantity,
                         'price_unit': sale_line.sale_price_unit,
+                        'current_stock': stock_line.current_stock,
                         'sub_total': sale_line.sub_total
                     }
                     lines.append(order_line_dict)
@@ -297,9 +367,11 @@ class SecondaryCustomer(http.Controller):
                     'distributor_address': order_id.distributor_address,
                     'responsible': order_id.responsible_id.name,
                     'customer': order_id.secondary_customer_id.name,
+                    'commission': stock_id.channel_commission,
                     'customer_code': order_id.secondary_customer_id.outlet_code,
                     'customer_mobile': order_id.secondary_customer_mobile,
                     'customer_address': order_id.secondary_customer_address,
+                    'customer_zone': order_id.secondary_customer_id.zone_id.name,
                     'status': order_id.state,
                     'order_date': localized_date_time,
                     'items': lines,

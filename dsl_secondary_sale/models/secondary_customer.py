@@ -15,12 +15,13 @@ class CustomerSecondary(models.Model):
     name = fields.Char(string='Customer Name')
     outlet_code = fields.Char(string='Outlet Code', index=True, copy=False, default="New", readonly=True)
     address = fields.Char(string='Customer Address')
-    phone = fields.Char(string='Customer Phone [Optional]')
+    phone = fields.Char(string='Secondary Contact [Optional]')
     mobile = fields.Char(string='Customer Mobile', required=True)
     email = fields.Char(string='Customer Email')
     enabled = fields.Boolean("Enabled", default=True)
 
     partner_id = fields.Many2one('res.partner', string='Distributor', required=True)
+    zone_id = fields.Many2one('res.zone', string='Zone', related='partner_id.zone_id')
     responsible_id = fields.Many2one('hr.employee', string='Responsible', required=True,
                                      related='partner_id.responsible')
     partner_code = fields.Char('Partner Code', related='partner_id.code')

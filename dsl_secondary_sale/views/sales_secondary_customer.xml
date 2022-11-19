@@ -38,6 +38,7 @@
                             <field name="email"/>
                             <field name="mobile"/>
                             <field name="phone"/>
+                            <field name="zone_id"/>
                             <field name="create_date" attrs="{'invisible': [('create_date', '=', False)]}"/>
                         </group>
                     </group>

@@ -22,6 +22,7 @@ class PrimaryCustomerStocks(models.Model):
     customer_country = fields.Many2one('res.country', string='', related='customer_id.country_id')
     customer_stocks = fields.One2many(comodel_name='product.line.secondary', inverse_name='primary_customer_stock_id',
                                       string='Stock Products')
+    channel_commission = fields.Float(string='Channel Commission (%)', default=0.0)
     write_date = fields.Datetime('Last Updated on', index=True, readonly=True)
 
     enable_secondary_sale = fields.Boolean("Secondary Sale Enabled", default=True)

@@ -23,8 +23,8 @@
                             attrs="{'invisible': [('write_date', '=', False)]}">
 
                     </button>
-                    <button name="action_clear_stock" string="Clear Stock" type="object"
-                            attrs="{'invisible': [('write_date', '=', False)]}"/>
+<!--                    <button name="action_clear_stock" string="Clear Stock" type="object"-->
+<!--                            attrs="{'invisible': [('write_date', '=', False)]}"/>-->
                 </header>
                 <sheet>
 
@@ -52,6 +52,7 @@
                         </group>
                         <group>
                             <field name="enable_secondary_sale"/>
+                            <field name="channel_commission"/>
                             <field name="write_date" attrs="{'invisible': [('write_date', '=', False)]}"/>
                             <!--                            <field name="phone"/>-->
                             <!--                            <field name="create_date" attrs="{'invisible': [('create_date', '=', False)]}"/>-->
@@ -63,7 +64,7 @@
                             <page name="stock_products_page"
                                   string="Stock Products">
                                 <field name="customer_stocks"><!--  attrs="{'readonly': True}"> />-->
-                                    <tree editable="bottom">
+                                    <tree editable="bottom" limit = "2000">
                                         <field name="product_id" string="Products" attrs="{'readonly': True}"/>
                                         <field name="current_stock" />
                                         <field name="sale_price" />

@@ -27,12 +27,15 @@ class SaleSecondary(models.Model):
                                     string='Products')
     latitude = fields.Char('Lat', copy=False)
     longitude = fields.Char('Long', copy=False)
+    channel_commission = fields.Float(string='Channel Commission', compute='_compute_channel_commission', store=True)
+
+    create_location_url = fields.Char(string='Create Location Url', compute='_compute_create_location_url_for_map')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('confirmed', 'Confirmed')
         # ('cancelled', 'Cancelled'),
     ], default='draft')
-    price_total = fields.Float(string='Subtotal', compute='_compute_price_total', store=True)
+    price_total = fields.Float(string='Total', compute='_compute_price_total', store=True)
     company_id = fields.Many2one('res.company')
 
     @api.depends('sale_line_ids')
@@ -43,6 +46,32 @@ class SaleSecondary(models.Model):
                 t_price += sale_line.sub_total
             rec.price_total = t_price
 
+    @api.depends('primary_customer_id')
+    def _compute_channel_commission(self):
+        for rec in self:
+            distributor_stock = rec.env['primary.customer.stocks'].search(
+                [('customer_id', '=', rec.primary_customer_id.id)])
+            if distributor_stock:
+                rec.channel_commission = distributor_stock.channel_commission
+            else:
+                rec.channel_commission = 0.0
+
+    @api.depends('latitude', 'longitude')
+    def _compute_create_location_url_for_map(self):
+        for record in self:
+            link_builder = f'https://www.google.com/maps/place/{record.latitude}+{record.longitude}/@{record.latitude},{record.longitude},17z'
+            if record.latitude and record.longitude:
+                record.create_location_url = link_builder
+            else:
+                record.create_location_url = ''
+
+    def open_so_create_location(self):
+        if self.id:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.create_location_url,
+                'target': 'new',
+            }
     # btn_css = fields.Html(string='CSS', sanitize=False, compute='_compute_css', store=False)
     #
     # @api.depends('state')
