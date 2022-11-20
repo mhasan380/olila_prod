@@ -1,0 +1,37 @@
+<odoo>
+    <record id="internal_transfer_report_wizard_view" model="ir.ui.view">
+        <field name="name">internal.transfer.wizard.form</field>
+        <field name="model">internal.transfer.wizard</field>
+        <field name="arch" type="xml">
+          <form string="Internal Transfer Summary">
+              <group>
+                  <group>
+                      <field name="from_date" required="1">From Date</field>
+                      <field name="to_date" required="1">To Date</field>
+                  </group>
+                  <group>
+                      <field name="department_id">Department</field>
+                      <field name="product_id">Product</field>
+                      <field name="warehouse_id" required="1">Warehouse</field>
+                  </group>
+
+              </group>
+
+              <footer>
+                  <button name="get_report" type="object" string="Print" class="btn-primary"/>
+                  <button string="Cancel" special="cancel"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+
+    <record id="action_internal_transfer_report" model="ir.actions.act_window">
+        <field name="name">Daily Internal Transfer Summary Report (SR Wise)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">internal.transfer.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="internal_transfer_report_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem name="Internal Transfer Summary Report" id="menu_daily_internal_transfer_report" parent="stock.menu_warehouse_report" action="action_internal_transfer_report" sequence="6"/>
+</odoo>
