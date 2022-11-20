@@ -25,6 +25,8 @@ class ProductTemplate(models.Model):
     total_weight = fields.Float(compute="_compute_total_weight", string='Total Weight', search='_search_total_weight')
     net_value = fields.Float(compute="_compute_net_value", string='Net value', search='_search_net_value')
     safety_qty = fields.Float('Safety Stock')
+    inner_qty = fields.Float('Inner Qty')
+    pcs_qty = fields.Float('PCS Qty')
 
     @api.depends('lst_price', 'net_stock','qty_available','outgoing_qty')
     def _compute_net_value(self):
