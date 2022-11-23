@@ -20,7 +20,7 @@ class RouteMaster(models.Model):
     ],  string='Route Type')
     primary_customer_ids = fields.One2many('primary.customer.line', 'route', string='Customers')
     corporate_customer_ids = fields.One2many('corporate.customer.line', 'route', string='Customers')
-    # secondary_customer_ids = fields.One2many('secondary.customer.line', 'route', string='Customers')
+    #secondary_customer_ids = fields.One2many('secondary.customer.line', 'route', string='Customers')
     coverage = fields.Char(string="Coverage Area")
 
     @api.model
@@ -58,7 +58,7 @@ class CorporateCustomerLine(models.Model):
     customer_code = fields.Char('Customer Code')
 
 
-# class SecondaryCustomerLine(models.Model):
+# class SecondCustomerLine(models.Model):
 #     _name = 'secondary.customer.line'
 #
 #     @api.onchange('customer_id')

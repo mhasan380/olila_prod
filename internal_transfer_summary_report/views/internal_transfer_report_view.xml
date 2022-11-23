@@ -1,7 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+		<record model="report.paperformat" id="paperformat_inter_transfer_report">
+            <field name="name">paperformat.inter.transfer.report</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">3</field>
+            <field name="dpi">90</field>
+        </record>
+
         <report id="internal_transfer_report" menu="False" model="internal.transfer.wizard"
                 name="internal_transfer_summary_report.int_trans_template" report_type="qweb-pdf"
+				paperformat="paperformat_inter_transfer_report"
                 string="Internal Transfer Summary Report"/>
         <template id="int_trans_template">
             <t t-call="web.html_container">
@@ -31,7 +50,7 @@
 								<span t-esc="to_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
 							</p>
 						</div>
-						<table class="table table-condensed">
+						<table style="padding-left: 5px;">
 							<thead>
 								<tr>
 									<th class="text-left" style="width: 2%">SL</th>
@@ -121,9 +140,10 @@
 								</tr>
 							</tbody>
 							<style>
-                                td {border: 1px solid #000; }
-                                th { color: white;
-                                background-color: black;
+                                td {border: 2px solid #000; text-align: center; padding-left: 5px; }
+								tr {border: 2px solid #000; padding-left: 5px;}
+                                th { color: black; border: 2px solid #000; padding-left: 5px;
+                                background-color: white;
                                 text-align: center;
                                 }
                             </style>

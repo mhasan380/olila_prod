@@ -1,0 +1,113 @@
+<odoo>
+    <data>
+        <report id="payment_collection_report" menu="False" model="payment.collection.wizard"
+                name="internal_transfer_summary_report.payment_template" report_type="qweb-pdf"
+                string="Payment Collection Report"/>
+
+        <template id="payment_template">
+            <t t-call="web.html_container">
+				<t t-call="web.internal_layout">
+					<div class="page" style="padding-top:5px;">
+						<div class="text-center">
+							<h4>Payment Collection Report</h4>
+						</div>
+						<div>
+							<t t-if="so_type">
+								<p>Sale Type:
+									<span t-esc="so_type"/>
+								</p>
+							</t>
+							<t t-if="bank_name">
+								<p>Bank Name:
+									<span t-esc="bank_name"/>
+								</p>
+							</t>
+							<t t-if="responsible">
+								<p>Product:
+									<span t-esc="responsible"/>
+								</p>
+							</t>
+							<t t-if="status">
+								<p>Status:
+									<span t-esc="status"/>
+								</p>
+							</t>
+							<p>From Date:
+								<span t-esc="from_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+							</p>
+							<p>To Date:
+								<span t-esc="to_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+							</p>
+						</div>
+
+						<table class="table table-bordered mt32">
+							<thead>
+								<tr>
+									<th class="text-left">SL</th>
+									<th class="text-left">Date</th>
+									<th class="text-left">Journal</th>
+									<th class="text-left">Customer</th>
+									<th class="text-left">Responsible</th>
+									<th class="text-left">Amount</th>
+									<th class="text-left">Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<t t-set="i" t-value="1"/>
+								<t t-set="total_amount" t-value="0"/>
+								<t t-foreach="payment_list" t-as="payment">
+									<tr>
+										<td>
+											<t t-esc="i"/>
+										</td>
+										<td>
+											<t t-esc="payment['date']"/>
+										</td>
+										<td>
+											<t t-esc="payment['bank_name']"/>
+										</td>
+										<td>
+											<t t-esc="payment['customer']"/>
+										</td>
+										<td>
+											<t t-esc="payment['responsible']"/>
+										</td>
+										<td>
+											<t t-esc="payment['amount']"/>
+											<t t-set="total_amount" t-value="total_amount+payment['amount']"/>
+										</td>
+										<td>
+											<t t-esc="payment['status']"/>
+										</td>
+										<t t-set="i" t-value="i+1"/>
+									</tr>
+								</t>
+
+								<tr style="font-weight: bold; color: blue;">
+									<td>
+										<b>Total</b>
+									</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td>
+										<span t-esc="total_amount" t-options='{"widget": "float", "precision": 2}'/>
+									</td>
+									<td></td>
+								</tr>
+							</tbody>
+							<style>
+                                td {border: 1px solid #000; }
+                                th { color: white;
+                                background-color: black;
+                                text-align: center;
+                                }
+                            </style>
+						</table>
+					</div>
+				</t>
+			</t>
+        </template>
+    </data>
+</odoo>

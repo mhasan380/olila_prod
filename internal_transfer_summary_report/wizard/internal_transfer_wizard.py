@@ -58,7 +58,8 @@ class InternalTransferReport(models.AbstractModel):
             for transfer in documents:
                 for line in transfer.move_ids_without_package:
                     if line.product_uom_qty != 0:
-                        transfer_list.append([transfer.scheduled_date, transfer.name, transfer.location_id.name,
+                        transfer_list.append([transfer.scheduled_date, transfer.name,
+                                              transfer.location_id.location_id.name,
                                               transfer.location_dest_id.name, transfer.department_id.name,
                                               line.product_id.default_code, line.product_id.name, line.quantity_done,
                                               line.product_uom.name, transfer.note, transfer.user_id.name,
@@ -72,7 +73,8 @@ class InternalTransferReport(models.AbstractModel):
             for transfer in documents:
                 for line in transfer.move_ids_without_package:
                     if line.product_id.name == product_id:
-                        transfer_list.append([transfer.scheduled_date, transfer.name, transfer.location_id.name,
+                        transfer_list.append([transfer.scheduled_date, transfer.name,
+                                              transfer.location_id.location_id.name,
                                               transfer.location_dest_id.name, transfer.department_id.name,
                                               line.product_id.default_code, line.product_id.name, line.quantity_done,
                                               line.product_uom.name, transfer.note, transfer.user_id.name,
@@ -86,7 +88,8 @@ class InternalTransferReport(models.AbstractModel):
             for transfer in documents:
                 for line in transfer.move_ids_without_package:
                     if line.product_id.name == product_id:
-                        transfer_list.append([transfer.scheduled_date, transfer.name, transfer.location_id.name,
+                        transfer_list.append([transfer.scheduled_date, transfer.name,
+                                              transfer.location_id.location_id.name,
                                               transfer.location_dest_id.name, transfer.department_id.name,
                                               line.product_id.default_code, line.product_id.name,
                                               line.quantity_done,
@@ -96,8 +99,9 @@ class InternalTransferReport(models.AbstractModel):
             for transfer in documents:
                 for line in transfer.move_ids_without_package:
                     if line.product_uom_qty != 0:
-                        transfer_list.append([transfer.scheduled_date, transfer.name, transfer.location_id.name,
-                                              transfer.location_dest_id.name, transfer.department_id.name,
+                        transfer_list.append([transfer.scheduled_date, transfer.name,
+                                              transfer.location_id.display_name,
+                                              transfer.location_dest_id.display_name, transfer.department_id.name,
                                               line.product_id.default_code, line.product_id.name, line.quantity_done,
                                               line.product_uom.name, transfer.note, transfer.user_id.name,
                                               transfer.state])

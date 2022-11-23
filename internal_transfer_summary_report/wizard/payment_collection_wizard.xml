@@ -1,0 +1,37 @@
+<odoo>
+    <record id="payment_collection_report_wizard_view" model="ir.ui.view">
+        <field name="name">payment.collection.wizard.form</field>
+        <field name="model">payment.collection.wizard</field>
+        <field name="arch" type="xml">
+          <form string="Payment Collection">
+              <group>
+                  <group>
+                      <field name="from_date" required="1">From Date</field>
+                      <field name="to_date" required="1">To Date</field>
+                  </group>
+                  <group>
+                      <field name="so_type">Sale Type</field>
+                      <field name="bank_name">Bank</field>
+                      <field name="responsible">Responsible</field>
+                      <field name="status">Status</field>
+                  </group>
+              </group>
+
+              <footer>
+                  <button name="get_report" type="object" string="Print" class="btn-primary"/>
+                  <button string="Cancel" special="cancel"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+
+    <record id="action_payment_collection_report" model="ir.actions.act_window">
+        <field name="name">Payment Collection Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">payment.collection.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="payment_collection_report_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem name="Payment Collection Report" id="menu_payment_collection_report" parent="customer_details_report.menu_customer_details_report" action="action_payment_collection_report" sequence="4"/>
+</odoo>

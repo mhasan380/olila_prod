@@ -33,5 +33,5 @@
         <field name="view_id" ref="internal_transfer_report_wizard_view"/>
         <field name="target">new</field>
     </record>
-    <menuitem name="Internal Transfer Summary Report" id="menu_daily_internal_transfer_report" parent="stock.menu_warehouse_report" action="action_internal_transfer_report" sequence="6"/>
+    <menuitem name="Internal Transfer Summary Report" id="menu_daily_internal_transfer_report" parent="olila_inventory_reports.menu_olila_inventory_reports" action="action_internal_transfer_report" sequence="8"/>
 </odoo>
