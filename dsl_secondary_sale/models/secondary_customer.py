@@ -21,10 +21,11 @@ class CustomerSecondary(models.Model):
     enabled = fields.Boolean("Enabled", default=True)
 
     partner_id = fields.Many2one('res.partner', string='Distributor', required=True)
+    # partner_code = fields.Char(string='Distributor Code', related='partner_id.code')
     zone_id = fields.Many2one('res.zone', string='Zone', related='partner_id.zone_id')
     responsible_id = fields.Many2one('hr.employee', string='Responsible', required=True,
                                      related='partner_id.responsible')
-    partner_code = fields.Char('Partner Code', related='partner_id.code')
+    partner_code = fields.Char('Partner Code', related='partner_id.code', store =True)
     company_id = fields.Many2one('res.company')
 
     # stock_products = fields.One2many(comodel_name="products.customer.secondary", inverse_name="customer_id")
@@ -32,7 +33,13 @@ class CustomerSecondary(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for val in vals_list:
-            val['outlet_code'] = self.env['ir.sequence'].next_by_code('customer.secondary') or '/'
+            distributor = self.env['res.partner'].sudo().search([('id', '=', val['partner_id'])])
+            raw_code = distributor.code or ''
+            if raw_code and '/' in raw_code:
+                x = raw_code.split('/')[1:]
+                raw_code = x[0]
+            print(raw_code)
+            val['outlet_code'] = f"DT/{raw_code}/{self.env['ir.sequence'].next_by_code('customer.secondary') or '/'}"
         return super(CustomerSecondary, self).create(vals_list)
 
     def name_get(self):

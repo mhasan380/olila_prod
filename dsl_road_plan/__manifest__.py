@@ -29,6 +29,7 @@
         'views/territory_view.xml',
         'views/area_view.xml',
         'views/route_master_view.xml',
+        'views/zone_view.xml',
         'security/rod_plan_security.xml',
         'views/sales_person.xml',
     ],

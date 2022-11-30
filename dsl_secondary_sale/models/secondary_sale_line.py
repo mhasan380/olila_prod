@@ -34,6 +34,10 @@ class SaleLineSecondary(models.Model):
     sale_price_unit = fields.Float('Sale Price')
     sub_total = fields.Float(string='Subtotal', compute='_compute_subtotal', store=True)
     company_id = fields.Many2one('res.company')
+    sale_type = fields.Selection([
+        ('master', 'Master'),
+        ('inner', 'Inner')
+    ])
 
     @api.depends('quantity')
     def _compute_subtotal(self):

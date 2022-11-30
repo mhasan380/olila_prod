@@ -21,7 +21,7 @@
             <form string="Route Territory">
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name"/></h1>
+                        <h1><field name="name" required="1"/></h1>
                     </div>
                     <group>
                         <group>
@@ -29,7 +29,8 @@
                             <field name="responsible"/>
                         </group>
                          <group>
-                            <field name="remarks"/>
+                             <field name="remarks"/>
+                            <field name="zone_id"/>
                         </group>
 
                     </group>
@@ -48,7 +49,7 @@
 
     <!-- Action -->
     <record model="ir.actions.act_window" id="action_route_territory">
-        <field name="name">Area</field>
+        <field name="name">Territory</field>
         <field name="res_model">route.territory</field>
         <field name="view_mode">tree,form</field>
     </record>

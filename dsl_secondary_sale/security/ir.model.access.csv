@@ -6,3 +6,4 @@ access_product_line_secondary,assess.product.line.secondary,model_product_line_s
 access_sale_secondary_line,assess.sale.secondary.line,model_sale_secondary_line,base.group_user,1,1,1,1
 access_stock_move_secondary,assess.stock.move.secondary,model_stock_move_secondary,base.group_user,1,1,1,1
 access_stock_move_secondary_multi,assess.stock.move.secondary.multi,model_stock_move_secondary_multi,base.group_user,1,1,1,1
+access_secondary_customer_line,secondary.customer.line,model_secondary_customer_line,base.group_user,1,1,1,1

@@ -12,7 +12,10 @@
                 <field name="primary_customer_id"/>
                 <field name="responsible_id"/>
                 <field name="secondary_customer_id"/>
-                <field name="price_total" widget="monetary" sum="Sum of Total Price"/>
+<!--                <field name="state" decoration-success="state == 'confirmed'" decoration-info="invoice_status == 'to invoice'" decoration-warning="invoice_status == 'upselling'" widget="badge" optional="show"/>-->
+                 <field name="price_total" widget="monetary" sum="Sum of Total Price"/>
+                <field name="state" decoration-success="state == 'confirmed'" decoration-warning="state == 'draft'" widget="badge" optional="show"/>
+
                 <!--                <field name="create_date"/>-->
             </tree>
         </field>
@@ -86,6 +89,7 @@
                                         <field name="product_id_domain" invisible="1"/>
                                         <field name="product_id" domain="product_id_domain"
                                                options="{'no_create': True, 'no_create_edit' : True}"/>
+<!--                                        <field name="sale_type" string="Sale Type"/>-->
                                         <field name="quantity" string="Quantity"/>
                                         <field name="sale_price_unit" string="Unit Price"/>
                                         <field name="sub_total"/>

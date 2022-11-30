@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="route_master_form_inherit" model="ir.ui.view">
+            <field name="name">route.master.form.view.inherit</field>
+            <field name="model">route.master</field>
+            <field name="inherit_id" ref="dsl_road_plan.route_master_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page[1]" position="after">
+                         <page string="Secondary Customers" attrs=" {'invisible': [('route_type', '!=', 'secondary')]}">
+                             <field name="secondary_customer_ids">
+                                <tree editable="bottom">
+                                    <field name="customer_id"/>
+                                    <field name="customer_code"/>
+                                </tree>
+                        </field>
+                        </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

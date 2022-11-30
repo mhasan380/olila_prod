@@ -25,7 +25,7 @@ class Planning(models.Model):
         ('cancel', 'Cancel')
     ], copy=False, default="planned")
     check_box = fields.Boolean(string='Is Rode List', default=True)
-    info_checklist = fields.One2many(comodel_name="rode.list", inverse_name="name", required=True,
+    info_checklist = fields.One2many("rode.list",'route_id', required=True,
                                      track_visibility='onchange')
     progress_rate = fields.Integer(string='Road list Progress', compute="check_rate")
     total = fields.Integer(string="Max")

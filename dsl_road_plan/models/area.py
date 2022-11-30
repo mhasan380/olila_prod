@@ -7,14 +7,12 @@ class RouteArea(models.Model):
 
     name = fields.Char(string="Name")
     area_id = fields.Char(string='Area ID',copy= False, readonly= True)
-    responsible = fields.Many2one('hr.employee', string="Responsible")
+    responsible = fields.Many2one('hr.employee', string="Responsible", domain="[('type','=','so')]")
     remarks = fields.Char(string="Remarks")
     customer_line_ids = fields.One2many('area.customer.line', 'area', string='Customers')
-    total_customer = fields.Integer(compute='_compute_total_customer')
+    zone_id = fields.Many2one('res.zone', string="Zone")
+    territory_id = fields.Many2one('route.territory', string="Territory")
 
-    def _compute_total_customer(self):
-        for record in self:
-            record.total_customer = len(self.customer_line_ids)
 
     @api.model
     def create(self, values):
@@ -26,17 +24,15 @@ class RouteArea(models.Model):
 class AreaCustomerLine(models.Model):
     _name = 'area.customer.line'
 
-    @api.onchange('area')
-    def _onchange_area(self):
-        if self.area:
-            return {'domain': {'customer_id': [('responsible', '=', self.area.responsible)]}}
 
-    @api.onchange('customer_id')
-    def _onchange_customer_id(self):
-        if self.customer_id:
-            self.customer_code = self.customer_id.code
+    @api.onchange('route_id')
+    def _onchange_route_id(self):
+        if self.route_id:
+            self.route_code = self.route_id.route_id
+            self.coverage_area = self.route_id.coverage
 
     area = fields.Many2one('route.area', string='Area ID')
-    customer_id = fields.Many2one('res.partner', string='Customer name')
-    customer_code = fields.Char('Customer Code')
+    route_id = fields.Many2one('route.master', string='Route name')
+    route_code = fields.Char('Route ID')
+    coverage_area = fields.Char('Coverage Area')
 

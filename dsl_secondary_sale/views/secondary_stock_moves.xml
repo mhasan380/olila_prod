@@ -11,6 +11,7 @@
                 <field name="quantity"/>
                 <field name="type"/>
                 <field name="secondary_customer_id"/>
+                <field name="remarks"/>
             </tree>
         </field>
     </record>

@@ -20,6 +20,7 @@ class StockMoveSecondary(models.Model):
     secondary_customer_id = fields.Many2one('customer.secondary', string='Secondary Customer')
     multi_ref_id = fields.Many2one('stock.move.secondary.multi')
     is_adjustment = fields.Boolean("Adjustment", default=False)
+    remarks = fields.Char('Remarks', copy=False)
 
     product_id_domain = fields.Char(
         compute="_compute_product_id_domain",

@@ -7,7 +7,7 @@ class RouteMaster(models.Model):
 
     name = fields.Char(string="Route Name")
     route_id = fields.Char(string='Route ID', copy=False, readonly=True)
-    zone_id = fields.Many2one('res.zone', string="Zone")
+    zone_id = fields.Many2one('res.zone', string="Region")
     deputy_id = fields.Many2one('hr.employee', string="Deputy NSM")
     dsm_id = fields.Many2one('hr.employee', string="DSM")
     area_id = fields.Many2one('route.area', string="Area")
@@ -20,8 +20,17 @@ class RouteMaster(models.Model):
     ],  string='Route Type')
     primary_customer_ids = fields.One2many('primary.customer.line', 'route', string='Customers')
     corporate_customer_ids = fields.One2many('corporate.customer.line', 'route', string='Customers')
-    #secondary_customer_ids = fields.One2many('secondary.customer.line', 'route', string='Customers')
     coverage = fields.Char(string="Coverage Area")
+    total_customer = fields.Integer(compute='_compute_total_customer')
+
+    def _compute_total_customer(self):
+        for record in self:
+            if self.route_type == 'primary':
+                record.total_customer = len(self.primary_customer_ids)
+            elif self.route_type == 'corporate':
+                record.total_customer = len(self.corporate_customer_ids)
+            elif self.route_type == 'secondary':
+                record.total_customer = len(self.secondary_customer_ids)
 
     @api.model
     def create(self, values):
@@ -58,16 +67,6 @@ class CorporateCustomerLine(models.Model):
     customer_code = fields.Char('Customer Code')
 
 
-# class SecondCustomerLine(models.Model):
-#     _name = 'secondary.customer.line'
-#
-#     @api.onchange('customer_id')
-#     def _onchange_customer_id(self):
-#         if self.customer_id:
-#             self.customer_code = self.customer_id.outlet_code
-#
-#     route = fields.Many2one('route.master', string='Route ID')
-#     customer_id = fields.Many2one('customer.secondary', string='Customer name')
-#     customer_code = fields.Char('Customer Code')
+
 
 

@@ -6,3 +6,4 @@ from . import area
 from . import teritorry
 from . import days
 from . import routes
+from . import zone

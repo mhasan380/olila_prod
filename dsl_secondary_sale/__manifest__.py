@@ -26,6 +26,7 @@
              'views/sales_secondary.xml',
              'views/secondary_sale_order.xml',
              'views/primary_customer_stocks.xml',
+             'views/routes.xml',
              'views/sales_secondary_customer.xml',
              'views/secondary_stock_moves.xml'
              ],

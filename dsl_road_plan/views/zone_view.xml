@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="zone_master_form_inherit" model="ir.ui.view">
+            <field name="name">res.zone.form.view.inherit</field>
+            <field name="model">res.zone</field>
+            <field name="inherit_id" ref="olila_sale.zone_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/div" position="after">
+                         <group colspan="4">
+                             <field name="responsible"/>
+                             <field name="remarks"/>
+                         </group>
+                         <group>
+                             <field name="territory_ids"/>
+                         </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

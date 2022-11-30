@@ -17,13 +17,15 @@ class CheckList(models.Model):
     _name = 'rode.list'
     name = fields.Char('Name')
     name_work = fields.Text('Task')
+    route_id = fields.Many2one('sales.person.plan', string="Route ID")
     track_status = fields.Char('Track Stage Change', store=True, compute='_onchange_status')
     remarks = fields.Text('Remarks')
-    customer = fields.Many2one('res.partner', string='Customer', required=True)
+    customer = fields.Many2one('res.partner', string='Customer')
     street = fields.Char(related='customer.street', string='Street')
     status = fields.Selection(string="Status", selection=[('todo', 'To Do'), ('done', 'Done'),
                                                           ('progress', 'In Progress'), ('incomplete', 'Incomplete'),
-                                                          ('cancel', 'Cancel')], readonly=True)
+                                                          ('cancel', 'Cancel')], readonly=True,default='todo')
+    # secondary_customer = fields.Many2one('customer.secondary', string="Secondary Customer")
     incomplete_reason = fields.Selection(string="Incomplete Reason", selection=[('reason1', 'Shop owner was not there'),
                                                                                 ('reason2', 'Shop was closed'),
                                                                                 ('reason3', 'Not enough money'),
@@ -117,11 +119,4 @@ class CheckList(models.Model):
                 'target': 'new',
             }
 
-    @api.model
-    def create(self, vals):
 
-        vals['status'] = 'todo'
-        print(f'----------------{vals}')
-        rec = super(CheckList, self).create(vals)
-
-        return rec

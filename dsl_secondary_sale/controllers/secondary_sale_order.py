@@ -48,6 +48,8 @@ class SecondaryCustomer(http.Controller):
                         stocks_dict = {
                             'product_id': stock_line.product_id.id,
                             'product_name': stock_line.product_id.name,
+                            'product_type': stock_line.product_id.fs_type,
+                            'inner_qty': stock_line.product_id.inner_qty,
                             'current_stock': stock_line.current_stock,
                             'sale_price': stock_line.sale_price,
                             'reference': raw_code,
@@ -62,7 +64,10 @@ class SecondaryCustomer(http.Controller):
                         reference_code = s_customer.outlet_code
                         if reference_code and '/' in reference_code:
                             x = reference_code.split('/')[1:]
-                            reference_code = x[0]
+                            if len(x) > 1:
+                                reference_code = x[1]
+                            else:
+                                reference_code = x[0]
                         sc_dict = {
                             'id': s_customer.id,
                             'name': s_customer.name,
@@ -148,6 +153,7 @@ class SecondaryCustomer(http.Controller):
                     'product_id': product.id,
                     'quantity': product_data['quantity'],
                     'sale_price_unit': product_data['price'],
+                    'sale_type': product_data['type'],
                     # 'price_total': product_data['total_price'],
                     'stock_id': distributor_stock.id,
                 }
@@ -199,6 +205,7 @@ class SecondaryCustomer(http.Controller):
                         'product_id': product.id,
                         'quantity': product_data['quantity'],
                         'sale_price_unit': product_data['price'],
+                        'sale_type': product_data['type'],
                         # 'price_total': product_data['total_price'],
                         'secondary_sale_id': order_id.id,
                         'stock_id': distributor_stock.id,
@@ -351,6 +358,9 @@ class SecondaryCustomer(http.Controller):
                         'product_id': sale_line.product_id.id,
                         'product_name': sale_line.product_id.name,
                         'product_code': sale_line.product_id.default_code,
+                        'product_type': sale_line.product_id.fs_type,
+                        'sale_type': sale_line.sale_type,
+                        'inner_qty': sale_line.product_id.inner_qty,
                         'quantity': sale_line.quantity,
                         'price_unit': sale_line.sale_price_unit,
                         'current_stock': stock_line.current_stock,

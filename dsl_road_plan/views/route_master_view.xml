@@ -36,6 +36,7 @@
                              <field name="route_type" required="1"/>
                             <field name="remarks"/>
                              <field name="coverage"/>
+                             <field name="total_customer"/>
                         </group>
 
                     </group>

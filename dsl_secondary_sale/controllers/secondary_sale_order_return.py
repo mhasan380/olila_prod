@@ -53,6 +53,7 @@ class SecondaryCustomer(http.Controller):
                             'secondary_stock_id': stock_id.id,
                             'product_id': product_id.id,
                             'quantity': product['quantity'],
+                            'remarks': product['remarks'],
                             'type': 'in',
                             'secondary_customer_id': ss_order.secondary_customer_id.id
                         }
@@ -121,57 +122,57 @@ class SecondaryCustomer(http.Controller):
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
 
-    @tools.security.protected_rafiul()
-    @http.route('/web/sales_secondary/order/info', auth='none', type='http', csrf=False, methods=['POST'])
-    def get_secondary_sale_order_info(self, **kwargs):
-        try:
-            order_id = request.env['sale.secondary'].sudo().search([('id', '=', kwargs['order_id'])])
-            if order_id:
-                lines = []
-                for sale_line in order_id.sale_line_ids:
-                    order_line_dict = {
-                        'id': sale_line.id,
-                        'product_id': sale_line.product_id.id,
-                        'product_name': sale_line.product_id.name,
-                        'product_code': sale_line.product_id.default_code,
-                        'quantity': sale_line.quantity,
-                        'price_unit': sale_line.sale_price_unit,
-                        'sub_total': sale_line.sub_total
-                    }
-                    lines.append(order_line_dict)
-                localized_date_time = order_id.create_date.astimezone(pytz.timezone("Asia/Dhaka")).strftime(
-                    "%Y-%m-%d %I:%M %p")
-                order_dict = {
-                    'distributor_id': order_id.primary_customer_id.id,
-                    'distributor_name': order_id.primary_customer_id.name,
-                    'distributor_code': order_id.primary_customer_id.code,
-                    'distributor_mobile': order_id.distributor_mobile,
-                    'distributor_address': order_id.distributor_address,
-                    'responsible': order_id.responsible_id.name,
-                    'customer': order_id.secondary_customer_id.name,
-                    'customer_code': order_id.secondary_customer_id.outlet_code,
-                    'customer_mobile': order_id.secondary_customer_mobile,
-                    'customer_address': order_id.secondary_customer_address,
-                    'status': order_id.state,
-                    'order_date': localized_date_time,
-                    'items': lines,
-                }
-            else:
-                order_dict = {
-                    'error': 'Secondary sale order not found'
-                }
-            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_01',
-            #                                      trace_ref='expected_primary_sale_order_create', with_location=False)
-            msg = json.dumps(order_dict,
-                             sort_keys=True, indent=4, cls=ResponseEncoder)
-            return Response(msg, content_type='application/json;charset=utf-8', status=200)
-
-        except Exception as e:
-            err = {'error': str(e)}
-            # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_05',
-            #                                      trace_ref=str(e), with_location=False)
-            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
-            return Response(error, content_type='application/json;charset=utf-8', status=200)
+    # @tools.security.protected_rafiul()
+    # @http.route('/web/sales_secondary/order/info', auth='none', type='http', csrf=False, methods=['POST'])
+    # def get_secondary_sale_order_info(self, **kwargs):
+    #     try:
+    #         order_id = request.env['sale.secondary'].sudo().search([('id', '=', kwargs['order_id'])])
+    #         if order_id:
+    #             lines = []
+    #             for sale_line in order_id.sale_line_ids:
+    #                 order_line_dict = {
+    #                     'id': sale_line.id,
+    #                     'product_id': sale_line.product_id.id,
+    #                     'product_name': sale_line.product_id.name,
+    #                     'product_code': sale_line.product_id.default_code,
+    #                     'quantity': sale_line.quantity,
+    #                     'price_unit': sale_line.sale_price_unit,
+    #                     'sub_total': sale_line.sub_total
+    #                 }
+    #                 lines.append(order_line_dict)
+    #             localized_date_time = order_id.create_date.astimezone(pytz.timezone("Asia/Dhaka")).strftime(
+    #                 "%Y-%m-%d %I:%M %p")
+    #             order_dict = {
+    #                 'distributor_id': order_id.primary_customer_id.id,
+    #                 'distributor_name': order_id.primary_customer_id.name,
+    #                 'distributor_code': order_id.primary_customer_id.code,
+    #                 'distributor_mobile': order_id.distributor_mobile,
+    #                 'distributor_address': order_id.distributor_address,
+    #                 'responsible': order_id.responsible_id.name,
+    #                 'customer': order_id.secondary_customer_id.name,
+    #                 'customer_code': order_id.secondary_customer_id.outlet_code,
+    #                 'customer_mobile': order_id.secondary_customer_mobile,
+    #                 'customer_address': order_id.secondary_customer_address,
+    #                 'status': order_id.state,
+    #                 'order_date': localized_date_time,
+    #                 'items': lines,
+    #             }
+    #         else:
+    #             order_dict = {
+    #                 'error': 'Secondary sale order not found'
+    #             }
+    #         # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_01',
+    #         #                                      trace_ref='expected_primary_sale_order_create', with_location=False)
+    #         msg = json.dumps(order_dict,
+    #                          sort_keys=True, indent=4, cls=ResponseEncoder)
+    #         return Response(msg, content_type='application/json;charset=utf-8', status=200)
+    #
+    #     except Exception as e:
+    #         err = {'error': str(e)}
+    #         # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_05',
+    #         #                                      trace_ref=str(e), with_location=False)
+    #         error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+    #         return Response(error, content_type='application/json;charset=utf-8', status=200)
 
     def get_subordinates(self, employee):
         subordinate_list = []

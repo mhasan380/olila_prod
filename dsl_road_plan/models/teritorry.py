@@ -7,7 +7,8 @@ class RouteTerritory(models.Model):
 
     name = fields.Char(string="Name")
     territory_id = fields.Char(string='Territory ID',copy= False, readonly= True)
-    responsible = fields.Many2one('hr.employee', string="Responsible")
+    zone_id = fields.Many2one('res.zone', string="Region")
+    responsible = fields.Many2one('hr.employee', string="Responsible", domain="[('type','=','tso')]")
     remarks = fields.Char(string="Remarks")
     area_ids = fields.Many2many('route.area', string="Areas")
 
