@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['olila_reports'],
+    'depends': ['olila_reports','report_xlsx'],
 
     # always loaded
     'data': [
@@ -30,8 +30,11 @@
         'views/sales_summary_report_view.xml',
         'views/undelivery_value_report.xml',
         'views/undelivery_report.xml',
+        'views/sale_value_performance_report.xml',
+        'views/reports.xml',
         'wizard/sales_summary_wizard.xml',
         'wizard/undelivery_stock_report_wizard_view.xml',
+        'wizard/sale_value_perform_report_wizard.xml',
 
     ],
     # only loaded in demonstration mode

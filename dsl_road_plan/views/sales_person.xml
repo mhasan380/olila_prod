@@ -131,7 +131,11 @@
         </field>
     </record>
 
+    <menuitem id="main_menu_sales_plan_view" name="Road Plan"
+              sequence="0"/>
+
     <menuitem id="menu_sales_plan_view" name="Road Plan"
+              parent="main_menu_sales_plan_view"
               action="action_sales_plan_menu"
               sequence="0"/>
 

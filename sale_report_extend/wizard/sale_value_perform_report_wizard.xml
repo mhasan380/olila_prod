@@ -1,0 +1,40 @@
+<odoo>
+    <record id="sales_value_performance_wizard_view" model="ir.ui.view">
+        <field name="name">sales.value.performance.form</field>
+        <field name="model">sales.value.performance</field>
+        <field name="arch" type="xml">
+            <form string="Sales Personnel Wise Value Performance Report">
+                <group>
+                    <group>
+                        <field name="from_date" required="1">From date</field>
+                        <field name="to_date" required="1">To date</field>
+                    </group>
+                    <group>
+                        <field name="designation"> </field>
+                        <field name="department_id" widget='selection'> </field>
+                        <field name="employee_ids" options="{'no_create_edit': True}" widget='many2many_tags'> </field>
+                    </group>
+
+                </group>
+
+                <footer>
+                    <button name="get_pdf_report" type="object" string="Print PDF" class="btn-primary"/>
+                    <button name="get_xls_report" type="object" string="Print XLS" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sales_value_performance" model="ir.actions.act_window">
+        <field name="name">Sales Personnel Wise Value Performance Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sales.value.performance</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="sales_value_performance_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem name="Sales Personnel Wise Value Performance Report" id="menu_value_performance_report"
+              parent="olila_reports.menu_olila_reports" action="action_sales_value_performance" sequence="7"/>
+</odoo>

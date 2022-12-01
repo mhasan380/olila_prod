@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_undeliverd_value_wizard,undeliverd.value.wizard,model_undeliverd_value_wizard,,1,1,1,0
 access_sales_summary_wizard,sales.summary.wizard,model_sales_summary_wizard,,1,1,1,0
+access_sales_value_performance,sales.value.performance,model_sales_value_performance,,1,1,1,0

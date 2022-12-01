@@ -24,7 +24,10 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/sales_person.xml',
+        'data/olila_data.xml',
+        'views/territory_view.xml',
+        'views/area_view.xml',
         'security/rod_plan_security.xml',
+        'views/sales_person.xml',
     ],
 }

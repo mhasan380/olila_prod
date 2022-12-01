@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="ir.ui.view" id="route_territory_tree_view">
+        <field name="name">route.territory.tree</field>
+        <field name="model">route.territory</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="territory_id"/>
+                <field name="name"/>
+                <field name="responsible"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- form veiw -->
+    <record model="ir.ui.view" id="route_territory_form_view">
+        <field name="name">route.territory.form.view</field>
+        <field name="model">route.territory</field>
+        <field name="arch" type="xml">
+            <form string="Route Territory">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="territory_id"/>
+                            <field name="responsible"/>
+                        </group>
+                         <group>
+                            <field name="remarks"/>
+                        </group>
+
+                    </group>
+                    <group>
+                        <field name="area_ids"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record model="ir.actions.act_window" id="action_route_territory">
+        <field name="name">Area</field>
+        <field name="res_model">route.territory</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="action_route_territory_menu"
+        name="Territory"
+        sequence="10"
+        parent="main_menu_sales_plan_view"
+        action="action_route_territory"/>
+    </data>
+</odoo>

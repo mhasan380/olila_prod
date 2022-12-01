@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sales_person_plan_user,sales.plan.user,model_sales_person_plan,base.group_user,1,1,1,1
 access_sales_person_plan_rode,sales.plan.rode,model_rode_list,base.group_user,1,1,1,1
+access_route_area,route.area,model_route_area,,1,1,1,1
+access_area_customer_line,area.customer.line,model_area_customer_line,,1,1,1,1
+access_route_territory,route.territory,model_route_territory,,1,1,1,1

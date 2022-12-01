@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="ir.ui.view" id="route_area_tree_view">
+        <field name="name">route.area.tree</field>
+        <field name="model">route.area</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="area_id"/>
+                <field name="name"/>
+                <field name="responsible"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- form veiw -->
+    <record model="ir.ui.view" id="route_area_form_view">
+        <field name="name">route.area.form.view</field>
+        <field name="model">route.area</field>
+        <field name="arch" type="xml">
+            <form string="Route Area">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="area_id"/>
+                            <field name="responsible"/>
+                        </group>
+                         <group>
+                            <field name="remarks"/>
+                             <field name="total_customer"/>
+                        </group>
+
+                    </group>
+                     <notebook>
+                        <page string="Customers">
+                             <field name="customer_line_ids">
+                                <tree editable="bottom">
+                                    <field name="customer_id"/>
+                                    <field name="customer_code"/>
+                                </tree>
+                        </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record model="ir.actions.act_window" id="action_route_area">
+        <field name="name">Area</field>
+        <field name="res_model">route.area</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="action_route_area_menu"
+        name="Area"
+        sequence="102"
+        parent="main_menu_sales_plan_view"
+        action="action_route_area"/>
+    </data>
+</odoo>
