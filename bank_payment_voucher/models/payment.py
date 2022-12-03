@@ -13,8 +13,16 @@ class AccountPayment(models.Model):
             rec.word_num = str(rec.currency_id.amount_to_text(rec.amount))
 
 
+
+
     def print_bank_payment(self):
         return self.env.ref('bank_payment_voucher.action_bank_vendor_voucher_report').report_action(self)
+
+    @api.onchange('partner_id')
+    def onchange_customer_res(self):
+        if self.partner_id:
+            self.responsible_id = self.partner_id.responsible.id
+
 
 
     def _prepare_move_line_default_vals(self, write_off_line_vals=None):
