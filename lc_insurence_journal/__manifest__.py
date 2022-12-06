@@ -25,7 +25,7 @@
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/lc_fund_request_view.xml',
+        #'views/lc_fund_request_view.xml',
         'views/account_move.xml',
 
     ],
