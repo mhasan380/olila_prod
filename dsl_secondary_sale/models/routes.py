@@ -2,7 +2,7 @@ from odoo import api, fields, models, _
 class RouteMaster(models.Model):
     _inherit = 'route.master'
 
-    secondary_customer_ids = fields.One2many('secondary.customer.line', 'route', string='Customers')
+    secondary_customer_ids = fields.One2many('secondary.customer.line', 'route', string='Secondary Customers')
 
 
 class SecondCustomerLine(models.Model):

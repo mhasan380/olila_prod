@@ -29,7 +29,7 @@
                             <field name="responsible" required="1"/>
                         </group>
                          <group>
-                             <field name="zone_id"/>
+                             <field name="zone_id" string="Region"/>
                              <field name="territory_id"/>
                             <field name="remarks"/>
 
@@ -59,13 +59,13 @@
 
     <!-- Action -->
     <record model="ir.actions.act_window" id="action_route_area">
-        <field name="name">Area</field>
+        <field name="name">SO Market</field>
         <field name="res_model">route.area</field>
         <field name="view_mode">tree,form</field>
     </record>
 
     <menuitem id="action_route_area_menu"
-        name="Area"
+        name="SO Market"
         sequence="102"
         parent="main_menu_sales_plan_view"
         action="action_route_area"/>

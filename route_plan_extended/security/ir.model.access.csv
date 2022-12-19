@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_route_plan_extended_route_plan_extended,route_plan_extended.route_plan_extended,model_route_plan_extended_route_plan_extended,base.group_user,1,1,1,1
+access_route_division,route.division,model_route_division,,1,1,1,1
+access_route_district,route.district,model_route_district,,1,1,1,1
+access_route_upazila,route.upazila,model_route_upazila,,1,1,1,1
+access_route_union,route.union,model_route_union,,1,1,1,1

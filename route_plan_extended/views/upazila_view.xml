@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="ir.ui.view" id="route_upazila_tree_view">
+        <field name="name">route.upazila.tree</field>
+        <field name="model">route.upazila</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="divison_id"/>
+                <field name="district_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- form veiw -->
+    <record model="ir.ui.view" id="route_upazila_form_view">
+        <field name="name">route.upazila.form.view</field>
+        <field name="model">route.upazila</field>
+        <field name="arch" type="xml">
+            <form string="Route Division">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group colspan="4">
+                        <field name="divison_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                        <field name="district_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record model="ir.actions.act_window" id="action_upazila">
+        <field name="name">Upazila</field>
+        <field name="res_model">route.upazila</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="action_route_upazila_menu"
+        name="Upazila"
+        sequence="3"
+        parent="route_division_main_menu"
+        action="action_upazila"/>
+    </data>
+</odoo>

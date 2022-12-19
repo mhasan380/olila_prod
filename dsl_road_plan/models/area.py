@@ -6,7 +6,7 @@ class RouteArea(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string="Name")
-    area_id = fields.Char(string='Area ID',copy= False, readonly= True)
+    area_id = fields.Char(string='ID',copy= False, readonly= True)
     responsible = fields.Many2one('hr.employee', string="Responsible", domain="[('type','=','so')]")
     remarks = fields.Char(string="Remarks")
     customer_line_ids = fields.One2many('area.customer.line', 'area', string='Customers')
