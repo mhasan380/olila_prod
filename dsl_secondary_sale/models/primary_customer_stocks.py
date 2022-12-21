@@ -28,6 +28,15 @@ class PrimaryCustomerStocks(models.Model):
 
     enable_secondary_sale = fields.Boolean("Secondary Sale Enabled", default=True)
 
+    total_stocks = fields.Float(string='Total Stock', compute='_compute_total_stock')
+
+    def _compute_total_stock(self):
+        for record in self:
+            inc_sum = 0.0
+            for stock_line in record.customer_stocks:
+                inc_sum += stock_line.current_stock
+            record.total_stocks = inc_sum
+
     @api.model_create_multi
     def create(self, vals_list):
         for val in vals_list:
@@ -154,7 +163,7 @@ class StockPickingInherited(models.Model):
                     product_found = False
                     for stock_line in secondary_stock_id.customer_stocks:
                         if stock_line.product_id == move_line.product_id:
-                            s_line=stock_line
+                            s_line = stock_line
                             product_found = True
                             break
                     if product_found:

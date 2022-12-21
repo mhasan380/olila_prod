@@ -53,6 +53,7 @@
                         <group>
                             <field name="enable_secondary_sale"/>
                             <field name="channel_commission"/>
+                            <field name="total_stocks"/>
                             <field name="write_date" attrs="{'invisible': [('write_date', '=', False)]}"/>
                             <!--                            <field name="phone"/>-->
                             <!--                            <field name="create_date" attrs="{'invisible': [('create_date', '=', False)]}"/>-->

@@ -83,17 +83,18 @@ class PrimarySales(http.Controller):
                     if quant_id.location_id.wh_id.id == line.warehouse_id.id:
                         depo_qty = quant_id.available_quantity
                 price_subtotal = line.price_unit * line.product_uom_qty
-                order_line = {'id': line.product_id.id,
-                              'name': line.product_id.name,
-                              'code': line.product_id.default_code,
-                              'product_uom_qty': line.product_uom_qty,
-                              'net': line.product_id.net_stock,
-                              'depo': depo_qty,
-                              'price_unit': line.price_unit,
-                              'delivered': line.qty_delivered,
-                              'price_subtotal': price_subtotal,
-                              }
-                order_lines.append(order_line)
+                if line.product_id:
+                    order_line = {'id': line.product_id.id,
+                                  'name': line.product_id.name,
+                                  'code': line.product_id.default_code,
+                                  'product_uom_qty': line.product_uom_qty,
+                                  'net': line.product_id.net_stock,
+                                  'depo': depo_qty,
+                                  'price_unit': line.price_unit,
+                                  'delivered': line.qty_delivered,
+                                  'price_subtotal': price_subtotal,
+                                  }
+                    order_lines.append(order_line)
 
             order_details = {
                 'name': order.name,
