@@ -20,17 +20,20 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base','report_xlsx'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/reports.xml',
         'wizard/internal_transfer_wizard.xml',
         'views/internal_transfer_report_view.xml',
         'wizard/payment_collection_wizard.xml',
-        'views/payment_collection_report_view.xml'
+        'views/payment_collection_report_view.xml',
+        'wizard/internal_transfer_sum_wizard.xml',
+        'views/internal_transfer_sum_report_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

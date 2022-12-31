@@ -1,0 +1,36 @@
+<odoo>
+    <record id="transfer_summary_wizard_view" model="ir.ui.view">
+        <field name="name">transfer.summary.wizard.form</field>
+        <field name="model">transfer.summary.wizard</field>
+        <field name="arch" type="xml">
+          <form string="Internal Transfer Summary">
+              <group>
+                  <group>
+                      <field name="from_date" required="1">From Date</field>
+                      <field name="to_date" required="1">To Date</field>
+                  </group>
+                  <group>
+                      <field name="department_id">Department</field>
+                      <field name="product_id">Product</field>
+                      <field name="warehouse_id" required="1">Warehouse</field>
+                  </group>
+
+              </group>
+
+              <footer>
+                  <button name="get_pdf_report" type="object" string="Print PDF" class="btn-primary"/>
+                  <button name="get_xls_report" type="object" string="Print XLS" class="btn-primary"/>
+                  <button string="Cancel" special="cancel"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+
+    <act_window id="action_transfer_summary_report"
+                name="Internal Transfer Productwise Report"
+                res_model="transfer.summary.wizard"
+                view_mode="form"
+                target="new"/>
+
+    <menuitem name="Internal Transfer Productwise Report" id="menu_transfer_sum_report" parent="olila_inventory_reports.menu_olila_inventory_reports" action="action_transfer_summary_report" sequence="8"/>
+</odoo>

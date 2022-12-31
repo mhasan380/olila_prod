@@ -1,0 +1,95 @@
+<odoo>
+    <data>
+        <report id="transfer_sum_report" menu="False" model="transfer.summary.wizard"
+                name="internal_transfer_summary_report.trans_sum_template" report_type="qweb-pdf"
+                string="Internal Transfer Report(Productwise)"/>
+
+        <template id="trans_sum_template">
+            <t t-call="web.html_container">
+				<t t-call="web.internal_layout">
+					<div class="page" style="padding-top:5px;">
+						<div class="text-center">
+							<h4>Internal Transfer Report(Productwise)</h4>
+						</div>
+						<div>
+
+							<t t-if="department_id">
+								<p>Department:
+									<span t-esc="department_id"/>
+								</p>
+							</t>
+							<t t-if="warehouse_id">
+								<p>Warehouse:
+									<span t-esc="warehouse_id"/>
+								</p>
+							</t>
+							<p>From Date:
+								<span t-esc="from_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+							</p>
+							<p>To Date:
+								<span t-esc="to_date" t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+							</p>
+						</div>
+
+						<table class="table table-bordered mt32">
+							<thead>
+								<tr>
+									<th class="text-left">SL</th>
+									<th class="text-left">Product Code</th>
+									<th class="text-left">Product Name</th>
+									<th class="text-left">Qty</th>
+									<th class="text-left">UoM</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								<t t-set="i" t-value="1"/>
+								<t t-set="total_amount" t-value="0"/>
+								<t t-foreach="transfer_list" t-as="transfer">
+									<tr>
+										<td>
+											<t t-esc="i"/>
+										</td>
+										<td>
+											<t t-esc="transfer['code']"/>
+										</td>
+										<td>
+											<t t-esc="transfer['product_name']"/>
+										</td>
+										<td>
+											<t t-esc="transfer['quantity']" t-options='{"widget": "float", "precision": 2}'/>
+										</td>
+										<td>
+											<t t-esc="transfer['uom']"/>
+										</td>
+
+										<t t-set="i" t-value="i+1"/>
+										<t t-set="total_amount" t-value="total_amount+transfer['quantity']"/>
+									</tr>
+								</t>
+
+								<tr style="font-weight: bold; color: blue;">
+									<td colspan="3">
+										<b>Total</b>
+									</td>
+
+									<td>
+										<span t-esc="total_amount" t-options='{"widget": "float", "precision": 2}'/>
+									</td>
+									<td></td>
+								</tr>
+							</tbody>
+							<style>
+                                td {border: 1px solid #000; }
+                                th { color: white;
+                                background-color: black;
+                                text-align: center;
+                                }
+                            </style>
+						</table>
+					</div>
+				</t>
+			</t>
+        </template>
+    </data>
+</odoo>
