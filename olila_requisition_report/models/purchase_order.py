@@ -6,6 +6,9 @@ class PurchaseOrder(models.Model):
     def change_po_state(self):
         self.state = 'cancel'
 
+    def change_bill_state(self):
+        self.invoice_status = 'invoiced'
+
 
 
 
