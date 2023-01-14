@@ -32,10 +32,10 @@
 <!--                <xpath expr="//field[@name='info_checklist']/tree/field[@name='customer']" position="replace">-->
 <!--                     <field name="customer" string="Customer Name" attrs="{'required': [('route_type', '!=', 'secondary')]}"/>-->
 <!--                </xpath>-->
-                <xpath expr="//field[@name='info_checklist']/tree/field[@name='customer']" position="after">
-                     <field name="secondary_customer"/>
+<!--                <xpath expr="//field[@name='info_checklist']/tree/field[@name='customer']" position="after">-->
+<!--                     <field name="secondary_customer"/>-->
 
-                </xpath>
+<!--                </xpath>-->
             </field>
         </record>
     </data>

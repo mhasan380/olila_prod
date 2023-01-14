@@ -35,8 +35,22 @@ class SaleSecondary(models.Model):
         ('confirmed', 'Confirmed')
         # ('cancelled', 'Cancelled'),
     ], default='draft')
-    price_total = fields.Float(string='Total', compute='_compute_price_total', store=True)
+    price_total = fields.Float(string='Gross Amount', compute='_compute_price_total', store=True)
+    total_commission = fields.Float(string='Commission', compute='_compute_total_commission', store=True)
+    net_amount = fields.Float(string='Net Amount', compute='_compute_total_net_amount', store=True)
     company_id = fields.Many2one('res.company')
+
+    #####All related fields
+    division_id = fields.Many2one('route.division', string='Division', related='secondary_customer_id.division_id')
+    district_id = fields.Many2one('route.district', string='District', related='secondary_customer_id.district_id')
+    upazila_id = fields.Many2one('route.upazila', string='Upazila', related='secondary_customer_id.upazila_id')
+    union_id = fields.Many2one('route.union', string='Union', related='secondary_customer_id.union_id')
+    route_id = fields.Many2one('route.master', string='Route', related='secondary_customer_id.route_id')
+    so_market_id = fields.Many2one('route.area', string='SO Market', related='secondary_customer_id.so_market_id')
+    territory_id = fields.Many2one('route.territory', string='Territory', related='secondary_customer_id.territory_id')
+    region_id = fields.Many2one('res.zone', string='Region', related='secondary_customer_id.region_id')
+
+    # type = fields.Char(related='secondary_customer_id.type', string='Customer Type')
 
     @api.depends('sale_line_ids')
     def _compute_price_total(self):
@@ -45,6 +59,16 @@ class SaleSecondary(models.Model):
             for sale_line in rec.sale_line_ids:
                 t_price += sale_line.sub_total
             rec.price_total = t_price
+
+    @api.depends('price_total')
+    def _compute_total_commission(self):
+        for rec in self:
+            rec.total_commission = rec.price_total * rec.channel_commission / 100
+
+    @api.depends('total_commission')
+    def _compute_total_net_amount(self):
+        for rec in self:
+            rec.net_amount = rec.price_total - rec.total_commission
 
     @api.depends('primary_customer_id')
     def _compute_channel_commission(self):
@@ -72,6 +96,7 @@ class SaleSecondary(models.Model):
                 'url': self.create_location_url,
                 'target': 'new',
             }
+
     # btn_css = fields.Html(string='CSS', sanitize=False, compute='_compute_css', store=False)
     #
     # @api.depends('state')

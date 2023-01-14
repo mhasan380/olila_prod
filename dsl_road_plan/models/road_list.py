@@ -4,6 +4,7 @@ import requests
 from datetime import datetime
 from odoo import models, fields, api
 from odoo.addons import decimal_precision as dp
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, float_compare, translate
 
 
 # UNIT = dp.get_precision("Location")
@@ -31,6 +32,11 @@ class CheckList(models.Model):
                                                                                 ('reason3', 'Not enough money'),
                                                                                 ('reason4', 'Enough stock available in shop'),
                                                                                 ('others', 'Others')], readonly=True)
+
+    start_time = fields.Datetime(string="Start")
+    end_time = fields.Datetime(string="End")
+    duration_time = fields.Char(string="Duration")
+
 
     check_in_latitude = fields.Char(
         "Check-in Latitude",
@@ -63,6 +69,12 @@ class CheckList(models.Model):
                 rec.track_status = f'{rec.track_status} -> {rec.status} : {now_time}'
             else:
                 rec.track_status = f'todo : {now_time}'
+            if rec.status == 'progress':
+                rec.start_time = now_time
+            if rec.status == 'done':
+                rec.end_time = now_time
+                if rec.start_time:
+                    rec.duration_time = str(rec.end_time-rec.start_time)
 
     @api.depends('check_in_latitude', 'check_in_longitude')
     def _compute_check_in_map_url(self):

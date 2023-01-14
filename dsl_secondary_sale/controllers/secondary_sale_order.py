@@ -118,6 +118,7 @@ class SecondaryCustomer(http.Controller):
                                      'mobile': customer.mobile,
                                      'reference': reference_code,
                                      'commission': stock.channel_commission,
+                                     'total_stocks': stock.total_stocks,
                                      # 'stock_products': stock_products,
                                      'code': customer.code}
                     records.append(customer_dict)
@@ -322,7 +323,7 @@ class SecondaryCustomer(http.Controller):
                     # _logger.warning(f' 1st============== {order.create_date}')
                     # _logger.warning(f' 2nd============== {localized_date_time}')
 
-                    sale_dict = {'id': order.id, 'name': order.name, 'total': order.price_total,
+                    sale_dict = {'id': order.id, 'name': order.name, 'total': order.net_amount,
                                  'sate': order.state, 'responsible_id': order.responsible_id.id,
                                  'distributor': order.primary_customer_id.name, 'date': localized_date_time,
                                  'date_long': int(millisec), 'customer': order.secondary_customer_id.name,

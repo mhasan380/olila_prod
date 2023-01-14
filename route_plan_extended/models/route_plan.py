@@ -15,7 +15,7 @@ class Planning(models.Model):
         ('secondary', 'Secondary'),
         ('corporate', 'Corporate')
     ], string='Route Type')
-    route_ids = fields.Many2many('route.master',string="Routes")
+    route_ids = fields.Many2many('route.master', string="Routes")
     route_code = fields.Char(string="Route ID")
     coverage = fields.Char(string="Coverage Area")
     deputy_ids = fields.Many2one('hr.employee', string="Deputy NSM")
@@ -39,9 +39,9 @@ class Planning(models.Model):
                 if route.route_type == "primary":
                     for line in route.primary_customer_ids:
                         prod = (0, 0, {'customer': line.customer_id.id,
-                                        'status': 'todo',
+                                       'status': 'todo',
                                        'name': self.name,
-                                                              })
+                                       })
                         filb_values.append(prod)
 
                 elif route.route_type == "corporate":
@@ -70,14 +70,13 @@ class Planning(models.Model):
 
         self.update({
             'area_ids': [(6, 0, areas)],
-            'territory_ids' : [(6, 0, territories)],
+            'territory_ids': [(6, 0, territories)],
             'zone_ids': [(6, 0, zones)],
-            'route_code' : route_codes,
-            'coverage' : cover,
+            'route_code': route_codes,
+            'coverage': cover,
         })
 
-
-class CheckList(models.Model):
-    _inherit = 'rode.list'
-
-    secondary_customer = fields.Many2one('customer.secondary', string="Secondary Customer")
+# class CheckList(models.Model):
+#     _inherit = 'rode.list'
+#
+#     secondary_customer = fields.Many2one('customer.secondary', string="Secondary Customer")

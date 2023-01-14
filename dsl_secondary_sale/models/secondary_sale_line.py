@@ -39,7 +39,7 @@ class SaleLineSecondary(models.Model):
         ('inner', 'Inner')
     ])
 
-    @api.depends('quantity')
+    @api.depends('quantity', 'sale_price_unit')
     def _compute_subtotal(self):
         for rec in self:
             rec.sub_total = rec.sale_price_unit * rec.quantity

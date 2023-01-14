@@ -29,7 +29,7 @@
                             <field name="responsible" required="1"/>
                         </group>
                          <group>
-                             <field name="zone_id" string="Region"/>
+                             <field name="zone_id"/>
                              <field name="territory_id"/>
                             <field name="remarks"/>
 

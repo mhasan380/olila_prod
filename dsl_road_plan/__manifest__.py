@@ -19,19 +19,19 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','hr','olila_sale'],
+    'depends': ['base', 'hr', 'olila_sale'],
 
     # always loaded
     'data': [
+
         'security/ir.model.access.csv',
         'data/olila_data.xml',
+        'views/zone_view.xml',
+        'security/rod_plan_security.xml',
         'views/sales_person.xml',
         'views/day_view.xml',
         'views/territory_view.xml',
         'views/area_view.xml',
         'views/route_master_view.xml',
-        'views/zone_view.xml',
-        'security/rod_plan_security.xml',
-
     ],
 }

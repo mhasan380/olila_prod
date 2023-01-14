@@ -18,8 +18,8 @@ class RouteMaster(models.Model):
         ('secondary', 'Secondary'),
         ('corporate', 'Corporate')
     ],  string='Route Type')
-    primary_customer_ids = fields.One2many('primary.customer.line', 'route', string='Primary Customers')
-    corporate_customer_ids = fields.One2many('corporate.customer.line', 'route', string='Corporate Customers')
+    primary_customer_ids = fields.One2many('primary.customer.line', 'route', string='Customers')
+    corporate_customer_ids = fields.One2many('corporate.customer.line', 'route', string='Customers')
     coverage = fields.Char(string="Coverage Area")
     total_customer = fields.Integer(compute='_compute_total_customer')
 
@@ -31,8 +31,6 @@ class RouteMaster(models.Model):
                 record.total_customer = len(self.corporate_customer_ids)
             elif self.route_type == 'secondary':
                 record.total_customer = len(self.secondary_customer_ids)
-            else:
-                record.total_customer = 0
 
     @api.model
     def create(self, values):

@@ -124,14 +124,28 @@ class SecondaryCustomer(http.Controller):
             data_in_json = json.loads(data)
             # _logger.warning(f' ----- - {data_in_json}')
             distributor = request.env['res.partner'].sudo().search([('id', '=', data_in_json['distributor'])])
+            master_route = request.env['route.master'].sudo().search([('id', '=', data_in_json['route'])])
+            division = request.env['route.division'].sudo().search([('id', '=', data_in_json['division'])])
+            district = request.env['route.district'].sudo().search([('id', '=', data_in_json['district'])])
+            upazila = request.env['route.upazila'].sudo().search([('id', '=', data_in_json['upazila'])])
+            union = request.env['route.union'].sudo().search([('id', '=', data_in_json['union'])])
 
             vals = {
                 'name': data_in_json['name'],
                 'address': data_in_json['address'],
                 'mobile': data_in_json['mobile'],
                 'email': data_in_json['email'],
+                'whats_app': data_in_json['whatsapp'],
+                'type': data_in_json['type'],
                 'partner_id': distributor.id,
-                'phone': data_in_json['phone']
+                'route_id': master_route.id,
+                'division_id': division.id,
+                'district_id': district.id,
+                'upazila_id': upazila.id,
+                'union_id': union.id,
+                'phone': data_in_json['phone'],
+                'latitude': data_in_json['latitude'],
+                'longitude': data_in_json['longitude']
             }
 
             if distributor:
@@ -157,5 +171,79 @@ class SecondaryCustomer(http.Controller):
             err = {'error': str(e)}
             tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ss_sc_04',
                                                  trace_ref=str(e), with_location=False)
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales_secondary/localization/preload', website=True, auth='none', type='http', csrf=False,
+                methods=['GET'])
+    def get_secondary_customers_localization_preload(self, **kwargs):
+        try:
+            division_ids = request.env['route.division'].sudo().search([])
+            divisions = []
+            for division_id in division_ids:
+                districts = []
+                district_ids = request.env['route.district'].sudo().search([('divison_id', '=', division_id.id)])
+                for district_id in district_ids:
+                    upazilas = []
+                    upazila_ids = request.env['route.upazila'].sudo().search([('district_id', '=', district_id.id)])
+                    for upazila_id in upazila_ids:
+                        unions = []
+                        union_ids = request.env['route.union'].sudo().search(
+                            [('upazila_id', '=', upazila_id.id)])
+                        for union in union_ids:
+                            union_dict = {
+                                'union_id': union.id,
+                                'union': union.name
+                            }
+                            unions.append(union_dict)
+                        upazila_dict = {
+                            'upazila_id': upazila_id.id,
+                            'upazila': upazila_id.name,
+                            'unions': unions
+                        }
+                        upazilas.append(upazila_dict)
+                    district_dict = {
+                        'district_id': district_id.id,
+                        'district': district_id.name,
+                        'upazilas': upazilas
+                    }
+                    districts.append(district_dict)
+                division_dict = {
+                    'division_id': division_id.id,
+                    'division': division_id.name,
+                    'districts': districts
+                }
+                divisions.append(division_dict)
+            msg = json.dumps(divisions,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+        except Exception as e:
+            err = {'error': str(e)}
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales_secondary/routes/master', website=True, auth='none', type='http', csrf=False,
+                methods=['GET'])
+    def get_all_routes(self, **kwargs):
+        try:
+            route_ids = request.env['route.master'].sudo().search([('route_type', '=', 'secondary')])
+            routes = []
+            for route_id in route_ids:
+                route_dict = {
+                    'id': route_id.id,
+                    'name': route_id.route_id,
+                    'so_market': route_id.area_id.name,
+                    'territory': route_id.territory_id.name,
+                    'region': route_id.zone_id.name,
+                    'remarks': route_id.remarks,
+                }
+                routes.append(route_dict)
+            msg = json.dumps(routes,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+        except Exception as e:
+            err = {'error': str(e)}
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)

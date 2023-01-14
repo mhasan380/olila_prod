@@ -16,7 +16,7 @@
     'author': 'Md. Rafiul Hassan',
     'company': 'DSL',
     'website': "https://daffodil.computer",
-    'depends': ['base', 'hr', 'olila_sale', 'sale', 'web_domain_field', 'stock', 'dsl_employee_access'],
+    'depends': ['base', 'hr', 'olila_sale', 'sale', 'web_domain_field', 'stock', 'route_plan_extended', 'dsl_employee_access'],
     'data': ['security/access_security.xml',
              'security/ir.model.access.csv',
              'data/secondary_sale_seq.xml',

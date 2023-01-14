@@ -35,7 +35,7 @@
 
                     </group>
                     <group>
-                        <field name="area_ids" string="SO Markets"/>
+                        <field name="area_ids"/>
                     </group>
                 </sheet>
                 <div class="oe_chatter">

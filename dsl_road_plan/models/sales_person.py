@@ -13,8 +13,8 @@ class Planning(models.Model):
     partner_id = fields.Many2one('res.partner', 'Customer Name')
     customer = fields.Many2one('res.partner', string='Customer name')
     street = fields.Char(related='customer.street', string='Customer Street')
-    sales_plan_date = fields.Date('Plan Date & Time', default=date.today())
-    end_plan_date = fields.Date('End Date & Time', default=date.today())
+    sales_plan_date = fields.Date('Create Date', default=date.today())
+    end_plan_date = fields.Date('Date', default=date.today())
     assigned_by = fields.Many2one('hr.employee', string='Assigned by')
     assigned_to = fields.Many2one('hr.employee', string='Assigned to')
 

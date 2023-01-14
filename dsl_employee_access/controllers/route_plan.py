@@ -27,7 +27,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class SaleReturnPrimary(http.Controller):
+class RoutePlanV1APIs(http.Controller):
 
     @tools.security.protected_rafiul()
     @http.route('/web/sales/force/route/plans', website=True, auth='none', type='http', csrf=False,
@@ -45,17 +45,18 @@ class SaleReturnPrimary(http.Controller):
                 plan_dict['start_date'] = route_plan.sales_plan_date
                 plan_dict['end_date'] = route_plan.end_plan_date
                 plan_dict['progress'] = route_plan.progress_rate
+                plan_dict['type'] = route_plan.route_type
                 plan_dict['assigned_by'] = route_plan.assigned_by.name
                 plan_dict['assigned_to'] = route_plan.assigned_to.name
-                tasks = []
-                for task in route_plan.info_checklist:
-                    task_dict = {}
-                    task_dict['id'] = task.id
-                    task_dict['name'] = task.name_work
-                    task_dict['customer_id'] = task.customer.id
-                    task_dict['customer'] = task.customer.name
-                    task_dict['status'] = task.status
-                    tasks.append(task_dict)
+                # tasks = []
+                # for task in route_plan.info_checklist:
+                #     task_dict = {}
+                #     task_dict['id'] = task.id
+                #     task_dict['name'] = task.name_work
+                #     task_dict['customer_id'] = task.customer.id
+                #     task_dict['customer'] = task.customer.name
+                #     task_dict['status'] = task.status
+                #     tasks.append(task_dict)
                 # plan_dict['tasks'] = tasks
                 records.append(plan_dict)
 
@@ -82,19 +83,29 @@ class SaleReturnPrimary(http.Controller):
             start_date = date.today()
             end_date = data_in_json['end_date']
             tasks = data_in_json['tasks']
+            type = data_in_json['type']
+            master_routes = data_in_json['routes']
+
+            if type == 'secondary':
+                customer_model = 'customer.secondary'
+                customer_field = 'secondary_customer'
+            else:
+                customer_model = 'res.partner'
+                customer_field = 'customer'
 
             task_lines = []
             for line in tasks:
-                customer = request.env['res.partner'].sudo().search([('id', '=', line['customer_id'])])
-                task_line_dict = {
-                    'name_work': line['task_name'],
-                    'customer': customer.id,
-                    # 'check_in_latitude': line['check_in_latitude'],
-                    # 'check_in_longitude': product_data['quantity'],
-                    # 'check_out_latitude': product.lst_price,
-                    # 'check_out_longitude': customer.discount
-                }
-                task_lines.append((0, 0, task_line_dict))
+                customer = request.env[customer_model].sudo().search([('id', '=', line['customer_id'])])
+                if customer:
+                    task_line_dict = {
+                        'name_work': line['task_name'],
+                        customer_field: customer.id,
+                    }
+                    task_lines.append((0, 0, task_line_dict))
+            m_routes = []
+            for m_route in master_routes:
+                single_m_route = request.env['route.master'].sudo().search([('id', '=', m_route['id'])])
+                m_routes.append((4, single_m_route.id))
 
             vals = {
                 'name': plan_name,
@@ -102,10 +113,15 @@ class SaleReturnPrimary(http.Controller):
                 'assigned_by': assigned_by.id,
                 'sales_plan_date': start_date,
                 'end_plan_date': end_date,
-                'info_checklist': task_lines,
+                # 'info_checklist': task_lines,
+                'route_type': type,
+                'route_ids': m_routes
             }
 
             route_plan_id = request.env['sales.person.plan'].sudo().create(vals)
+            route_plan_id.on_change_route_ids()
+            route_plan_id.info_checklist.unlink()
+            route_plan_id.write({'info_checklist': task_lines})
 
             order_details = {
                 'id': route_plan_id.id,
@@ -134,6 +150,7 @@ class SaleReturnPrimary(http.Controller):
             plan_dict['id'] = route_plan.id
             plan_dict['name'] = route_plan.name
             plan_dict['start_date'] = route_plan.sales_plan_date
+            plan_dict['type'] = route_plan.route_type
             plan_dict['end_date'] = route_plan.end_plan_date
             plan_dict['progress'] = route_plan.progress_rate
             plan_dict['assigned_by'] = route_plan.assigned_by.name
@@ -145,12 +162,33 @@ class SaleReturnPrimary(http.Controller):
                 task_dict['name'] = task.name_work
                 task_dict['responsible'] = route_plan.assigned_to.id
                 task_dict['manager'] = route_plan.assigned_by.id
-                task_dict['customer_id'] = task.customer.id
-                task_dict['customer'] = task.customer.name
+                if route_plan.route_type == 'secondary':
+                    task_dict['customer_id'] = task.secondary_customer.id
+                    task_dict['customer'] = task.secondary_customer.name
+                else:
+                    task_dict['customer_id'] = task.customer.id
+                    task_dict['customer'] = task.customer.name
                 task_dict['remark'] = task.remarks
                 task_dict['reason'] = task.incomplete_reason
                 task_dict['status'] = task.status
                 tasks.append(task_dict)
+            routes = []
+            for r_route in route_plan.route_ids:
+                routes.append(r_route.name)
+            plan_dict['routes'] = routes
+            regions = []
+            for r_region in route_plan.zone_ids:
+                regions.append(r_region.name)
+            plan_dict['regions'] = regions
+            territories = []
+            for r_territory in route_plan.territory_ids:
+                territories.append(r_territory.name)
+            plan_dict['territories'] = territories
+            so_markets = []
+            for so_market in route_plan.area_ids:
+                so_markets.append(so_market.name)
+            plan_dict['so_markets'] = so_markets
+
             plan_dict['tasks'] = tasks
 
             msg = json.dumps(plan_dict,
@@ -220,11 +258,13 @@ class SaleReturnPrimary(http.Controller):
                 methods=['GET'])
     def get_team_employees(self, **kwargs):
         try:
-            _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
+            # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
             employee = request.env['hr.employee'].sudo().search([('id', '=', request.em_id)])
             employees = self.get_subordinates(employee)
 
             my_customers = []
+
+            # adding own primary customers
             customers1 = request.env['res.partner'].sudo().search([('responsible', '=', employee.id)])
             for customer1 in customers1:
                 reference_code1 = customer1.code
@@ -235,11 +275,32 @@ class SaleReturnPrimary(http.Controller):
                 customer_dict1['id'] = customer1.id
                 customer_dict1['name'] = customer1.name
                 customer_dict1['code'] = customer1.code
+                customer_dict1['type'] = 'primary'
                 customer_dict1['reference_code'] = reference_code1
                 my_customers.append(customer_dict1)
 
+            # adding own secondary customers
+            s_customers1 = request.env['customer.secondary'].sudo().search([('responsible_id', '=', employee.id)])
+            for s_customer1 in s_customers1:
+                sc_reference_code1 = s_customer1.outlet_code
+                if sc_reference_code1 and '/' in sc_reference_code1:
+                    x = sc_reference_code1.split('/')[1:]
+                    if len(x) > 1:
+                        sc_reference_code1 = x[1]
+                    else:
+                        sc_reference_code1 = x[0]
+                s_customer_dict1 = {}
+                s_customer_dict1['id'] = s_customer1.id
+                s_customer_dict1['name'] = s_customer1.name
+                s_customer_dict1['code'] = s_customer1.outlet_code
+                s_customer_dict1['type'] = 'secondary'
+                s_customer_dict1['reference_code'] = sc_reference_code1
+                my_customers.append(s_customer_dict1)
+
             sub_tree = [
                 {'id': employee.id, 'name': employee.name, 'customers': my_customers}]
+
+            # adding subordinates primary & secondary customers
             for record in employees:
                 employee_dict = {}
                 employee_dict['id'] = record.id
@@ -255,8 +316,26 @@ class SaleReturnPrimary(http.Controller):
                     customer_dict['id'] = customer.id
                     customer_dict['name'] = customer.name
                     customer_dict['code'] = customer.code
+                    customer_dict['type'] = 'primary'
                     customer_dict['reference_code'] = reference_code
                     customer_list.append(customer_dict)
+                secondary_customers = request.env['customer.secondary'].sudo().search(
+                    [('responsible_id', '=', record.id)])
+                for s_customer in secondary_customers:
+                    sc_reference_code = s_customer.outlet_code
+                    if sc_reference_code and '/' in sc_reference_code:
+                        x = sc_reference_code.split('/')[1:]
+                        if len(x) > 1:
+                            sc_reference_code = x[1]
+                        else:
+                            sc_reference_code = x[0]
+                    s_customer_dict = {}
+                    s_customer_dict['id'] = s_customer.id
+                    s_customer_dict['name'] = s_customer.name
+                    s_customer_dict['code'] = s_customer.outlet_code
+                    s_customer_dict['type'] = 'secondary'
+                    s_customer_dict['reference_code'] = sc_reference_code
+                    customer_list.append(s_customer_dict)
                 employee_dict['customers'] = customer_list
                 sub_tree.append(employee_dict)
 

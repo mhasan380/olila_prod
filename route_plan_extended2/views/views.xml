@@ -1,0 +1,16 @@
+<odoo>
+
+    <data>
+        <record id="sales_person_plan_form_inherit2" model="ir.ui.view">
+            <field name="name">sales.person.plan.form.view.inherit2</field>
+            <field name="model">sales.person.plan</field>
+            <field name="inherit_id" ref="dsl_road_plan.view_sales_plan_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='info_checklist']/tree/field[@name='customer']" position="after">
+                     <field name="secondary_customer"/>
+
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
