@@ -85,6 +85,7 @@ class RoutePlanV1APIs(http.Controller):
             tasks = data_in_json['tasks']
             type = data_in_json['type']
             master_routes = data_in_json['routes']
+            multi_dates = data_in_json['dates']
 
             if type == 'secondary':
                 customer_model = 'customer.secondary'
@@ -107,25 +108,35 @@ class RoutePlanV1APIs(http.Controller):
                 single_m_route = request.env['route.master'].sudo().search([('id', '=', m_route['id'])])
                 m_routes.append((4, single_m_route.id))
 
-            vals = {
-                'name': plan_name,
-                'assigned_to': assigned_to.id,
-                'assigned_by': assigned_by.id,
-                'sales_plan_date': start_date,
-                'end_plan_date': end_date,
-                # 'info_checklist': task_lines,
-                'route_type': type,
-                'route_ids': m_routes
-            }
+            val_list = []
+            for date1 in multi_dates:
+                dt = date1['date']
+                vals = {
+                    # 'name': f'{plan_name} ({self.get_day_name(dt)})',
+                    'name': plan_name,
+                    'assigned_to': assigned_to.id,
+                    'assigned_by': assigned_by.id,
+                    'sales_plan_date': start_date,
+                    'end_plan_date': date1['date'],
+                    # 'info_checklist': task_lines,
+                    'route_type': type,
+                    'route_ids': m_routes
+                }
+                val_list.append(vals)
 
-            route_plan_id = request.env['sales.person.plan'].sudo().create(vals)
-            route_plan_id.on_change_route_ids()
-            route_plan_id.info_checklist.unlink()
-            route_plan_id.write({'info_checklist': task_lines})
+            route_plan_ids = request.env['sales.person.plan'].sudo().create(val_list)
+            last_created_id = ''
+            last_created_name = ''
+            for route_plan_id in route_plan_ids:
+                last_created_id = route_plan_id.id
+                last_created_name = route_plan_id.name
+                route_plan_id.on_change_route_ids()
+                route_plan_id.info_checklist.unlink()
+                route_plan_id.write({'info_checklist': task_lines})
 
             order_details = {
-                'id': route_plan_id.id,
-                'name': route_plan_id.name
+                'id': last_created_id,
+                'name': last_created_name
             }
 
             msg = json.dumps(order_details,
@@ -360,6 +371,11 @@ class RoutePlanV1APIs(http.Controller):
 
         return subordinate_list
 
+    def get_day_name(self, date1):
+        year, month, day = (int(x) for x in date1.split('-'))
+        ans = date(year, month, day)
+        return ans.strftime("%A")
+
     # @tools.security.protected_rafiul()
     # @http.route('/web/sales/force/returnable/order/detail', auth='none', type='http', csrf=False, methods=['POST'])
     # def get_returnable_order_detail(self, **kwargs):
@@ -430,3 +446,4 @@ class RoutePlanV1APIs(http.Controller):
     #         err = {'error': str(e)}
     #         error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
     #         return Response(error, content_type='application/json;charset=utf-8', status=200)
+
