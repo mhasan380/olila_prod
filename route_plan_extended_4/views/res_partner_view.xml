@@ -1,0 +1,21 @@
+<odoo>
+  <data>
+    <record id="res_partner_form_inherit_route2" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit.olila.route2</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="route_plan_extended.res_partner_form_inherit_route"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='route_id']" position="after">
+                     <field name="division_id" />
+                    <field name="district_id" />
+                    <field name="upazila_id" />
+                    <field name="union_id" />
+
+                </xpath>
+                <xpath expr="//field[@name='division']" position="attributes">
+                      <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+  </data>
+</odoo>

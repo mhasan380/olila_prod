@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="zone_master_form_inherit2" model="ir.ui.view">
+            <field name="name">res.zone.form.view.inherit2</field>
+            <field name="model">res.zone</field>
+            <field name="inherit_id" ref="olila_sale.zone_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/div" position="before">
+                    <div name="button_box">
+                     <button name="assign_territory" string="Assign Territory" class="btn-primary" type="object"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

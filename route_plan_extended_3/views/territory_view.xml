@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="route_territory_form_inherit" model="ir.ui.view">
+            <field name="name">route.territory.form.view.inherit</field>
+            <field name="model">route.territory</field>
+            <field name="inherit_id" ref="dsl_road_plan.route_territory_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/div" position="before">
+                    <div name="button_box">
+                     <button name="assign_areas" string="Assign Areas" class="btn-primary" type="object"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
