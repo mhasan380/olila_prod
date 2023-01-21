@@ -31,8 +31,6 @@ class RouteMaster(models.Model):
                 record.total_customer = len(self.corporate_customer_ids)
             elif self.route_type == 'secondary':
                 record.total_customer = len(self.secondary_customer_ids)
-            else:
-                record.total_customer = 0
 
     @api.model
     def create(self, values):
