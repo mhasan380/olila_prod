@@ -1,0 +1,43 @@
+<odoo>
+    <record id="production_report_wizard_view" model="ir.ui.view">
+        <field name="name">production.wizard.form</field>
+        <field name="model">production.wizard</field>
+        <field name="arch" type="xml">
+          <form string="Production Report">
+              <group>
+                  <group>
+                      <field name="from_date" required="1">From Date</field>
+                      <field name="to_date" required="1">To Date</field>
+                  </group>
+                  <group>
+                      <field name="production_type">Production Type</field>
+                      <field name="product">Product</field>
+                      <field name="shift">Shift</field>
+                  </group>
+
+              </group>
+
+              <footer>
+                  <button name="get_report" type="object" string="Print" class="btn-primary"/>
+                  <button string="Cancel" special="cancel"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+
+    <record id="action_production_report" model="ir.actions.act_window">
+        <field name="name">Production Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">production.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="production_report_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        id="menu_all_production_report"
+        name="Olila Production Reports"
+        sequence="50"
+        parent="mrp.menu_mrp_root"/>
+    <menuitem name="Production Report" id="menu_production_report" parent="menu_all_production_report" action="action_production_report" sequence="1"/>
+</odoo>
