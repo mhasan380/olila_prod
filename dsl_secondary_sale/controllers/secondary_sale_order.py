@@ -107,7 +107,7 @@ class SecondaryCustomer(http.Controller):
                 stock = request.env['primary.customer.stocks'].sudo().search([('customer_id', '=', customer.id)])
 
                 if stock:
-                    print(f'-----------------{stock}')
+                    # print(f'-----------------{stock}')
                     reference_code = customer.code
                     if reference_code and '/' in reference_code:
                         x = reference_code.split('/')[1:]

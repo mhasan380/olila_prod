@@ -128,7 +128,10 @@ class SecondaryCustomer(http.Controller):
             division = request.env['route.division'].sudo().search([('id', '=', data_in_json['division'])])
             district = request.env['route.district'].sudo().search([('id', '=', data_in_json['district'])])
             upazila = request.env['route.upazila'].sudo().search([('id', '=', data_in_json['upazila'])])
-            union = request.env['route.union'].sudo().search([('id', '=', data_in_json['union'])])
+            union_id = False
+            if len(data_in_json['union']) > 0:
+                union = request.env['route.union'].sudo().search([('id', '=', data_in_json['union'])])
+                union_id = union.id
 
             vals = {
                 'name': data_in_json['name'],
@@ -142,7 +145,7 @@ class SecondaryCustomer(http.Controller):
                 'division_id': division.id,
                 'district_id': district.id,
                 'upazila_id': upazila.id,
-                'union_id': union.id,
+                'union_id': union_id,
                 'phone': data_in_json['phone'],
                 'latitude': data_in_json['latitude'],
                 'longitude': data_in_json['longitude']
