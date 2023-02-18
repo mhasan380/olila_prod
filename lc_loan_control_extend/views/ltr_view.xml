@@ -26,6 +26,10 @@
               <xpath expr="//field[@name='lc_number']" position="attributes">
                       <attribute name="string">ID</attribute>
                     </xpath>
+
+                <xpath expr="//field[@name='payment_line_ids']/tree/field[@name='payment']" position="before">
+                      <field name="payment_journal" widget="selection" domain="[('type', 'in', ('bank', 'cash'))]"/>
+                    </xpath>
             </field>
         </record>
 

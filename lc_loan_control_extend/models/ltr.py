@@ -25,6 +25,13 @@ class LtrControl(models.Model):
     #         lc = self.env['lc.opening'].search([('lc_no', '=', vals['lc_num'])])
     #         vals.update({'lc_number': lc.id})
 
+    def overdue_check(self):
+        today = fields.date.today()
+        ltr_records = self.env['ltr.control'].search([('overdue_status', '=', 'run')])
+        for rec in ltr_records:
+            if rec.due_date < today:
+                rec.overdue_status = 'due'
+
 
 
 
@@ -76,6 +83,8 @@ class LtrInterestLines(models.Model):
 class LtrPaymentLines(models.Model):
     _inherit = 'ltr.payment.lines'
 
+    payment_journal = fields.Many2one('account.journal')
+
     def account_move_creation(self):
         ref = self.ltr_id.number
         journal_id = self.env['account.journal'].search([('type', '=', 'general')], limit=1)
@@ -91,7 +100,7 @@ class LtrPaymentLines(models.Model):
             {
                 'name': ref,
                 'move_id': account_move.id,
-                'account_id': self.ltr_id.bank_account_id.id,
+                'account_id': self.payment_journal.payment_credit_account_id.id,
                 'debit': 0,
                 'credit': self.payment,
             },
