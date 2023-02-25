@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record id="lc_register_form_inherit" model="ir.ui.view">
+            <field name="name">lc.register.form.inherit</field>
+            <field name="model">lc.register</field>
+            <field name="inherit_id" ref="lc_loan_control.lc_register_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='lc_open_date']" position="before">
+                      <field name="lc_no" />
+                    </xpath>
+
+                <xpath expr="//field[@name='lc_number']" position="attributes">
+                       <attribute name="string">ID</attribute>
+                    </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

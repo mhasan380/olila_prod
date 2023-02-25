@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "lc_loan_control_extend",
+    'name': "lc_opening_extend",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,15 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['lc_loan_control'],
+    'depends': ['lc_opening'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/ltr_view.xml',
-        'views/loan_control_view.xml',
-        'views/lc_register.xml',
-
+        'views/views.xml',
+        'views/templates.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

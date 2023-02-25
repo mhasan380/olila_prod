@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record id="loan_control_inherit" model="ir.ui.view">
+            <field name="name">loan.control.form.inherit</field>
+            <field name="model">loan.control</field>
+            <field name="inherit_id" ref="lc_loan_control.loan_control_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='term_loan_lines']/tree/field[@name='balance']" position="after">
+                      <field name="inti_balance" invisible="1"/>
+                    </xpath>
+
+                <xpath expr="//field[@name='term_loan_lines']/tree/field[@name='interest']" position="after">
+                      <button name="add_interest_journal" string="Add Journal" type="object" class="btn-primary" attrs="{'invisible': [('status','!=', 'unpaid')]}"/>
+                    </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>
