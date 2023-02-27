@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="daily_projection_action" model="ir.actions.act_window">
+        <field name="name">Daily Projections</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">daily.projection</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_noncontent_smiley_face">
+                Create a new Daily Projection!
+            </p>
+        </field>
+    </record>
+
+    <record id="daily_projection_list_view" model="ir.ui.view">
+        <field name="name">daily.projection.tree</field>
+        <field name="model">daily.projection</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="ref"/>
+                <field name="date"/>
+                <field name="region"/>
+                <field name="territory"/>
+                <field name="responsible"/>
+                <field name="target_amount"/>
+                <field name="projection_amount"/>
+                <field name="projection_percentage"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="daily_projection_form_view" model="ir.ui.view">
+        <field name="name">daily.projection.form</field>
+        <field name="model">daily.projection</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="ref" style="font-size:24pt;"/>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="region"/>
+                            <field name="territory" />
+<!--                            <field name="territory_domain" invisible="1"/>-->
+                            <field name="so_market"/>
+<!--                            <field name="so_market_domain" invisible="1"/>-->
+                            <field name="responsible"/>
+                        </group>
+
+                        <group>
+                            <field name="target_amount"/>
+                            <field name="projection_amount"/>
+                            <field name="projection_percentage"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="daily_projection_root" name="Daily Projection" sequence="1"/>
+    <menuitem id="daily_projection" name="Daily Projections" parent="daily_projection_root" sequence="1"/>
+    <menuitem id="daily_projection_list" name="Projections" parent="daily_projection"
+              action="daily_projection_action" sequence="1"/>
+
+
+</odoo>
