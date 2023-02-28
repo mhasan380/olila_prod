@@ -23,7 +23,7 @@
                 <field name="territory"/>
                 <field name="responsible"/>
                 <field name="target_amount"/>
-                <field name="projection_amount"/>
+                <field name="projection_amount" sum="Total"/>
                 <field name="projection_percentage"/>
             </tree>
         </field>
@@ -35,15 +35,13 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <field name="ref" style="font-size:24pt;"/>
+                    <field name="ref" readonly="1" style="font-size:24pt;"/>
                     <group>
                         <group>
                             <field name="date"/>
                             <field name="region"/>
                             <field name="territory" />
-<!--                            <field name="territory_domain" invisible="1"/>-->
                             <field name="so_market"/>
-<!--                            <field name="so_market_domain" invisible="1"/>-->
                             <field name="responsible"/>
                         </group>
 

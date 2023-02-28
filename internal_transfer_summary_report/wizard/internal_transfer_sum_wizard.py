@@ -4,9 +4,10 @@ from datetime import datetime
 
 class InterTransferSumWizard(models.TransientModel):
     _name = 'transfer.summary.wizard'
-    _description = 'Daily Internal Transfer Summary productwise'
+    _description = 'Daily Internal Transfer Summary Productwise'
 
     product_id = fields.Many2one('product.product', string='Product')
+    product_category = fields.Many2one('product.category', string="Category")
     department_id = fields.Many2one('hr.department', string='Department')
     warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
     from_date = fields.Date(string="From Date")
@@ -21,6 +22,8 @@ class InterTransferSumWizard(models.TransientModel):
             'model': self._name,
             'form': {
                 'product_id': product_id.name,
+                'product_category': self.product_category.id,
+                'category': self.product_category.name,
                 'department_id': department_id.name,
                 'warehouse_id': self.warehouse_id.name,
                 'from_date': self.from_date,
@@ -38,15 +41,16 @@ class InterTransferSumWizard(models.TransientModel):
             domain.append(('picking_id.department_id', '=', self.department_id.id))
         if self.product_id:
             domain.append(('product_id', '=', self.product_id.id))
+        if self.product_category:
+            domain.append(('product_id.categ_id', '=', self.product_category.id))
         move_lines = self.env['stock.move'].search(domain)
 
         for line in move_lines:
-            key = (line.product_id)
+            key = line.product_id
             transfer_list.setdefault(key, 0.0)
             transfer_list[key] += line.quantity_done
 
         data = {
-
             'from_date': self.from_date,
             'to_date': self.to_date,
             'product_id': self.product_id,
@@ -58,6 +62,9 @@ class InterTransferSumWizard(models.TransientModel):
                         'code': product.default_code,
                         'quantity': qty,
                         'uom': product.uom_id.name,
+                        'product_category': product.categ_id.name,
+                        'avg_weight': product.weight,
+                        'total_weight': qty*product.weight
                     } for (product), qty in transfer_list.items()], key=lambda l: l['code']),
 
         }

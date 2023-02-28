@@ -31,6 +31,9 @@ class InterTransferReportXLS(models.AbstractModel):
         sheet.write(row, col + 1, 'Product name', format21)
         sheet.write(row, col + 2, 'Quantity', format21)
         sheet.write(row, col + 3, 'UoM', format21)
+        sheet.write(row, col + 4, 'Category', format21)
+        sheet.write(row, col + 5, 'Avg. Weight', format21)
+        sheet.write(row, col + 6, 'Total Weight', format21)
 
 
         for product in data['transfer_list']:
@@ -39,6 +42,9 @@ class InterTransferReportXLS(models.AbstractModel):
             sheet.write(row, col + 1, product['product_name'], font_size_8)
             sheet.write(row, col + 2, product['quantity'], font_size_8)
             sheet.write(row, col + 3, product['uom'], font_size_8)
+            sheet.write(row, col + 4, product['product_category'], font_size_8)
+            sheet.write(row, col + 5, product['avg_weight'], font_size_8)
+            sheet.write(row, col + 6, product['total_weight'], font_size_8)
 
 
 

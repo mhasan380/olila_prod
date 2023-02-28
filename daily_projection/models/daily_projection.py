@@ -8,11 +8,15 @@ class DailyProjection(models.Model):
     @api.onchange('region')
     def on_change_region(self):
         if self.region:
+            self.responsible = self.region.responsible.id
+            self.target_amount = self.region.responsible.target
             return {'domain': {'territory': [('zone_id', '=', self.region.id)]}}
 
     @api.onchange('territory')
     def on_change_territory(self):
         if self.territory:
+            self.responsible = self.territory.responsible.id
+            self.target_amount = self.territory.responsible.target
             return {'domain': {'so_market': [('territory_id', '=', self.territory.id)]}}
 
     @api.onchange('so_market')
@@ -24,9 +28,7 @@ class DailyProjection(models.Model):
     date = fields.Date(string="Date", required=True)
     region = fields.Many2one('res.zone', string="Region", required=True)
     territory = fields.Many2one('route.territory', string="Territory")
-    #territory_domain = fields.Char(compute="_compute_territory_domain", readonly=True, store=False)
     so_market = fields.Many2one('route.area', string="SO Market")
-    #so_market_domain = fields.Char(compute="_compute_so_market_domain", readonly=True, store=False)
     responsible = fields.Many2one('hr.employee', string="Responsible")
     customer = fields.Many2one('res.partner', string="Customer")
     target_amount = fields.Float(string="Target Amount")
@@ -56,4 +58,3 @@ class DailyProjection(models.Model):
     # def _compute_so_market_domain(self):
     #     for rec in self:
     #         rec.so_market_domain = json.dumps([('territory', '=', rec.territory.id)])
-

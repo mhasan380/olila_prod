@@ -9,10 +9,9 @@
 				<t t-call="web.internal_layout">
 					<div class="page" style="padding-top:5px;">
 						<div class="text-center">
-							<h4>Internal Transfer Report(Productwise)</h4>
+							<h4>Internal Transfer Report(Product-wise)</h4>
 						</div>
 						<div>
-
 							<t t-if="department_id">
 								<p>Department:
 									<span t-esc="department_id"/>
@@ -21,6 +20,11 @@
 							<t t-if="warehouse_id">
 								<p>Warehouse:
 									<span t-esc="warehouse_id"/>
+								</p>
+							</t>
+							<t t-if="product_category">
+								<p>Product Category:
+									<span t-esc="category"/>
 								</p>
 							</t>
 							<p>From Date:
@@ -39,7 +43,9 @@
 									<th class="text-left">Product Name</th>
 									<th class="text-left">Qty</th>
 									<th class="text-left">UoM</th>
-
+									<th class="text-left">Category</th>
+									<th class="text-left">Avg. Weight</th>
+									<th class="text-left">Total Weight</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -62,6 +68,15 @@
 										<td>
 											<t t-esc="transfer['uom']"/>
 										</td>
+										<td>
+											<t t-esc="transfer['product_category']"/>
+										</td>
+										<td>
+											<t t-esc="transfer['avg_weight']"/>
+										</td>
+										<td>
+											<t t-esc="transfer['total_weight']" t-options='{"widget": "float", "precision": 2}'/>
+										</td>
 
 										<t t-set="i" t-value="i+1"/>
 										<t t-set="total_amount" t-value="total_amount+transfer['quantity']"/>
@@ -76,6 +91,9 @@
 									<td>
 										<span t-esc="total_amount" t-options='{"widget": "float", "precision": 2}'/>
 									</td>
+									<td></td>
+									<td></td>
+									<td></td>
 									<td></td>
 								</tr>
 							</tbody>

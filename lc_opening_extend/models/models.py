@@ -52,6 +52,9 @@ class LcOpening(models.Model):
                 lc_register_lines.create(line_data)
             lc_register.onchange_exchange()
             lc_register.onchange_partial()
+            if rec.requisition_id:
+                rec.requisition_id.state = 'accept'
+            rec.write({'state': 'accept'})
 
 
 
