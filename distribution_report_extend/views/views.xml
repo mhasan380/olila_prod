@@ -13,14 +13,13 @@
                                     </t>
                                     <th></th>
                                     <th colspan="3">Undelivered Qty</th>
-                                    <th colspan="3">Last Day Delivery</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
                                 <tr>
-                                    <th>SL No</th>
-                                    <th>Product Code</th>
-                                    <th>Product Name</th>
+                                    <th>SL</th>
+                                    <th>Code</th>
+                                    <th width="30%">Product Name</th>
                                     <t t-foreach="wh_data" t-as="wh">
                                         <th><span t-esc="wh"/></th>
                                     </t>
@@ -28,10 +27,10 @@
                                     <th>Retail</th>
                                     <th>Corporate</th>
                                     <th>Total</th>
-                                    <th>Retail</th>
-                                    <th>Corporate</th>
-                                    <th>Total</th>
-                                    <th>Last Day DO</th>
+<!--                                    <th>Retail</th>-->
+<!--                                    <th>Corporate</th>-->
+<!--                                    <th>Total</th>-->
+<!--                                    <th>Last Day DO</th>-->
                                     <th>Net Stock</th>
                                 </tr>
                             </thead>
@@ -50,38 +49,38 @@
                                         </td>
                                         <t t-foreach="line['wh_stock']" t-as="sd">
                                             <td class="text-left">
-                                                <span t-esc="sd['stock']"/>
+                                                <span t-esc="sd['stock']" t-options='{"widget": "float", "precision": 2}'/>
                                             </td>
                                             <td class="text-left">
-                                                <span t-esc="sd['qty']"/>
+                                                <span t-esc="sd['qty']" t-options='{"widget": "float", "precision": 2}'/>
                                             </td>
                                         </t>
                                         <td class="text-left">
-                                            <span t-esc="line['total_stock']"/>
+                                            <span t-esc="line['total_stock']" t-options='{"widget": "float", "precision": 2}'/>
                                         </td>
                                         <td class="text-left">
                                             <span t-esc="line['total_undel_retail']"/>
                                         </td>
                                         <td class="text-left">
-                                            <span t-esc="line['total_undel_corp']"/>
+                                            <span t-esc="line['total_undel_corp']" t-options='{"widget": "float", "precision": 2}'/>
                                         </td>
                                         <td class="text-left">
-                                            <span t-esc="line['total_undelivered']"/>
+                                            <span t-esc="line['total_undelivered']" t-options='{"widget": "float", "precision": 2}'/>
                                         </td>
+<!--                                        <td class="text-left">-->
+<!--                                            <span t-esc="line['last_day_del_retail']" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <td class="text-left">-->
+<!--                                            <span t-esc="line['last_day_del_corp']" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <td class="text-left">-->
+<!--                                            <span t-esc="line['total_delivery']" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
+<!--                                        <td class="text-left">-->
+<!--                                            <span t-esc="line['last_day_do']" t-options='{"widget": "float", "precision": 2}'/>-->
+<!--                                        </td>-->
                                         <td class="text-left">
-                                            <span t-esc="line['last_day_del_retail']"/>
-                                        </td>
-                                        <td class="text-left">
-                                            <span t-esc="line['last_day_del_corp']"/>
-                                        </td>
-                                        <td class="text-left">
-                                            <span t-esc="line['total_delivery']"/>
-                                        </td>
-                                        <td class="text-left">
-                                            <span t-esc="line['last_day_do']"/>
-                                        </td>
-                                        <td class="text-left">
-                                            <span t-esc="line['net_stock']"/>
+                                            <span t-esc="line['net_stock']" t-options='{"widget": "float", "precision": 2}'/>
                                         </td>
                                          <t t-set="i" t-value="i+1"/>
                                     </tr>
@@ -106,25 +105,26 @@
                                     <td>
                                         <strong><span t-esc="footer_total['footer_total_undelivered']"/></strong>
                                     </td>
-                                    <td>
-                                        <strong><span t-esc="footer_total['footer_last_day_del_retail']"/></strong>
-                                    </td>
-                                    <td>
-                                        <strong><span t-esc="footer_total['footer_last_day_del_corp']"/></strong>
-                                    </td>
-                                    <td>
-                                        <strong><span t-esc="footer_total['footer_total_delivery']"/></strong>
-                                    </td>
-                                    <td>
-                                        <strong><span t-esc="footer_total['footer_last_day_do']"/></strong>
-                                    </td>
+<!--                                    <td>-->
+<!--                                        <strong><span t-esc="footer_total['footer_last_day_del_retail']"/></strong>-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <strong><span t-esc="footer_total['footer_last_day_del_corp']"/></strong>-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <strong><span t-esc="footer_total['footer_total_delivery']"/></strong>-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <strong><span t-esc="footer_total['footer_last_day_do']"/></strong>-->
+<!--                                    </td>-->
                                     <td>
                                         <strong><span t-esc="footer_total['footer_net_stock']"/></strong>
                                     </td>
                                 </tr>
                             </tbody>
                            <style>
-                        td,tr {border: 1px solid #000; }
+                        td,tr {border: 1px solid #000;
+                               font-size: 10px;}
 
 
                         </style>

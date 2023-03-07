@@ -32,6 +32,8 @@
         'views/internal_transfer_report_view.xml',
         'wizard/payment_collection_wizard.xml',
         'views/payment_collection_report_view.xml',
+        'wizard/do_print_report.xml',
+        'views/do_print_report.xml',
         'wizard/internal_transfer_sum_wizard.xml',
         'views/internal_transfer_sum_report_view.xml',
     ],

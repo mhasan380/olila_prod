@@ -1,0 +1,329 @@
+<odoo>
+    <data>
+        <report id="do_print_report" menu="False" model="do.report.wizard"
+                name="internal_transfer_summary_report.do_report_template" report_type="qweb-pdf"
+                string="DO print Report"/>
+        <template id="do_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="sale_order" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div style="text-align: center; margin-bottom: 5px; margin-top: 5px; text-decoration: underline;">
+                            <h3>
+                                <b> Delivery Order </b>
+                            </h3>
+                        </div>
+                        <!-- <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)" />
+-->
+                        <div class ="customer_info" >
+                            <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                <h4>
+                                    <span t-field="doc.partner_id.name"></span>
+                                </h4>
+                                <b>
+                                    <span t-field="doc.dealer_code"></span>
+                                    <br/>
+                                </b>
+                                <b>Address : </b>
+                                <span t-field="doc.partner_id.street"></span>
+                                <br/>
+                                <span t-field="doc.partner_id.street2"></span>
+                                <br/>
+                                <b>Mobile : </b>
+                                <span t-field="doc.partner_id.mobile"></span>
+                            </div>
+                            <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                <h4>
+                                    <b>DO No : </b>
+                                    <span t-field="doc.name"></span>
+                                </h4>
+                                <p>
+                                    <b>DO Date : </b>
+                                    <span t-field="doc.date_order" t-field-options='{"widget": "date"}'></span>
+                                </p>
+                            </div>
+                        </div>
+                        <style>
+                        .customer_info {
+                                        height: 150px;
+                             }
+                        </style>
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <t t-if="doc.sale_type=='corporate_sales'">
+                                <div class="row mt32 mb32" id="informations">
+                                <div>
+                                    <strong>Order Date:</strong>
+                                    <p class="m-0" t-field="doc.date_order"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="doc.client_order_ref">
+                                    <strong>Your Reference:</strong>
+                                    <p class="m-0" t-field="doc.client_order_ref"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Depot Name:</strong>
+                                    <p class="m-0" t-field="doc.warehouse_id"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Contact Person:</strong>
+                                    <p class="m-0" t-field="doc.partner_id.secondary_contact_persion"/>
+                                    <p class="m-0" t-field="doc.partner_id.mobile"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Salesperson:</strong>
+                                    <p class="m-0" t-field="doc.responsible"/>
+                                </div>
+                            </div>
+                            <!-- Is there a discount on at least one line? -->
+                            <t t-set="display_discount" t-value="any(l.discount for l in doc.order_line)"/>
+                            <table class="table table-sm o_main_table">
+                                <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                                <thead>
+                                    <tr>
+                                        <th class="text-left" name="th_sl">
+                                            <b>S/N </b>
+                                        </th>
+                                        <th class="text-left" name="th_code">
+                                            <b>Item Code </b>
+                                        </th>
+                                        <th class="text-left" name="th_description">
+                                            <b>Item Description </b>
+                                        </th>
+                                        <th class="text-right" name="th_uom">
+                                            <b>UoM</b>
+                                        </th>
+                                        <th class="text-right" name="th_pcs_quantity">
+                                            <b>PCS Qty.</b>
+                                        </th>
+                                        <th class="text-right" name="th_inner_quantity">
+                                            <b>Inner Qty.</b>
+                                        </th>
+                                        <th class="text-right" name="th_mctn_quantity">
+                                            <b>MCTN Qty.</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-set="current_subtotal" t-value="0"/>
+                                    <t t-set="i" t-value="1"/>
+                                    <t t-set="pcs_qty" t-value="0"/>
+                                    <t t-set="inner_qty" t-value="0"/>
+                                    <t t-set="mctn_qty" t-value="0"/>
+                                    <t t-as="line" t-foreach="doc.order_line">
+                                        <t groups="account.group_show_line_subtotals_tax_excluded" t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
+                                        <t groups="account.group_show_line_subtotals_tax_included" t-set="current_subtotal" t-value="current_subtotal + line.price_total"/>
+                                        <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                            <t t-if="not line.display_type">
+                                                <td name="th_sl">
+                                                    <span t-esc="i"/>
+                                                </td>
+                                                <td name="th_code">
+                                                    <span t-esc="line.product_id.default_code"/>
+                                                </td>
+                                                <td name="td_name">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                                <td name="th_uom">
+                                                    <span t-field="line.product_uom"/>
+                                                </td>
+                                                <td class="text-right" name="td_pcs_quantity">
+                                                  <t t-if="line.product_id.fs_type=='pcs'">
+                                                      <span t-field="line.product_uom_qty"/> </t>
+                                                </td>
+                                                <td class="text-right" name="td_inner_quantity">
+                                                  <t t-if="line.product_id.fs_type=='inner'">
+                                                      <span t-field="line.product_uom_qty"/> </t>
+                                                </td>
+                                                <td class="text-right" name="td_mctn_quantity">
+                                                  <t t-if="line.product_id.fs_type=='master'">
+                                                      <span t-field="line.product_uom_qty"/> </t>
+                                                </td>
+                                            </t>
+                                            <t t-if="line.display_type == 'line_section'">
+                                                <td colspan="99" name="td_section_line">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                                <t t-set="current_section" t-value="line"/>
+                                                <t t-set="current_subtotal" t-value="0"/>
+                                            </t>
+                                            <t t-if="line.display_type == 'line_note'">
+                                                <td colspan="99" name="td_note_line">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                            </t>
+                                            <t t-set="i" t-value="i+1"/>
+                                            <t t-if="line.product_id.fs_type=='pcs'">
+                                            <t t-set="pcs_qty" t-value="pcs_qty + line.product_uom_qty"/> </t>
+                                            <t t-if="line.product_id.fs_type=='inner'">
+                                            <t t-set="inner_qty" t-value="inner_qty + line.product_uom_qty"/> </t>
+                                            <t t-if="line.product_id.fs_type=='master'">
+                                            <t t-set="mctn_qty" t-value="mctn_qty + line.product_uom_qty"/> </t>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <strong>Total:  </strong>
+                                            <span t-esc="pcs_qty"/>
+                                        </td>
+                                        <td >
+                                            <strong>Total:  </strong>
+                                            <span t-esc="inner_qty"/>
+                                        </td>
+                                        <td >
+                                            <strong>Total:  </strong>
+                                            <span t-esc="mctn_qty"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <style>td ,th {border: 1px solid #000;
+                                font-size: 14px;
+
+                        }
+                        </style>
+                            </table>
+                            </t>
+                        <t t-else="">
+                            <div class="row mt32 mb32" id="informations">
+                                <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Your Reference:</strong>
+                                    <p class="m-0" t-field="doc.client_order_ref"/>
+                                </div>
+                                <div >
+                                    <strong>Order Date:</strong>
+                                    <p class="m-0" t-field="doc.date_order"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Depot Name:</strong>
+                                    <p class="m-0" t-field="doc.warehouse_id"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Contact Person:</strong>
+                                    <p class="m-0" t-field="doc.partner_id.proprietor_name"/>
+                                    <p class="m-0" t-field="doc.partner_id.proprietor_contact"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Salesperson:</strong>
+                                    <p class="m-0" t-field="doc.responsible"/>
+                                </div>
+                            </div>
+                            <!-- Is there a discount on at least one line? -->
+                            <t t-set="display_discount" t-value="any(l.discount for l in doc.order_line)"/>
+                            <table class="table table-sm o_main_table">
+                                <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                                <thead>
+                                    <tr>
+                                        <th name="th_sl" class="text-left">
+                                            <b>S/N </b>
+                                        </th>
+                                        <th name="th_code" class="text-left">
+                                            <b>Item Code </b>
+                                        </th>
+                                        <th name="th_description" class="text-left">
+                                            <b> Item Description </b>
+                                        </th>
+                                        <th name="th_uom" class="text-right">
+                                            <b>UoM</b>
+                                        </th>
+                                        <th name="th_quantity" class="text-right">
+                                            <b>Quantity</b>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-set="current_subtotal" t-value="0"/>
+                                    <t t-set="i" t-value="1" />
+                                    <t t-set="product_qty" t-value="0" />
+                                    <t t-foreach="doc.order_line" t-as="line">
+                                        <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                        <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                                        <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                            <t t-if="not line.display_type">
+                                                <td name="th_sl">
+                                                    <span t-esc="i"/>
+                                                </td>
+                                                <td name="th_code">
+                                                    <span t-esc="line.product_id.default_code"/>
+                                                </td>
+                                                <td name="td_name">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                                <td name="th_uom">
+                                                    <span t-field="line.product_uom"/>
+                                                </td>
+                                                <td name="td_quantity" class="text-right">
+                                                    <span t-field="line.product_uom_qty"/>
+                                                </td>
+                                            </t>
+                                            <t t-if="line.display_type == 'line_section'">
+                                                <td name="td_section_line" colspan="99">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                                <t t-set="current_section" t-value="line"/>
+                                                <t t-set="current_subtotal" t-value="0"/></t>
+                                            <t t-if="line.display_type == 'line_note'">
+                                                <td name="td_note_line" colspan="99">
+                                                    <span t-field="line.name"/>
+                                                </td>
+                                            </t>
+                                            <t t-set="i" t-value="i+1"/>
+                                            <t t-set="product_qty" t-value="product_qty + line.product_uom_qty"/>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <strong> Total Qty:  </strong>
+                                            <span t-esc="product_qty"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <style>
+                        td ,th {border: 1px solid #000;
+                                font-size: 14px;
+
+                        }
+                        </style>
+                            </table>
+                    </t>
+                            <div class="customer_signature" text-align= "center">
+                                <div  class="customer" style="float:right;">
+                                    <p> ---------------------------------   </p>
+                                    <P>
+                                        <b> Authorized By </b>
+                                    </P>
+                                </div>
+                                <div  class="seller" style="float:left;">
+                                    <p> ---------------------------------   </p>
+                                    <P>
+                                        <b>Prepared By </b>
+                                        <br/>
+                                        <span t-field="doc.create_uid.name"/>
+                                    </P>
+                                </div>
+                                <style>
+                         .customer_signature{ text-align: center;
+                                              padding-top: 120px;
+                                              margin-bottom: 10px;
+
+                         }
+
+                       </style>
+                            </div>
+                            <div class="oe_structure"/>
+                            <p id="fiscal_position_remark" t-if="doc.fiscal_position_id and doc.fiscal_position_id.sudo().note">
+                                <strong>Fiscal Position Remark:</strong>
+                                <span t-field="doc.fiscal_position_id.sudo().note"/>
+                            </p>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

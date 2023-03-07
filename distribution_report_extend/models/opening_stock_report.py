@@ -23,8 +23,8 @@ class OpeningStockReport(models.AbstractModel):
 
         wh_data = []
         for wh in warehouse_ids:
-            wh_data.append('Stock')
-            wh_data.append('Un.Delivery')
+            wh_data.append('ST')
+            wh_data.append('UD')
 
         domain = [('distribution_id.date', '<=', date)]
         if product_ids:

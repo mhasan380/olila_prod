@@ -1,0 +1,30 @@
+<odoo>
+    <record id="do_report_wizard_view" model="ir.ui.view">
+        <field name="name">do.report.wizard.form</field>
+        <field name="model">do.report.wizard</field>
+        <field name="arch" type="xml">
+          <form string="DO Print Report">
+              <group>
+                  <group>
+                      <field name="sale_order" options="{'no_create': True, 'no_create_edit':True}">Sale Order</field>
+                  </group>
+              </group>
+
+              <footer>
+                  <button name="get_report" type="object" string="Print" class="btn-primary"/>
+                  <button string="Cancel" special="cancel"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+
+    <record id="action_do_report_report" model="ir.actions.act_window">
+        <field name="name">DO Print Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">do.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="do_report_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem name="DO Print Report" id="menu_do_print_report" parent="olila_inventory_reports.menu_olila_inventory_reports" action="action_do_report_report" sequence="4"/>
+</odoo>
