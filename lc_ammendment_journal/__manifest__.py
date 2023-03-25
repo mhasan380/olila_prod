@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "lc_fund_req_journal",
+    'name': "lc_ammendment_journal",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,15 +20,12 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['lc_opening_fund_requisition','account'],
+    'depends': ['lc_ammenment'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/lc_fund_request_view.xml',
-        'views/account_move.xml',
-        'views/res_config_view.xml',
-
+        'views/ammendment.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

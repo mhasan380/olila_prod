@@ -9,7 +9,7 @@ class LtrControl(models.Model):
 
     def change_ltr_state(self):
         for record in self:
-            record.overdue_status = 'run'
+            record.overdue_status = 'paid'
 
     lc_num = fields.Char('LC Number')
 
@@ -31,6 +31,12 @@ class LtrControl(models.Model):
         for rec in ltr_records:
             if rec.due_date < today:
                 rec.overdue_status = 'due'
+
+    @api.onchange('payment')
+    def onchange_payment(self):
+        self.ltr_balance = self.ltr_balance - self.payment
+
+
 
 
 

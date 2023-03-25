@@ -17,6 +17,7 @@ class Insurance(models.Model):
             'partner_id': self.partner_id.id,
             'invoice_date': date_invoice,
             'date': date_invoice,
+            'ref' : self.insurance_cover_no,
             'invoice_line_ids': [(0, 0, {
                 'product_id': product.id,
                 'name': 'Insurance Premium',
@@ -29,9 +30,13 @@ class Insurance(models.Model):
         return invoice
 
     def button_confirm(self):
-        invoice_record = self.create_invoice(type='in_invoice', invoice_amount=self.premium_amount, currency_id=self.currency_id)
-        # import pdb;pdb.set_trace();
-        # self.invoice_id = invoice_record.id
-        self.write({'state' : 'confirm'})
+        if self.insurance_cover_no:
+            invoice_record = self.create_invoice(type='in_invoice', invoice_amount=self.premium_amount, currency_id=self.currency_id)
+            # import pdb;pdb.set_trace();
+            # self.invoice_id = invoice_record.id
+            self.write({'state' : 'confirm'})
+        else:
+            raise UserError(_('Please Input Marine Cover Note Number.'))
+
         return True
 

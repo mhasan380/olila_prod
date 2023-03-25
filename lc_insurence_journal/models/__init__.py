@@ -2,4 +2,3 @@
 
 from . import lc_insurence_journal
 from . import account
-from . import lc_ammendment

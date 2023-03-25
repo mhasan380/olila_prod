@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['lc_fund_insurance','account','lc_ammenment'],
+    'depends': ['lc_fund_insurance','account'],
 
     # always loaded
     'data': [

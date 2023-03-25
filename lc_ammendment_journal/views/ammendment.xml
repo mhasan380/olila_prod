@@ -1,0 +1,24 @@
+<odoo>
+  <data>
+     <record id="amendment_form_chrages_inherit" model="ir.ui.view">
+            <field name="name">purchase.lc.ammendment.form.charges</field>
+            <field name="model">purchase.lc.ammendment</field>
+            <field name="inherit_id" ref="lc_ammenment.purchase_lc_ammendment_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='Ammendment Charges']" position="replace">
+                      <page string='Ammendment Charges' name='Ammendment Charges'>
+                            <group class="oe_subtotal_footer oe_right">
+
+                                    <field name="ammendment_charges" string="Amendmend Charges"/>
+                                    <field name="foreign_vat"/>
+                                    <field name="other_vat"/>
+                                    <field name="source_tax" />
+                                    <field name="postage"/>
+                                    <field name="total_charges" class="oe_subtotal_footer_separator"/>
+                                </group>
+                        </page>
+                    </xpath>
+            </field>
+        </record>
+  </data>
+</odoo>
