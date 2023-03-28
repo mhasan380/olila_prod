@@ -11,6 +11,10 @@ class LtrControl(models.Model):
         for record in self:
             record.overdue_status = 'paid'
 
+    def change_state_run(self):
+        for record in self:
+            record.overdue_status = 'run'
+
     lc_num = fields.Char('LC Number')
 
     @api.onchange('lc_number')

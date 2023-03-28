@@ -66,7 +66,7 @@ class PurchaseLcAmmendment(models.Model):
             'line_ids': [(0, 0, line_data) for line_data in move_lines1]
         }
         move_id1 = self.env['account.move'].create(vals)
-        move_id1.ref = 'LC Ammendmend'
+        move_id1.ref = 'LC Ammendmend-'+ self.lc_no.lc_no
 
         self.write({'state' : 'paid'})
 
