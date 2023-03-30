@@ -150,28 +150,28 @@ class PrimaryCustomerStocks(models.Model):
 class StockPickingInherited(models.Model):
     _inherit = 'stock.picking'
 
-    def button_validate(self):
-        return_value = super(StockPickingInherited, self).button_validate()
-        if self.state == 'done' and self.partner_id:
-            secondary_stock_id = self.env['primary.customer.stocks'].search([('customer_id', '=', self.partner_id.id)])
-            if secondary_stock_id:
-                for move_line in self.move_lines:
-                    # if any(move_line.product_id == stock_line.product_id for stock_line in secondary_stock_id.customer_stocks):
-                    #     self.update_product_stock_secondary(secondary_stock_id, stock_line, move_line)
-                    # else:
-                    #     self.create_product_stock_secondary(secondary_stock_id)
-                    product_found = False
-                    for stock_line in secondary_stock_id.customer_stocks:
-                        if stock_line.product_id == move_line.product_id:
-                            s_line = stock_line
-                            product_found = True
-                            break
-                    if product_found:
-                        self.update_product_stock_secondary(secondary_stock_id, s_line, move_line)
-                    else:
-                        self.create_product_stock_secondary(secondary_stock_id)
-
-        return return_value
+    # def button_validate(self):
+    #     return_value = super(StockPickingInherited, self).button_validate()
+    #     if self.state == 'done' and self.partner_id:
+    #         secondary_stock_id = self.env['primary.customer.stocks'].search([('customer_id', '=', self.partner_id.id)])
+    #         if secondary_stock_id:
+    #             for move_line in self.move_lines:
+    #                 # if any(move_line.product_id == stock_line.product_id for stock_line in secondary_stock_id.customer_stocks):
+    #                 #     self.update_product_stock_secondary(secondary_stock_id, stock_line, move_line)
+    #                 # else:
+    #                 #     self.create_product_stock_secondary(secondary_stock_id)
+    #                 product_found = False
+    #                 for stock_line in secondary_stock_id.customer_stocks:
+    #                     if stock_line.product_id == move_line.product_id:
+    #                         s_line = stock_line
+    #                         product_found = True
+    #                         break
+    #                 if product_found:
+    #                     self.update_product_stock_secondary(secondary_stock_id, s_line, move_line)
+    #                 else:
+    #                     self.create_product_stock_secondary(secondary_stock_id)
+    #
+    #     return return_value
 
     def update_product_stock_secondary(self, secondary_stock_id, stock_line, move_line):
         if move_line.picking_type_id.code == 'outgoing':
