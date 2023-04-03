@@ -79,5 +79,42 @@ class StockPicking(models.Model):
             })
             return invoice
 
+    def _bill_invoice_line(self, move):
+        account = move.product_id.property_account_expense_id if move.product_id.property_account_expense_id else move.product_id.categ_id.property_account_expense_categ_id
+        factor = move.purchase_line_id.product_uom.factor_inv
+        return {
+            'name': move.description_picking,
+            'product_id': move.product_id.id,
+            'price_unit':  move.purchase_line_id.price_unit if move.purchase_line_id else move.product_id.standard_price,
+            'account_id': account and account.id,
+            'tax_ids': [(6, 0, move.purchase_line_id.taxes_id.ids)],
+            'discount' : move.purchase_line_id.discount if move.purchase_line_id else 0.0,
+            'quantity': (move.quantity_done / factor),
+            'purchase_line_id': move.purchase_line_id and move.purchase_line_id.id or False,
+            'product_uom_id' : move.purchase_line_id.product_uom.id
+        }
+
+    def create_bill(self):
+        for picking_id in self:
+            vendor_journal_id = picking_id.env['ir.config_parameter'].sudo().get_param('stock_move_invoice.vendor_journal_id') or False
+            if not vendor_journal_id:
+                raise UserError(_("Please configure the journal from account settings."))
+            invoice_lines = [(0, 0, self._bill_invoice_line(move)) for move in picking_id.move_ids_without_package]
+            partner_id = picking_id.purchase_id and picking_id.purchase_id.partner_id
+            invoice = picking_id.env['account.move'].create({
+                'move_type': 'in_invoice',
+                'partner_id' : partner_id and partner_id,
+                'invoice_origin': picking_id.name,
+                'invoice_user_id': self.env.uid,
+                'narration': picking_id.name,
+                'journal_id': int(vendor_journal_id),
+                'payment_reference': picking_id.name,
+                'picking_id': picking_id.id,
+                'currency_id' : picking_id.purchase_id.currency_id.id if picking_id.purchase_id else picking_id.company_id.currency_id.id,
+                'invoice_date': picking_id.scheduled_date,
+                'invoice_line_ids': invoice_lines
+            })
+            return invoice
+
 
 

@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
+import operator as py_operator
 
-from odoo import models, fields, api, _
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 from datetime import datetime, date, timedelta
+
+OPERATORS = {
+    '<': py_operator.lt,
+    '>': py_operator.gt,
+    '<=': py_operator.le,
+    '>=': py_operator.ge,
+    '=': py_operator.eq,
+    '!=': py_operator.ne
+}
+
 
 
 class account_journal(models.Model):
@@ -115,7 +127,7 @@ class LCDirectTransfer(models.Model):
 
         return move_line_dict
 
-    total_amount = fields.Float('Total Amount', compute="_compute_total_amount")
+    total_amount = fields.Float('Total Amount', compute="_compute_total_amount" ,search='_search_total_amount')
     moves_id = fields.Many2one('account.move', 'Journal Entry')
     word_num = fields.Char(string="Amount In Words:", compute='_amount_in_word')
     payee = fields.Char('Payee/Receiver')
@@ -151,3 +163,42 @@ class LCDirectTransfer(models.Model):
 
     def print_bank_vouchar(self):
         return self.env.ref('direct_transfer_extend.action_olila_bank_voucher_report').report_action(self)
+    def _search_total_amount(self, operator, value):
+        # TDE FIXME: should probably clean the search methods
+        return self._search_product_total_amount(operator, value, 'total_amount')
+
+    def _search_product_total_amount(self, operator, value, field):
+        # TDE FIXME: should probably clean the search methods
+        # to prevent sql injections
+        if field not in ('total_amount'):
+            raise UserError(_('Invalid domain left operand %s', field))
+        if operator not in ('<', '>', '=', '!=', '<=', '>='):
+            raise UserError(_('Invalid domain operator %s', operator))
+        if not isinstance(value, (float, int)):
+            raise UserError(_('Invalid domain right operand %s', value))
+
+        # TODO: Still optimization possible when searching virtual quantities
+        ids = []
+        # Order the search on `id` to prevent the default order on the product name which slows
+        # down the search because of the join on the translation table to get the translated names.
+        for product in self.with_context(prefetch_fields=False).search([], order='id'):
+            if OPERATORS[operator](product[field], value):
+                ids.append(product.id)
+        return [('id', 'in', ids)]
+
+    @api.model
+    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        res = super(LCDirectTransfer, self).read_group(domain, fields, groupby, offset=offset, limit=limit,
+                                                      orderby=orderby,
+                                                      lazy=lazy)
+        if 'total_amount' in fields:
+            for line in res:
+                if '__domain' in line:
+                    lines = self.search(line['__domain'])
+                    total_net_value = 0.0
+                    for record in lines:
+                        total_net_value += record.total_amount
+
+                    line['total_amount'] = total_net_value
+
+        return res
