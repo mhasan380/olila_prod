@@ -23,6 +23,9 @@
             <field name="model">lc.direct.transfer</field>
             <field name="inherit_id" ref="lc_direct_transfer.lc_direct_transfer_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly':[('state', '!=', 'draft')]}</attribute>
+                </xpath>
                 <xpath expr="//field[@name='ref']" position="attributes">
                     <attribute name="required">1</attribute>
                 </xpath>

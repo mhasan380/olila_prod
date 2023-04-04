@@ -59,7 +59,8 @@ class LCDirectTransfer(models.Model):
         move_id = self.env['account.move'].create(vals)
         move_id.ref = self.ref
         self.moves_id = move_id.id
-        self.state = 'journal'
+        move_id.sudo().action_post()
+        self.state = 'paid'
 
 
     def _prepare_move_line(self):
