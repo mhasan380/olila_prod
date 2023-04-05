@@ -33,16 +33,33 @@ class SaleLineSecondary(models.Model):
     quantity = fields.Float('Sale Quantity')
     sale_price_unit = fields.Float('Sale Price')
     sub_total = fields.Float(string='Subtotal', compute='_compute_subtotal', store=True)
+    actual_total = fields.Float(string='Subtotal', compute='_compute_actual_total', store=True)
     company_id = fields.Many2one('res.company')
     sale_type = fields.Selection([
         ('master', 'Master'),
         ('inner', 'Inner')
     ])
+    channel_commission_percentage = fields.Float('Commission %', default=0.0)
+    channel_commission_amount = fields.Float('Commission Amount', compute='_compute_channel_commission_amount', store=True)
 
-    @api.depends('quantity', 'sale_price_unit')
+    @api.depends('channel_commission_percentage', 'quantity')
+    def _compute_channel_commission_amount(self):
+        for rec in self:
+            if rec.channel_commission_percentage > 0.0 and rec.quantity > 0.0:
+                _actual_price = rec.sale_price_unit * rec.quantity
+                rec.channel_commission_amount = _actual_price * (rec.channel_commission_percentage / 100)
+            else:
+                rec.channel_commission_amount = 0.0
+
+    @api.depends('quantity', 'sale_price_unit', 'channel_commission_amount')
     def _compute_subtotal(self):
         for rec in self:
-            rec.sub_total = rec.sale_price_unit * rec.quantity
+            rec.sub_total = (rec.sale_price_unit * rec.quantity) - rec.channel_commission_amount
+
+    @api.depends('quantity', 'sale_price_unit')
+    def _compute_actual_total(self):
+        for rec in self:
+            rec.actual_total = rec.sale_price_unit * rec.quantity
 
     @api.depends('stock_id')
     def _compute_product_id_domain(self):

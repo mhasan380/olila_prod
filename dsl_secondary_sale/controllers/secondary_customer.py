@@ -86,7 +86,7 @@ class SecondaryCustomer(http.Controller):
     def get_secondary_customers(self, **kwargs):
         try:
             employee = request.env['hr.employee'].sudo().browse(request.em_id)
-            customers = request.env['customer.secondary'].sudo().search([('responsible_id', '=', employee.id)])
+            customers = request.env['customer.secondary'].sudo().search([('responsible_id', '=', employee.id)], order='id desc')
 
             records = []
             for customer in customers:
@@ -236,7 +236,7 @@ class SecondaryCustomer(http.Controller):
             for route_id in route_ids:
                 route_dict = {
                     'id': route_id.id,
-                    'name': route_id.route_id,
+                    'name': f'[{route_id.route_id}] {route_id.name}',
                     'so_market': route_id.area_id.name,
                     'territory': route_id.territory_id.name,
                     'region': route_id.zone_id.name,

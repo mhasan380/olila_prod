@@ -5,8 +5,9 @@
         <field name="model">stock.move.secondary</field>
         <field name="priority">2</field>
         <field name="arch" type="xml">
-            <tree string="Sales Plan">
+            <tree string="Sales Plan" default_order='create_date desc'>
                 <field name="create_date"/>
+                <field name="secondary_stock_id"/>
                 <field name="product_id"/>
                 <field name="quantity"/>
                 <field name="type"/>
@@ -53,8 +54,9 @@
                         <field name="move_ids">
                             <tree string="Stock Moves" editable="bottom">
                                 <field name="product_id_domain" invisible="1"/>
-                                <field name="secondary_stock_id"/>
-                                <field name="product_id" domain="product_id_domain"
+                                <field name="secondary_stock_id" />
+<!--                                <field name="product_id" domain="product_id_domain"-->
+                                <field name="product_id"
                                        options="{'no_create': True, 'no_create_edit' : True}"/>
                                 <field name="quantity"/>
                                 <field name="type"/>

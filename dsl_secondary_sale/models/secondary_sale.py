@@ -57,15 +57,18 @@ class SaleSecondary(models.Model):
         for rec in self:
             t_price = 0.0
             for sale_line in rec.sale_line_ids:
-                t_price += sale_line.sub_total
+                t_price += sale_line.actual_total
             rec.price_total = t_price
 
-    @api.depends('price_total')
+    @api.depends('sale_line_ids')
     def _compute_total_commission(self):
         for rec in self:
-            rec.total_commission = rec.price_total * rec.channel_commission / 100
+            t_commission = 0.0
+            for sale_line in rec.sale_line_ids:
+                t_commission += sale_line.channel_commission_amount
+            rec.total_commission = t_commission
 
-    @api.depends('total_commission')
+    @api.depends('total_commission', 'price_total')
     def _compute_total_net_amount(self):
         for rec in self:
             rec.net_amount = rec.price_total - rec.total_commission

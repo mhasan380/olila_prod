@@ -74,7 +74,7 @@
                             <field name="secondary_customer_id" options="{'no_create': True, 'no_create_edit' : True}"/>
                             <field name="secondary_customer_address"/>
                             <field name="secondary_customer_mobile"/>
-                            <field name="channel_commission"/>
+<!--                            <field name="channel_commission"/>-->
                         </group>
                     </group>
 
@@ -92,8 +92,9 @@
                                                options="{'no_create': True, 'no_create_edit' : True}"/>
                                         <!--                                        <field name="sale_type" string="Sale Type"/>-->
                                         <field name="quantity" string="Quantity"/>
+                                        <field name="channel_commission_percentage"/>
                                         <field name="sale_price_unit" string="Unit Price"/>
-                                        <field name="sub_total"/>
+                                        <field name="actual_total"/>
                                     </tree>
                                 </field>
                                 <group col="6" class="mt-2 mt-md-0">

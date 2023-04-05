@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class StockMoveMulti(models.Model):
     _name = 'stock.move.secondary.multi'
     secondary_sale_id = fields.Many2one('sale.secondary', string='Secondary Sale')
-    secondary_stock_id = fields.Many2one('primary.customer.stocks', string='Secondary Sale')
+    secondary_stock_id = fields.Many2one('primary.customer.stocks', string='Secondary Stock')
     move_ids = fields.One2many('stock.move.secondary', inverse_name='multi_ref_id', string='Movable Items',
                                required=True)
 
@@ -63,8 +63,5 @@ class StockMoveMulti(models.Model):
 
     @api.model
     def create(self, vals):
-        # print(f'------------{vals}')
-        # for rec in self.move_ids:
-        #     print('------------')
-        record = super(StockMoveMulti, self).create(vals)
-        return record
+        res = super(StockMoveMulti, self).create(vals)
+        return res

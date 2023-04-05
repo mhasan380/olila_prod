@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class StockMoveSecondary(models.Model):
     _name = 'stock.move.secondary'
     secondary_sale_id = fields.Many2one('sale.secondary', string='Secondary Sale')
-    secondary_stock_id = fields.Many2one('primary.customer.stocks', string='Secondary Stock', required=True)
+    secondary_stock_id = fields.Many2one('primary.customer.stocks', string='Distributor Stock', required=True)
     product_id = fields.Many2one('product.product', string='Products')
     quantity = fields.Float('Move Quantity')
     type = fields.Selection([('in', 'Stock In'), ('out', 'Stock Out')], required=True)
@@ -28,6 +28,12 @@ class StockMoveSecondary(models.Model):
         store=False,
     )
 
+    @api.onchange('secondary_stock_id')
+    def _onchange_multi_ref_id(self):
+        for rec in self:
+            if rec.multi_ref_id:
+                rec.secondary_stock_id = rec.multi_ref_id.secondary_stock_id.id
+
     @api.depends('secondary_stock_id')
     def _compute_product_id_domain(self):
         product_list = []
@@ -41,11 +47,12 @@ class StockMoveSecondary(models.Model):
 
     @api.model
     def create(self, vals):
-        print(f'------------{vals}')
+
         if hasattr(vals, 'secondary_sale_id') and vals['secondary_sale_id']:
             vals['is_adjustment'] = False
         else:
             vals['is_adjustment'] = True
+
         record = super(StockMoveSecondary, self).create(vals)
         # if vals['type'] == 'in' and vals['secondary_stock_id']:
         #     print('------------'+str(['secondary_stock_id']))

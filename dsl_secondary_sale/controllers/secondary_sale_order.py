@@ -155,6 +155,7 @@ class SecondaryCustomer(http.Controller):
                     'quantity': product_data['quantity'],
                     'sale_price_unit': product_data['price'],
                     'sale_type': product_data['type'],
+                    'channel_commission_percentage': product_data['commission'],
                     # 'price_total': product_data['total_price'],
                     'stock_id': distributor_stock.id,
                 }
@@ -207,6 +208,7 @@ class SecondaryCustomer(http.Controller):
                         'quantity': product_data['quantity'],
                         'sale_price_unit': product_data['price'],
                         'sale_type': product_data['type'],
+                        'channel_commission_percentage': product_data['commission'],
                         # 'price_total': product_data['total_price'],
                         'secondary_sale_id': order_id.id,
                         'stock_id': distributor_stock.id,
@@ -363,9 +365,10 @@ class SecondaryCustomer(http.Controller):
                         'sale_type': sale_line.sale_type,
                         'inner_qty': sale_line.product_id.inner_qty,
                         'quantity': sale_line.quantity,
+                        'commission_percentage': sale_line.channel_commission_percentage,
                         'price_unit': sale_line.sale_price_unit,
                         'current_stock': stock_line.current_stock,
-                        'sub_total': sale_line.sub_total
+                        'sub_total': sale_line.actual_total
                     }
                     lines.append(order_line_dict)
                 localized_date_time = order_id.create_date.astimezone(pytz.timezone("Asia/Dhaka")).strftime(
@@ -378,7 +381,8 @@ class SecondaryCustomer(http.Controller):
                     'distributor_address': order_id.distributor_address,
                     'responsible': order_id.responsible_id.name,
                     'customer': order_id.secondary_customer_id.name,
-                    'commission': stock_id.channel_commission,
+                    # 'commission': stock_id.channel_commission,
+                    'commission': 0.0,
                     'customer_code': order_id.secondary_customer_id.outlet_code,
                     'customer_mobile': order_id.secondary_customer_mobile,
                     'customer_address': order_id.secondary_customer_address,
@@ -386,6 +390,10 @@ class SecondaryCustomer(http.Controller):
                     'status': order_id.state,
                     'order_date': localized_date_time,
                     'items': lines,
+                    'region': order_id.region_id.name,
+                    'territory': order_id.territory_id.name,
+                    'route': order_id.route_id.name,
+                    'area': order_id.so_market_id.name
                 }
             else:
                 order_dict = {
