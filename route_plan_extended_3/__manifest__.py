@@ -27,6 +27,7 @@
         # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/route_view.xml',
         'views/zone_view.xml',
         'views/territory_view.xml',
         'views/area_view.xml',

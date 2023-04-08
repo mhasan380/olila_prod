@@ -234,9 +234,14 @@ class SecondaryCustomer(http.Controller):
             route_ids = request.env['route.master'].sudo().search([('route_type', '=', 'secondary')])
             routes = []
             for route_id in route_ids:
+                reference_code = route_id.route_id
+                if reference_code and '-' in reference_code:
+                    x = reference_code.split('-')[1:]
+                    reference_code = x[0]
                 route_dict = {
                     'id': route_id.id,
-                    'name': f'[{route_id.route_id}] {route_id.name}',
+                    'name': route_id.name,
+                    'reference_code': reference_code,
                     'so_market': route_id.area_id.name,
                     'territory': route_id.territory_id.name,
                     'region': route_id.zone_id.name,

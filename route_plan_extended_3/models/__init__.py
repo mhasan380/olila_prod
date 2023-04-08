@@ -4,3 +4,4 @@ from . import models
 from . import zone
 from . import territory
 from . import area
+from . import routes

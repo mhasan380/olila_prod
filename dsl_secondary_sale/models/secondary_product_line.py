@@ -16,15 +16,6 @@ class SecondaryProductLine(models.Model):
     product_code = fields.Char('Code', related='product_id.default_code')
     primary_customer_stock_id = fields.Many2one('primary.customer.stocks', string='Customer Stock', required=True)
     current_stock = fields.Float('Stock (Units)')
-    sale_price = fields.Float('Unit Price', compute="_compute_sales_price")
+    sale_price = fields.Float('Unit Price')
     enabled = fields.Boolean("Enabled", default=True)
-
-    @api.depends('product_id')
-    def _compute_sales_price(self):
-        for product in self:
-            if product.product_id:
-                product.sale_price = product.product_id.lst_price
-            else:
-                product.sale_price = 0.0
-
 
