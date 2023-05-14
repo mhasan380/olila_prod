@@ -1,11 +1,31 @@
 # -*- coding: utf-8 -*-
-
+import operator as py_operator
 from odoo import fields, models, _
 from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 
+OPERATORS = {
+    '<': py_operator.lt,
+    '>': py_operator.gt,
+    '<=': py_operator.le,
+    '>=': py_operator.ge,
+    '=': py_operator.eq,
+    '!=': py_operator.ne
+}
+
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
+
+
+    def _compute_invoice_count(self):
+        """This compute function used to count the number of invoice for the picking"""
+        for picking_id in self:
+            move_ids = picking_id.env['account.move'].sudo().search([('invoice_origin', '=', picking_id.name)])
+            if move_ids:
+                picking_id.invoice_count = len(move_ids)
+            else:
+                picking_id.invoice_count = 0
+
 
 
     def create_customer_credit(self):
@@ -29,19 +49,20 @@ class StockPicking(models.Model):
                     'quantity': move.quantity_done,
                 })
                 invoice_line_list.append(vals)
-            invoice = picking_id.env['account.move'].sudo().create({
-                'move_type': 'out_refund',
-                'invoice_origin': picking_id.name,
-                'invoice_user_id': self.env.uid,
-                'narration': picking_id.name,
-                'partner_id': picking_id.partner_id and picking_id.partner_id.id,
-                'currency_id': picking_id.sale_id.currency_id.id if picking_id.sale_id else picking_id.company_id.currency_id.id,
-                'journal_id': int(customer_journal_id),
-                'payment_reference': picking_id.name,
-                'picking_id': picking_id.id,
-                'invoice_line_ids': invoice_line_list,
-                'invoice_date' : picking_id.scheduled_date.date()
-            })
+            if picking_id.invoice_count == 0:
+                invoice = picking_id.env['account.move'].sudo().create({
+                    'move_type': 'out_refund',
+                    'invoice_origin': picking_id.name,
+                    'invoice_user_id': self.env.uid,
+                    'narration': picking_id.name,
+                    'partner_id': picking_id.partner_id and picking_id.partner_id.id,
+                    'currency_id': picking_id.sale_id.currency_id.id if picking_id.sale_id else picking_id.company_id.currency_id.id,
+                    'journal_id': int(customer_journal_id),
+                    'payment_reference': picking_id.name,
+                    'picking_id': picking_id.id,
+                    'invoice_line_ids': invoice_line_list,
+                    'invoice_date' : picking_id.scheduled_date.date()
+                })
             return invoice
 
     def create_invoice(self):
