@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_depot_value_wizard,depot.value.wizard,model_depot_value_wizard,,1,1,1,0
