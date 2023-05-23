@@ -1,60 +1,15 @@
 <odoo>
   <data>
-    <!-- explicit list view definition -->
-<!--
-    <record model="ir.ui.view" id="3rd_party_depot.list">
-      <field name="name">3rd_party_depot list</field>
-      <field name="model">3rd_party_depot.3rd_party_depot</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
--->
-
-    <!-- actions opening views on models -->
-<!--
-    <record model="ir.actions.act_window" id="3rd_party_depot.action_window">
-      <field name="name">3rd_party_depot window</field>
-      <field name="res_model">3rd_party_depot.3rd_party_depot</field>
-      <field name="view_mode">tree,form</field>
-    </record>
--->
-
-    <!-- server action to the one above -->
-<!--
-    <record model="ir.actions.server" id="3rd_party_depot.action_server">
-      <field name="name">3rd_party_depot server</field>
-      <field name="model_id" ref="model_3rd_party_depot_3rd_party_depot"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }
-      </field>
-    </record>
--->
-
-    <!-- Top menu item -->
-<!--
-    <menuitem name="3rd_party_depot" id="3rd_party_depot.menu_root"/>
--->
-    <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="3rd_party_depot.menu_1" parent="3rd_party_depot.menu_root"/>
-    <menuitem name="Menu 2" id="3rd_party_depot.menu_2" parent="3rd_party_depot.menu_root"/>
--->
-    <!-- actions -->
-<!--
-    <menuitem name="List" id="3rd_party_depot.menu_1_list" parent="3rd_party_depot.menu_1"
-              action="3rd_party_depot.action_window"/>
-    <menuitem name="Server to list" id="3rd_party_depot" parent="3rd_party_depot.menu_2"
-              action="3rd_party_depot.action_server"/>
--->
+   <record id="stock_warehouse_form_inherit_3rd_party" model="ir.ui.view">
+            <field name="name">stock.warehouse.form.inherit.3rd.party</field>
+            <field name="model">stock.warehouse</field>
+            <field name="inherit_id" ref="stock.view_warehouse"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="is_3rd_party" />
+                    <field name="responsible" attrs="{'invisible':[('is_3rd_party', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
   </data>
 </odoo>

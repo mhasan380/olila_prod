@@ -137,7 +137,7 @@ class LCDirectTransfer(models.Model):
     cheque_date = fields.Date('Cheque Date')
     state = fields.Selection([('draft', 'Draft'), ('confirm', 'Confirm'),('journal', 'Journal Entry'), ('paid', 'Paid'), ('cancel', 'Cancel')],
                              string='Status', required=True, readonly=True, copy=False, tracking=True, default='draft')
-    date = fields.Date(string="Date", default=datetime.today(), required=True)
+    date = fields.Date(string="Date", default=fields.Date.context_today, required=True)
 
 
 

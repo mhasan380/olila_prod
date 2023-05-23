@@ -79,6 +79,34 @@
 
                         </style>
                         </table>
+
+                        <div class="clearfix" name="so_total_summary">
+                <div id="total" class="row" name="total">
+                    <div t-attf-class="#{'col-4' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto">
+                        <table class="table table-sm">
+                            <tr class="border-black o_subtotal" style="">
+                                <td name="customer_balance"><strong>Customer Advance</strong></td>
+                                <td name="customer_balance" class="text-right">
+                                    <span t-esc="customer_balance" t-options="{'widget': 'float', 'precision': 2}"/>
+                                </td>
+                            </tr>
+                             <tr class="border-black o_subtotal" style="">
+                                <td name="stock_balance"><strong>Current Stock</strong></td>
+                                <td name="stock_balance" class="text-right">
+                                    <span t-esc="total_value" t-options="{'widget': 'float', 'precision': 2}"/>
+                                </td>
+                            </tr>
+
+                            <tr class="border-black o_total">
+                                <td name="td_available_balance"><strong>Available Balance</strong></td>
+                                <td name="td_available_balance" class="text-right">
+                                    <span t-esc="customer_balance - total_value" t-options="{'widget': 'float', 'precision': 2}"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
                     </div>
                 </t>
             </t>

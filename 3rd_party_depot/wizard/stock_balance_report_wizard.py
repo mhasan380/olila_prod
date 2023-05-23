@@ -22,6 +22,7 @@ class DepotValueWizard(models.TransientModel):
                 'warehouse_id' : self.warehouse_id.id,
                 'product_category': self.product_category.id,
                 'location_id': self.warehouse_id.lot_stock_id.id,
+                'partner_id' : self.warehouse_id.responsible.id
             },
         }
         return self.env.ref('3rd_party_depot.depot_value_report').report_action(self, data=data)
@@ -40,6 +41,7 @@ class DepotValueReport(models.AbstractModel):
         docs = self.env[model].browse(self.env.context.get('active_id'))
         product_category = data['form']['product_category']
         warehouse_id = data['form']['warehouse_id']
+        partner_id = data['form']['partner_id']
         location_id = data['form']['location_id']
         warehouse_name = self.env['stock.warehouse'].browse(warehouse_id)
         category_name = self.env['product.category'].browse(product_category)
@@ -59,6 +61,7 @@ class DepotValueReport(models.AbstractModel):
         discount_percent = float(self.env['ir.config_parameter'].sudo().get_param('3rd_party_depot.sale_discount')) or 0
         total_value = 0
         total_stock = 0
+        customer_balance = 0
 
         for move in stock_moves:
             sale_value = (move.quantity * move.product_id.lst_price)
@@ -76,6 +79,13 @@ class DepotValueReport(models.AbstractModel):
             total_value += stock_value
             total_stock += move.quantity
 
+        if warehouse_name.is_3rd_party == True:
+            journals = self.env['account.move.line'].search([('partner_id','=',partner_id)])
+            for line in journals:
+                if (line.account_id.user_type_id.display_name == 'Receivable') and (line.move_id.state == 'posted'):
+                    customer_balance = customer_balance + line.debit - line.credit
+
+
 
         return {
             'doc_ids': data.get('ids'),
@@ -84,6 +94,7 @@ class DepotValueReport(models.AbstractModel):
             'warehouse_name' : warehouse_name,
             'total_value' : total_value,
             'category_name': category_name,
-            'total_stock' : total_stock
+            'total_stock' : total_stock,
+            'customer_balance': (customer_balance * (-1))
             }
 

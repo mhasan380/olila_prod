@@ -22,6 +22,8 @@ class AccountPayment(models.Model):
     def onchange_customer_res(self):
         if self.partner_id:
             self.responsible_id = self.partner_id.responsible.id
+        if self.journal_id:
+            self.partner_bank_id = self.journal_id.bank_account_id.id
 
 
 
