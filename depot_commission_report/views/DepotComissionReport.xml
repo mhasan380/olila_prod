@@ -1,0 +1,115 @@
+<odoo>
+    <data>
+        <report id="depot_commission_report" menu="False" model="depot.commission.report.wizard"
+                name="depot_commission_report.depo_template" report_type="qweb-pdf"
+                string="Depot Commission Report"/>
+
+        <template id="depo_template">
+            <t t-call="web.html_container">
+				<t t-call="web.internal_layout">
+					<div class="page" style="padding-top:5px;">
+						<div class="text-center">
+							<h4>Depot Commission Report</h4>
+						</div>
+						<div>
+							<t t-if="warehouse_id">
+								<p>Warehouse:
+									<span t-esc="warehouse_id"/>
+								</p>
+							</t>
+							<p>From Date:
+
+								<span t-esc="from_date"  t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+							</p>
+							<p>To Date:
+								<span t-esc="to_date"  t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+							</p>
+						</div>
+
+						<table class="table table-bordered mt32">
+							<thead>
+								<tr>
+									<th class="text-left">SL</th>
+									<th class="text-left">Location ID</th>
+									<th class="text-left">Schedule Date</th>
+									<th class="text-left">Sale ID</th>
+									<th class="text-left">Delivery Address</th>
+									<th class="text-left">Delivery Quantity</th>
+									<th class="text-left">Delivery Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								<t t-set="i" t-value="1"/>
+								<t t-foreach="delivery_line_list" t-as="values">
+									<tr>
+										<td>
+											<t t-esc="i"/>
+										</td>
+										<td>
+											<t t-esc="values['name']"/>
+										</td>
+										<td>
+											<t t-esc="values['schedule_date']"/>
+										</td>
+										<td>
+											<t t-esc="values['sale_id']"/>
+										</td>
+										<td>
+											<t t-esc="values['delivery_address']"/>
+										</td>
+										<td>
+											<t t-esc="values['delivery_total_qty']" t-options='{"widget": "float", "precision": 2}'/>
+										</td>
+										<td>
+											<t t-esc="values['delivery_total_amt']" t-options='{"widget": "float", "precision": 2}'/>
+										</td>
+										<t t-set="i" t-value="i+1"/>
+									</tr>
+								</t>
+
+								<tr style="font-weight: bold; color: green; text-align: center">
+									<td colspan="5">
+										<b>Total </b>
+									</td>
+
+									<td colspan="1">
+										<b><span t-esc='total_quantity' t-options ='{"widget": "float", "precision": 2}'/></b>
+									</td>
+									<td colspan="1">
+										<b><span t-esc='total_amount' t-options ='{"widget": "float", "precision": 2}'/></b>
+									</td>
+								</tr>
+								<tr style="font-weight: bold; color: blue; text-align: center">
+									<td colspan="6">
+										<b>Commission Percentage</b>
+									</td>
+
+									<td>
+										<span t-esc="depo_commission" t-options='{"widget": "float", "precision": 2}'/>
+									</td>
+								</tr>
+								<tr style="font-weight: bold; color: red; text-align: center">
+									<td colspan="6">
+										<b>Total Commission Amount</b>
+									</td>
+
+									<td>
+										<span t-esc="commission_amount" t-options='{"widget": "float", "precision": 2}'/>
+									</td>
+								</tr>
+
+							</tbody>
+							<style>
+                                td {border: 1px solid #000; }
+                                th { color: white;
+                                background-color: black;
+                                text-align: center;
+                                }
+                            </style>
+						</table>
+					</div>
+				</t>
+			</t>
+        </template>
+    </data>
+</odoo>

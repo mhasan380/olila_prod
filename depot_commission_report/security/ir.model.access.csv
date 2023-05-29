@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_depo_commission_report_wizard,depot.commission.report.wizard,model_depot_commission_report_wizard,,1,1,1,1
+access_depot_product_com_wizard,depot.product.com.wizard,model_depot_product_com_wizard,,1,1,1,1

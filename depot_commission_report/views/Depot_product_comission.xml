@@ -1,0 +1,202 @@
+<odoo>
+    <data>
+        <report id="depot_product_report" menu="False" model="depot.product.com.wizard"
+                name="depot_commission_report.deport_prod_template" report_type="qweb-pdf"
+                string="Depot Commission Report"/>
+        <template id="deport_prod_template">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <div class="page" style="padding-top:5px;">
+                        <div class="text-center">
+                            <h4>Depot Commission Report</h4>
+                        </div>
+                        <div class="depot_info">
+                            <div style="float: right; padding-left: 5px; padding-top: 5px;">
+                                <t t-if="warehouse">
+                                    <p>Depot:
+
+                                        <span t-esc="warehouse.name"/>
+                                    </p>
+                                </t>
+                                <p>From Date:
+
+
+                                    <span t-esc="from_date"  t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                </p>
+                                <p>To Date:
+
+                                    <span t-esc="to_date"  t-options='{"widget": "date","format": "dd-MM-yyyy"}'/>
+                                </p>
+                            </div>
+                            <div style="float: left; padding-right: 5px; padding-top: 5px; ">
+                                <b>Responsible : </b>
+                                <span t-esc="warehouse.responsible.name"/>
+                                <br/>
+                                <b>Division : </b>
+                                <span t-esc="warehouse.responsible.division_id.name"/>
+                                <br/>
+                                <b>District : </b>
+                                <span t-esc="warehouse.responsible.district_id.name"/>
+                                <br/>
+                            </div>
+                        </div>
+                        <table class="table table-bordered mt32">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">SL</th>
+                                    <th class="text-left">Code</th>
+                                    <th class="text-left">Name</th>
+                                    <th class="text-left">UoM</th>
+                                    <th class="text-left">Quantity</th>
+                                    <th class="text-left">Net Value</th>
+                                    <th class="text-left">Commission %</th>
+                                    <th class="text-left">Comm. Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="i" t-value="1"/>
+                                <t t-foreach="list2" t-as="values">
+                                    <tr>
+                                        <td>
+                                            <t t-esc="i"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="values['product_code']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="values['product_name']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="values['uom']"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="values['product_qty']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="values['net_value']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="values['com_percent']" />
+                                        </td>
+                                        <td>
+                                            <t t-esc="values['net_comission']" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <t t-set="i" t-value="i+1"/>
+                                    </tr>
+                                </t>
+                                <tr style="font-weight: bold; color: green; text-align: center">
+                                    <td colspan="4">
+                                        <b>Total </b>
+                                    </td>
+                                    <td colspan="1">
+                                        <b>
+                                            <span t-esc='total_quantity' t-options ='{"widget": "float", "precision": 2}'/>
+                                        </b>
+                                    </td>
+                                    <td colspan="1">
+                                        <b>
+                                            <span t-esc='total_amount' t-options ='{"widget": "float", "precision": 2}'/>
+                                        </b>
+                                    </td>
+                                    <td colspan="1"></td>
+                                    <td colspan="1">
+                                        <b>
+                                            <span t-esc='total_commission' t-options ='{"widget": "float", "precision": 2}'/>
+                                        </b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <style>
+                                td {border: 1px solid #000; }
+                                th { color: white;
+                                background-color: black;
+                                text-align: center;
+                                }
+                            </style>
+                        </table>
+                        <table class="table table-sm mt48" style="margin-top: 120px">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Signature-RSM</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Name: </p>
+                                        </strong>
+                                        <strong>
+                                            <p>Designation:</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Signature-Depot Owner</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Name: </p>
+                                        </strong>
+                                        <strong>
+                                            <p>Designation:</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr style="margin-top: 20px">
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Checked By</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Name: </p>
+                                        </strong>
+                                        <strong>
+                                            <p>Designation:</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Recommended By</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Name: </p>
+                                        </strong>
+                                        <strong>
+                                            <p>Designation:</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr style="margin-top: 20px">
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Approved By</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Name: </p>
+                                        </strong>
+                                        <strong>
+                                            <p>Designation:</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
