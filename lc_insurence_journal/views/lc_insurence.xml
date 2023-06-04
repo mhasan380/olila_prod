@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+        <record id="insurence_cover_inherit_journal" model="ir.ui.view">
+            <field name="name">insurance.cover.form.inherit.journal</field>
+            <field name="model">insurance.cover</field>
+            <field name="inherit_id" ref="lc_fund_insurance.pway_insurance_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='view_marine']" position="after">
+                       <button name="action_open_picking_invoice" type="object"
+                            class="oe_stat_button" icon="fa-file-text"
+                            attrs="{'invisible': [('invoice_count','=', 0)]}">
+                        <field name="invoice_count" widget="statinfo"/>
+                    </button>
+                    </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

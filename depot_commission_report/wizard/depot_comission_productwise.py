@@ -3,6 +3,7 @@
 from odoo import models,fields,api
 from odoo.tools import date_utils
 from odoo.exceptions import UserError, ValidationError
+from num2words import num2words
 
 class DepotProdCommission(models.TransientModel):
     _name = 'depot.product.com.wizard'
@@ -78,6 +79,7 @@ class DepotprodCommissionReport(models.AbstractModel):
             total_qty += sum(lines.mapped('product_uom_qty'))
             total_amount += product_total
             total_commission += net_comission
+            word_num = str(self.env.user.currency_id.amount_to_text(total_commission))
         return {
             'docs': docs,
             'from_date': from_date,
@@ -87,8 +89,8 @@ class DepotprodCommissionReport(models.AbstractModel):
             'total_quantity':total_qty,
             'list2': sorted(list2,key=lambda l: l['product_code']),
             'total_commission': total_commission,
+            'word_num' : word_num
         }
-
 
 
 

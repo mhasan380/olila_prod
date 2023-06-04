@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="internal_transfer_extend.list">
+      <field name="name">internal_transfer_extend list</field>
+      <field name="model">internal_transfer_extend.internal_transfer_extend</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="internal_transfer_extend.action_window">
+      <field name="name">internal_transfer_extend window</field>
+      <field name="res_model">internal_transfer_extend.internal_transfer_extend</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="internal_transfer_extend.action_server">
+      <field name="name">internal_transfer_extend server</field>
+      <field name="model_id" ref="model_internal_transfer_extend_internal_transfer_extend"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="internal_transfer_extend" id="internal_transfer_extend.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="internal_transfer_extend.menu_1" parent="internal_transfer_extend.menu_root"/>
+    <menuitem name="Menu 2" id="internal_transfer_extend.menu_2" parent="internal_transfer_extend.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="internal_transfer_extend.menu_1_list" parent="internal_transfer_extend.menu_1"
+              action="internal_transfer_extend.action_window"/>
+    <menuitem name="Server to list" id="internal_transfer_extend" parent="internal_transfer_extend.menu_2"
+              action="internal_transfer_extend.action_server"/>
+-->
+  </data>
+</odoo>

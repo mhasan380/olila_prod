@@ -27,6 +27,7 @@
         # 'security/ir.model.access.csv',
         #'views/lc_fund_request_view.xml',
         'views/account_move.xml',
+        'views/lc_insurence.xml',
 
     ],
     # only loaded in demonstration mode

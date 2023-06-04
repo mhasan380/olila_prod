@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from . import test_print_product_label
+
+from . import product_variant_in

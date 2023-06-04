@@ -1,0 +1,22 @@
+<odoo>
+  <data>
+    <record id="lc_opening_form_inherit_account" model="ir.ui.view">
+            <field name="name">document.release.letter.inherit_account</field>
+            <field name="model">document.release.letter</field>
+            <field name="inherit_id" ref="lc_document_letter.document_release_letter_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="lc_type"/>
+                    <field name="ltr_number" attrs="{'invisible':[('lc_type', '!=', 'at_sight')], 'required':[('lc_type', '=', 'at_sight')] }"/>
+                    <field name="accepted_bill_no" attrs="{'invisible':[('lc_type', '!=', 'deferred')], 'required':[('lc_type', '=', 'deferred')] }"/>
+                </xpath>
+                <xpath expr="/form/sheet/div[@class='oe_button_box']/button[@name='view_aggents']" position="after">
+                <button name="view_journal_entry" type="object" class="oe_stat_button" icon="fa-id-card" attrs="{'invisible': [('move_count', '=', 0)]}">
+                                <field name="move_count" widget="statinfo" string="Joural Entries"/>
+                            </button>
+
+                </xpath>
+            </field>
+        </record>
+  </data>
+</odoo>

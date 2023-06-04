@@ -30,8 +30,8 @@
 							<thead>
 								<tr>
 									<th class="text-left">SL</th>
-									<th class="text-left">Location ID</th>
-									<th class="text-left">Schedule Date</th>
+									<th class="text-left">Delivery ID</th>
+									<th class="text-left">Date</th>
 									<th class="text-left">Sale ID</th>
 									<th class="text-left">Delivery Address</th>
 									<th class="text-left">Delivery Quantity</th>
@@ -98,7 +98,9 @@
 									</td>
 								</tr>
 
+
 							</tbody>
+
 							<style>
                                 td {border: 1px solid #000; }
                                 th { color: white;

@@ -106,6 +106,7 @@
                                     </td>
                                 </tr>
                             </tbody>
+
                             <style>
                                 td {border: 1px solid #000; }
                                 th { color: white;
@@ -114,12 +115,17 @@
                                 }
                             </style>
                         </table>
-                        <table class="table table-sm mt48" style="margin-top: 120px">
+                        <div style="margin:20px">
+                            <p style="font-size:20px">Amount In words(Commission):
+								<span t-esc="word_num"/>
+                            </p>
+							</div>
+                        <table class="table table-sm mt48" style="margin-top: 120px; border-top: 2px solid black;">
                             <tbody>
                                 <tr>
                                     <td style="width: 50%">
                                         <strong>
-                                            <p>Signature-RSM</p>
+                                            <p>Signature-RSM :-</p>
                                         </strong>
                                         <strong>
                                             <p>Name: </p>
@@ -133,37 +139,7 @@
                                     </td>
                                     <td style="width: 50%">
                                         <strong>
-                                            <p>Signature-Depot Owner</p>
-                                        </strong>
-                                        <strong>
-                                            <p>Name: </p>
-                                        </strong>
-                                        <strong>
-                                            <p>Designation:</p>
-                                        </strong>
-                                        <strong>
-                                            <p>Organization:</p>
-                                        </strong>
-                                    </td>
-                                </tr>
-                                <tr style="margin-top: 20px">
-                                    <td style="width: 50%">
-                                        <strong>
-                                            <p>Checked By</p>
-                                        </strong>
-                                        <strong>
-                                            <p>Name: </p>
-                                        </strong>
-                                        <strong>
-                                            <p>Designation:</p>
-                                        </strong>
-                                        <strong>
-                                            <p>Organization:</p>
-                                        </strong>
-                                    </td>
-                                    <td style="width: 50%">
-                                        <strong>
-                                            <p>Recommended By</p>
+                                            <p>Signature-Depot Owner :-</p>
                                         </strong>
                                         <strong>
                                             <p>Name: </p>
@@ -179,7 +155,7 @@
                                 <tr style="margin-top: 20px">
                                     <td style="width: 50%">
                                         <strong>
-                                            <p>Approved By</p>
+                                            <p>Checked By :-</p>
                                         </strong>
                                         <strong>
                                             <p>Name: </p>
@@ -189,6 +165,41 @@
                                         </strong>
                                         <strong>
                                             <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Recommended By :-</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Name: </p>
+                                        </strong>
+                                        <strong>
+                                            <p>Designation:</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr style="margin-top: 20px">
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Approved By :-</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Name: </p>
+                                        </strong>
+                                        <strong>
+                                            <p>Designation:</p>
+                                        </strong>
+                                        <strong>
+                                            <p>Organization:</p>
+                                        </strong>
+                                    </td>
+                                    <td style="width: 50%">
+                                        <strong>
+                                            <p>Remarks :-</p>
                                         </strong>
                                     </td>
                                 </tr>

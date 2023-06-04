@@ -65,6 +65,24 @@
                                         <field name="ltr_account"
                                            />
                                     </div>
+                                    <div class="row">
+                                        <label string="Material Transit Account" for="ltr_account"
+                                           class="col-lg-3 o_light_label"/>
+                                        <field name="transit_account"
+                                           />
+                                    </div>
+                                    <div class="row">
+                                        <label string="Bank Charges Account" for="bank_charges"
+                                           class="col-lg-3 o_light_label"/>
+                                        <field name="bank_charges"
+                                           />
+                                    </div>
+                                    <div class="row">
+                                        <label string="Bank Interest Account" for="interest_account"
+                                           class="col-lg-3 o_light_label"/>
+                                        <field name="interest_account"
+                                           />
+                                    </div>
                                 </div>
                             </div>
                         </div>

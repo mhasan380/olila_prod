@@ -21,6 +21,7 @@
         'report/product_label_reports.xml',
         'report/product_label_templates.xml',
         'wizard/print_product_label_views.xml',
+        'view/product_variant_in.xml',
     ],
     'demo': [
         'demo/product_demo.xml',

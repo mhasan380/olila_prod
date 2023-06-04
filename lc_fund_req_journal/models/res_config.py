@@ -13,6 +13,9 @@ class Settings(models.TransientModel):
     lc_vat_account = fields.Many2one('account.account', string="LC VAT Account")
     lc_amenmend_charge = fields.Many2one('account.account', string="LC Amendmend Account")
     ltr_account = fields.Many2one('account.account', string="LTR Account")
+    transit_account = fields.Many2one('account.account', string="Stock Transit Account")
+    bank_charges = fields.Many2one('account.account', string="Bank Charges Account")
+    interest_account = fields.Many2one('account.account', string="Interest Account")
 
     @api.model
     def get_values(self):
@@ -34,6 +37,12 @@ class Settings(models.TransientModel):
                 'lc_fund_req_journal.lc_amenmend_charge')),
             ltr_account= int(self.env['ir.config_parameter'].sudo().get_param(
                 'lc_fund_req_journal.ltr_account')),
+            transit_account=int(self.env['ir.config_parameter'].sudo().get_param(
+                'lc_fund_req_journal.transit_account')),
+            bank_charges=int(self.env['ir.config_parameter'].sudo().get_param(
+                'lc_fund_req_journal.bank_charges')),
+            interest_account=int(self.env['ir.config_parameter'].sudo().get_param(
+                'lc_fund_req_journal.interest_account')),
         )
         return res
 
@@ -49,6 +58,9 @@ class Settings(models.TransientModel):
         lc_vat_account = self.lc_vat_account and self.lc_vat_account.id or False
         lc_amenmend_charge = self.lc_amenmend_charge and self.lc_amenmend_charge.id or False
         ltr_account = self.ltr_account and self.ltr_account.id or False
+        transit_account = self.transit_account and self.transit_account.id or False
+        bank_charges = self.bank_charges and self.bank_charges.id or False
+        interest_account = self.interest_account and self.interest_account.id or False
 
         param.set_param('lc_fund_req_journal.lc_opening_bank', lc_opening_bank)
         param.set_param('lc_fund_req_journal.lc_margin_account', lc_margin_account)
@@ -58,5 +70,8 @@ class Settings(models.TransientModel):
         param.set_param('lc_fund_req_journal.lc_vat_account', lc_vat_account)
         param.set_param('lc_fund_req_journal.lc_amenmend_charge', lc_amenmend_charge)
         param.set_param('lc_fund_req_journal.ltr_account', ltr_account)
+        param.set_param('lc_fund_req_journal.transit_account', transit_account)
+        param.set_param('lc_fund_req_journal.bank_charges', bank_charges)
+        param.set_param('lc_fund_req_journal.interest_account', interest_account)
 
         return res

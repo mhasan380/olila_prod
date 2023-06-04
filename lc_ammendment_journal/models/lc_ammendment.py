@@ -4,12 +4,30 @@ from odoo import models, fields, api, _
 class PurchaseLcAmmendment(models.Model):
     _inherit="purchase.lc.ammendment"
 
+    def _move_count(self):
+        for rec in self:
+            move_ids = self.env['account.move'].search([('lc_ammend_id', '=', rec.id)])
+            rec.move_count = len(move_ids.ids)
+
+    def view_journal_entry(self):
+        move_ids = self.env['account.move'].search([('lc_ammend_id', '=', self.id)])
+        return {
+            'name': _('Journal Entries'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'domain': [('id', 'in', move_ids.ids)],
+        }
+
     foreign_vat = fields.Float('Vat Revenue on Foreign')
     other_vat = fields.Float('Vat Revenue on Other')
     source_tax = fields.Float('Tax on Source')
     postage = fields.Float('Postage and Telegram')
 
     total_charges = fields.Float(string='Total', compute='_compute_total_charges')
+    move_count = fields.Integer(compute='_move_count', string='#Move')
 
     @api.depends('ammendment_charges','foreign_vat','other_vat','source_tax','postage')
     def _compute_total_charges(self):
@@ -67,6 +85,7 @@ class PurchaseLcAmmendment(models.Model):
         }
         move_id1 = self.env['account.move'].create(vals)
         move_id1.ref = 'LC Ammendmend-'+ self.lc_no.lc_no
+        move_id1.lc_ammend_id = self.id
 
         self.write({'state' : 'paid'})
 
