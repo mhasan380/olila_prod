@@ -9,6 +9,9 @@
                     <group>
                         <field name="warehouse_id"/>
                     </group>
+                    <group>
+                        <field name="product_category"/>
+                    </group>
 
                 </group>
                 <footer>
@@ -25,6 +28,6 @@
                 target="new"/>
     <menuitem action="action_current_stock_report_wizard"
               id="menu_current_stock_report_wizard"
-              parent="stock.menu_warehouse_report"
+              parent="olila_inventory_reports.menu_olila_inventory_reports"
               name="Stock Report Details" />
 </odoo>

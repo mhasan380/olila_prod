@@ -7,6 +7,7 @@ class CurrentStockReportWizard(models.TransientModel):
     _name = 'current.stock.report.wizard'
 
     warehouse_id = fields.Many2one('stock.warehouse', 'Stock Location')
+    product_category = fields.Many2one('product.category', string="Category")
 
 
     def get_report(self):
@@ -17,7 +18,8 @@ class CurrentStockReportWizard(models.TransientModel):
             'model': self._name,
             'form': {
                 'warehouse_id':warehouse_id.id,
-                'location_id' : warehouse_id.lot_stock_id.id
+                'location_id' : warehouse_id.lot_stock_id.id,
+                'product_category':self.product_category.id,
             },
         }
         return self.env.ref('stock_details_report_oilia.current_stock_report').report_action(self, data=data)
@@ -42,8 +44,12 @@ class CurrentStockReport(models.AbstractModel):
         warehouse_id = data['form']['warehouse_id']
         location_id = data['form']['location_id']
         warehouse_name = self.env['stock.warehouse'].browse(warehouse_id)
+        product_category = data['form']['product_category']
+        domain=[('location_id', '=', location_id)]
+        if product_category:
+            domain.append(('product_id.categ_id', '=', product_category))
+        quants = self.env['stock.quant'].search(domain)
 
-        quants = self.env['stock.quant'].search([('location_id', '=', location_id)])
 
 
         return {
@@ -51,6 +57,5 @@ class CurrentStockReport(models.AbstractModel):
             'doc_model': data.get('model'),
             'quants': quants,
             'warehouse_name' : warehouse_name
-
             }
 

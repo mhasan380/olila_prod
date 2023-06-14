@@ -1,0 +1,55 @@
+<odoo>
+    <data>
+
+        <record id="stock_picking_form_inherit_lc_drl" model="ir.ui.view">
+            <field name="name">stock.picking.form.inherit.lc.drl</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                      <field name="is_lc" invisible="1"/>
+                    </xpath>
+                <notebook position="inside" >
+<!--                    attrs="{'invisible': [('is_lc', '=', False)]}"-->
+                 <page string="LC Details">
+                    <form string="Details">
+                        <sheet>
+                            <group>
+                                <group>
+                                     <field name="lc_no"/>
+                                     <field name="be_no"/>
+                                     <field name="pi_no"/>
+                                </group>
+                                <group>
+                                     <field name="landing"/>
+                                     <field name="cnf"/>
+                                </group>
+                            </group>
+                        </sheet>
+                    </form>
+                 </page>
+                </notebook>
+            </field>
+        </record>
+        <record id="stock_picking_form_inherit_lc_tab2" model="ir.ui.view">
+            <field name="name">stock.picking.form.inherit.lc.tab2</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="lc_opening_fund_requisition.view_stock_picking_inherit_multi_image_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vehicle_type']" position="attributes">
+                      <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='carton_type']" position="attributes">
+                      <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='capture_barcode']" position="after">
+                     <field name="suplier_name" attrs="{'invisible': [('picking_type_code', '!=', 'incoming')]}" />
+                    <field name="purchase_type" attrs="{'invisible': [('picking_type_code', '!=', 'incoming')]}" />
+                    <field name="purchased_by" attrs="{'invisible': [('picking_type_code', '!=', 'incoming')]}" />
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+
+</odoo>
