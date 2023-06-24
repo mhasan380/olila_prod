@@ -17,6 +17,7 @@
                         <field name="warehouse_id" attrs="{'invisible':[('report_type', '=', 'national')], 'required': [('report_type', 'in', ('depot','customer'))]}"/>
                         <field name="partner_id" attrs="{'invisible':[('report_type', '=', 'national')]}"/>
                         <field name="sort_type" attrs="{'invisible':[('report_type', '!=', 'product')]}"/>
+                        <field name="product_category" widget="many2many_tags"/>
                     </group>
 
                 </group>

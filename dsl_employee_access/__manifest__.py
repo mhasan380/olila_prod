@@ -22,7 +22,8 @@
         'security/ir.model.access.csv',
         'views/employee_res.xml',
         'views/sale_order_other_tab.xml',
-        'views/setting_logger_menu.xml'
+        'views/setting_logger_menu.xml',
+        'views/product_category.xml'
 
     ],
     'images': ['static/description/banner.png'],

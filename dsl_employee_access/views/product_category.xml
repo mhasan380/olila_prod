@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record model="ir.ui.view" id="view_form_product_category_discount">
+        <field name="name">view.form.product.category.discount</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='account_property']" position="before">
+                <group string="Discount">
+                    <group>
+                        <field name="discount_percentage"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

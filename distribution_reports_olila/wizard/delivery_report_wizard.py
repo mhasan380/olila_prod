@@ -14,6 +14,7 @@ class DeliverdReportWizard(models.TransientModel):
     partner_id = fields.Many2one('res.partner', string='Customer')
     sort_type = fields.Selection([('asc', 'Smallest to Largest'), ('desc', 'Largest to Smallest')])
     sale_type = fields.Selection([('primary_sales', 'Primary Sales'), ('corporate_sales', 'Corporate Sales'), ('all', 'All Sales')],default='primary_sales')
+    product_category = fields.Many2many('product.category', string="Category")
 
 
     def get_report(self):
@@ -30,7 +31,8 @@ class DeliverdReportWizard(models.TransientModel):
                 'sale_type' : self.sale_type,
                 'sort_type' : self.sort_type,
                 'report_type' : self.report_type,
-                'partner_id' : self.partner_id.id
+                'partner_id' : self.partner_id.id,
+                'category_ids' : self.product_category.ids
 
 
                 },
@@ -57,6 +59,7 @@ class DeliveredStockReport(models.AbstractModel):
         sale_type = data['form']['sale_type']
         sort_type = data['form']['sort_type']
         partner_id = data['form']['partner_id']
+        category_ids = data['form']['category_ids']
         warehouse_name = self.env['stock.warehouse'].browse(warehouse_id)
 
         from_date = datetime.combine(datetime.strptime(date_start,"%Y-%m-%d"), datetime.min.time())
@@ -64,14 +67,12 @@ class DeliveredStockReport(models.AbstractModel):
 
         if report_type == 'depot':
             depot_stock_dict ={}
-            if sale_type != 'all':
-                delivery_orders = self.env['stock.picking'].search(
-                [('location_id', '=', location_id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
-                 ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('sale_type', '=', sale_type), ('state', '=', 'done'),('transfer_id', '=', False)])
-            else:
-                delivery_orders = self.env['stock.picking'].search(
-                            [('location_id', '=', location_id), ('picking_type_code', '=', 'outgoing'),('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
-                             ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('transfer_id', '=', False)])
+            domain = [[('location_id', '=', location_id), ('picking_type_code', '=', 'outgoing'),('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
+                             ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('transfer_id', '=', False)]]
+            if sale_type:
+                domain.append(('sale_type', '=', sale_type))
+
+            delivery_orders = self.env['stock.picking'].search(domain)
             for delivery in delivery_orders:
                 total_product_delivery = sum(delivery.mapped('move_ids_without_package').mapped('quantity_done'))
 
@@ -103,21 +104,19 @@ class DeliveredStockReport(models.AbstractModel):
                 depots = self.env['stock.warehouse'].search([('lot_stock_id', '=', location_id)])
             else:
                 depots = self.env['stock.warehouse'].search([('is_depot', '=', True)])
+            domain = [('picking_id.scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")), ('picking_id.scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")),
+                      ('picking_id.picking_type_code', '=', 'outgoing'),('picking_id.state' ,'=','done'),('picking_id.location_id.wh_id', 'in', depots.ids),('picking_id.transfer_id', '=', False)]
 
-            for depot in depots:
-                if sale_type != 'all':
-                    delivery_orders = self.env['stock.picking'].search(
-                    [('location_id', '=',  depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'), ('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
-                     ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('sale_type', '=', sale_type), ('state', '=', 'done'),('transfer_id', '=', False)])
-                else:
-                    delivery_orders = self.env['stock.picking'].search(
-                                [('location_id', '=',  depot.lot_stock_id.id), ('picking_type_code', '=', 'outgoing'),('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
-                                 ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('transfer_id', '=', False)])
-                for delivery in delivery_orders:
-                    for line in delivery.move_ids_without_package:
-                        key = (line.product_id)
-                        depot_stock_dict.setdefault(key, 0.0)
-                        depot_stock_dict[key] += line.quantity_done
+
+            if sale_type:
+                domain.append(('sale_type', '=', sale_type))
+            if category_ids:
+                domain.append(('product_id.categ_id', 'in', category_ids))
+            moves = self.env['stock.move'].search(domain)
+            for line in moves:
+                key = (line.product_id)
+                depot_stock_dict.setdefault(key, 0.0)
+                depot_stock_dict[key] += line.product_uom_qty
 
             if sort_type == 'desc':
                 return {

@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="opening_und_xls.list">
+      <field name="name">opening_und_xls list</field>
+      <field name="model">opening_und_xls.opening_und_xls</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="opening_und_xls.action_window">
+      <field name="name">opening_und_xls window</field>
+      <field name="res_model">opening_und_xls.opening_und_xls</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="opening_und_xls.action_server">
+      <field name="name">opening_und_xls server</field>
+      <field name="model_id" ref="model_opening_und_xls_opening_und_xls"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="opening_und_xls" id="opening_und_xls.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="opening_und_xls.menu_1" parent="opening_und_xls.menu_root"/>
+    <menuitem name="Menu 2" id="opening_und_xls.menu_2" parent="opening_und_xls.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="opening_und_xls.menu_1_list" parent="opening_und_xls.menu_1"
+              action="opening_und_xls.action_window"/>
+    <menuitem name="Server to list" id="opening_und_xls" parent="opening_und_xls.menu_2"
+              action="opening_und_xls.action_server"/>
+-->
+  </data>
+</odoo>
