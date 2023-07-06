@@ -99,42 +99,28 @@ class SecondaryCustomer(http.Controller):
                 methods=['GET'])
     def get_secondary_sale_order_distributors(self, **kwargs):
         try:
-            including_subordinates = []
-            so_id_str = kwargs["so_id"]
-            _logger.warning(f'-----------{so_id_str}')
-            # so_id = request.env['hr.employee'].sudo().browse(int(so_id_str))
-            # if so_id = request.env['hr.employee'].sudo().browse(int(so_id_str))
-            if kwargs["so_id"] and kwargs["so_id"] == '-1':
-                employee = request.env['hr.employee'].sudo().browse(request.em_id)
-                including_subordinates.append(employee)
-                including_subordinates.extend(self.get_subordinates(employee))
-            else:
-                so_id_str = kwargs["so_id"]
-                so_id = request.env['hr.employee'].sudo().browse(int(so_id_str))
-                including_subordinates.append(so_id)
-
-            distributors = request.env['res.partner'].sudo().search(
-                [('responsible', 'in', [i_sub.id for i_sub in including_subordinates]), ('is_customer', '=', True)])
+            employee = request.env['hr.employee'].sudo().browse(request.em_id)
+            customers = request.env['res.partner'].sudo().search(
+                [('responsible', '=', employee.id), ('is_customer', '=', True)])
             records = []
-            for distributor in distributors:
-                stock = request.env['primary.customer.stocks'].sudo().search([('customer_id', '=', distributor.id)])
+            for customer in customers:
+                stock = request.env['primary.customer.stocks'].sudo().search([('customer_id', '=', customer.id)])
 
                 if stock:
                     # print(f'-----------------{stock}')
-                    reference_code = distributor.code
+                    reference_code = customer.code
                     if reference_code and '/' in reference_code:
                         x = reference_code.split('/')[1:]
                         reference_code = x[0]
-                    customer_dict = {'id': distributor.id,
-                                     'name': distributor.name,
-                                     'address': distributor.street,
-                                     'mobile': distributor.mobile,
-                                     'responsible': distributor.responsible.name,
+                    customer_dict = {'id': customer.id,
+                                     'name': customer.name,
+                                     'address': customer.street,
+                                     'mobile': customer.mobile,
                                      'reference': reference_code,
                                      'commission': stock.channel_commission,
                                      'total_stocks': stock.total_stocks,
                                      # 'stock_products': stock_products,
-                                     'code': distributor.code}
+                                     'code': customer.code}
                     records.append(customer_dict)
             msg = json.dumps(records,
                              sort_keys=True, indent=4, cls=ResponseEncoder)
@@ -153,7 +139,6 @@ class SecondaryCustomer(http.Controller):
         try:
             data = request.httprequest.data
             data_in_json = json.loads(data)
-            employee = request.env['hr.employee'].sudo().browse(request.em_id)
             # _logger.warning(f' ----- - {data_in_json}')
             distributor = request.env['res.partner'].sudo().search([('id', '=', data_in_json['distributor'])])
             distributor_stock = request.env['primary.customer.stocks'].sudo().search(
@@ -177,7 +162,6 @@ class SecondaryCustomer(http.Controller):
                 order_lines.append((0, 0, order_line_dict))
 
             order_vals = {
-                'create_responsible_id': employee.id,
                 'primary_customer_id': distributor.id,
                 'secondary_customer_id': s_customer.id,
                 'sale_line_ids': order_lines,
@@ -215,8 +199,7 @@ class SecondaryCustomer(http.Controller):
             distributor_stock = request.env['primary.customer.stocks'].sudo().search(
                 [('customer_id', '=', order_id.primary_customer_id.id)])
 
-            if order_id and (
-                    order_id.responsible_id.id == request.em_id or order_id.create_responsible_id.id == request.em_id):
+            if order_id and order_id.responsible_id.id == request.em_id:
                 order_lines = []
                 for product_data in data_in_json['products']:
                     product = request.env['product.product'].sudo().search([('id', '=', product_data['id'])])
@@ -300,12 +283,8 @@ class SecondaryCustomer(http.Controller):
             order_id = request.env['sale.secondary'].sudo().search(
                 [('id', '=', kwargs['order_id']), ('responsible_id', '=', employee.id)])
             if order_id and order_id.state == 'draft':
-                if order_id.responsible_id.id == request.em_id or order_id.create_responsible_id.id == request.em_id:
-                    bol = order_id.unlink()
-                    value = 'Secondary sale order deleted successfully'
-                else:
-                    bol = False
-                    value = 'The sale order is not in draft state'
+                bol = order_id.unlink()
+                value = 'Secondary sale order deleted successfully'
             else:
                 bol = False
                 value = 'You are not allowed to delete this sale order'

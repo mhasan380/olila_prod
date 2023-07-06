@@ -45,12 +45,13 @@
                         <style>
                         .customer_info {
                                         height: 150px;
+                                        color: black;
                              }
                         </style>
                         <div class="page">
                             <div class="oe_structure"/>
                             <t t-if="doc.sale_type=='corporate_sales'">
-                                <div class="row mt32 mb32" id="informations">
+                                <div class="row mt32 mb32" id="informations" style="color: black;">
                                 <div>
                                     <strong>Order Date:</strong>
                                     <p class="m-0" t-field="doc.date_order"/>
@@ -180,13 +181,13 @@
                                 </tbody>
                                 <style>td ,th {border: 1px solid #000;
                                 font-size: 14px;
-
+                                 color: black;
                         }
                         </style>
                             </table>
                             </t>
                         <t t-else="">
-                            <div class="row mt32 mb32" id="informations">
+                            <div class="row mt32 mb32" id="informations" style="color: black;">
                                 <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2">
                                     <strong>Your Reference:</strong>
                                     <p class="m-0" t-field="doc.client_order_ref"/>
@@ -286,7 +287,7 @@
                                 <style>
                         td ,th {border: 1px solid #000;
                                 font-size: 14px;
-
+                                color: black;
                         }
                         </style>
                             </table>
@@ -310,6 +311,7 @@
                          .customer_signature{ text-align: center;
                                               padding-top: 120px;
                                               margin-bottom: 10px;
+                                              color: black;
 
                          }
 

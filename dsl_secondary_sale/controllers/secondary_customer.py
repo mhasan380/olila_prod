@@ -85,12 +85,8 @@ class SecondaryCustomer(http.Controller):
                 methods=['GET'])
     def get_secondary_customers(self, **kwargs):
         try:
-            including_subordinates = []
             employee = request.env['hr.employee'].sudo().browse(request.em_id)
-            including_subordinates.append(employee)
-            including_subordinates.extend(self.get_subordinates(employee))
-            customers = request.env['customer.secondary'].sudo().search(
-                [('responsible_id', 'in', [i_sub.id for i_sub in including_subordinates])], order='id desc')
+            customers = request.env['customer.secondary'].sudo().search([('responsible_id', '=', employee.id)], order='id desc')
 
             records = []
             for customer in customers:
@@ -259,13 +255,3 @@ class SecondaryCustomer(http.Controller):
             err = {'error': str(e)}
             error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
             return Response(error, content_type='application/json;charset=utf-8', status=200)
-
-    def get_subordinates(self, employee):
-        subordinate_list = []
-        subordinates = request.env['hr.employee'].sudo().search(
-            [('parent_id', '=', employee.id), '|', ('active', '=', True), ('active', '=', False)])
-        subordinate_list.extend(subordinates)
-        for subordinate in subordinates:
-            subordinate_list.extend(self.get_subordinates(subordinate))
-
-        return subordinate_list

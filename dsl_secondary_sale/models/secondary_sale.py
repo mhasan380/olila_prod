@@ -19,7 +19,6 @@ class SaleSecondary(models.Model):
     distributor_mobile = fields.Char('Contact', related='primary_customer_id.mobile')
     distributor_address = fields.Char('Address', related='primary_customer_id.street')
     responsible_id = fields.Many2one('hr.employee', string='Responsible', related='primary_customer_id.responsible')
-    create_responsible_id = fields.Many2one('hr.employee', string='Create Responsible')
     secondary_customer_id = fields.Many2one('customer.secondary', string='Secondary Customer', required=True,
                                             domain="[('partner_id', '=', primary_customer_id)]")
     secondary_customer_address = fields.Char(string='Address', related='secondary_customer_id.address')

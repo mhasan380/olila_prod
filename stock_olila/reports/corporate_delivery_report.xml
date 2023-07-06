@@ -87,11 +87,12 @@
                         </div>
                         <style>.customer_info {
                                         height: 150px;
+                                        color: black;
                              }
                         </style>
                         <div class="page">
                             <div class="oe_structure"/>
-                            <div class="row mt32 mb32" id="informations" style="padding-top: 5px;">
+                            <div class="row mt32 mb32" id="informations" style="padding-top: 5px; color: black;">
                                 <div>
                                     <strong>Order</strong>
                                     <p class="m-0" t-field="doc.origin"/>
@@ -106,7 +107,7 @@
                               </div>
 
                             </div>
-                            <table class="table table-sm o_main_table">
+                            <table class="table table-sm o_main_table" >
                                 <!-- In case we want to repeat the header, remove "display: table-row-group" -->
                                 <thead>
                                     <tr>
@@ -191,6 +192,7 @@
                 </tbody>
                                 <style>td ,th {border: 1px solid #000;
                                 font-size: 14px;
+                                    color: black;
 
                         }
                         </style>
@@ -201,7 +203,7 @@
                              <p t-field="doc.note"/>
                             </div>
 
-                            <table class="table table-sm mt48" style="margin-top: 120px">
+                            <table class="table table-sm mt48" style="margin-top: 120px; color: black;">
                               <tbody>
                                 <tr>
                                   <td>
