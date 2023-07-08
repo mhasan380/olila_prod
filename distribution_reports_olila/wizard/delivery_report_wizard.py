@@ -109,7 +109,7 @@ class DeliveredStockReport(models.AbstractModel):
 
 
             if sale_type:
-                domain.append(('sale_type', '=', sale_type))
+                domain.append(('picking_id.sale_type', '=', sale_type))
             if category_ids:
                 domain.append(('product_id.categ_id', 'in', category_ids))
             moves = self.env['stock.move'].search(domain)
