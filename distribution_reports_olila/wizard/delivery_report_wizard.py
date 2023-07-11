@@ -67,8 +67,8 @@ class DeliveredStockReport(models.AbstractModel):
 
         if report_type == 'depot':
             depot_stock_dict ={}
-            domain = [[('location_id', '=', location_id), ('picking_type_code', '=', 'outgoing'),('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
-                             ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('transfer_id', '=', False)]]
+            domain = [('location_id', '=', location_id), ('picking_type_code', '=', 'outgoing'),('scheduled_date', '>=', from_date.strftime("%Y-%m-%d %H:%M:%S")),
+                             ('scheduled_date', '<=', to_date.strftime("%Y-%m-%d %H:%M:%S")), ('state', '=', 'done'),('transfer_id', '=', False)]
             if sale_type:
                 domain.append(('sale_type', '=', sale_type))
 
