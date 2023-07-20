@@ -15,5 +15,20 @@
 
             </field>
         </record>
+        <record id="lc_register_tree_inherit" model="ir.ui.view">
+            <field name="name">lc.register.tree.inherit</field>
+            <field name="model">lc.register</field>
+            <field name="inherit_id" ref="lc_loan_control.lc_register_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='lc_number']" position="replace">
+                     <field name="lc_no" />
+                    </xpath>
+                <xpath expr="//field[@name='state']" position="after">
+                    <button name="lc_close" string="Close LC" type="object" class="oe_highlight" states="run"/>
+                    </xpath>
+
+            </field>
+        </record>
     </data>
 </odoo>

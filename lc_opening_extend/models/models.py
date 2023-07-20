@@ -56,6 +56,15 @@ class LcOpening(models.Model):
                 rec.requisition_id.state = 'accept'
             rec.write({'state': 'accept'})
 
+    state = fields.Selection(
+        [('draft', 'Draft'), ('confirm', 'Confirm'), ('accept', 'Accept'), ('amendment', 'Amendment'), ('done','Done'),
+         ('cancel', 'Cancel')],
+        string='Status', readonly=True, index=True, copy=False, default='draft', tracking=True)
+
+    def close_lc(self):
+        for rec in self:
+            rec.state = 'done'
+
 
 
 
