@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+     <record model="ir.ui.view" id="discount_update_tree_view">
+        <field name="name">discount.update.tree</field>
+        <field name="model">discount.update</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="region"/>
+                 <field name="remarks"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- form veiw -->
+    <record model="ir.ui.view" id="discount_update_form_view">
+        <field name="name">discount.update.form.view</field>
+        <field name="model">discount.update</field>
+        <field name="arch" type="xml">
+            <form string="Sales Discount Update">
+                <header>
+                    <button name="first_approval" states="draft" string="First Approval" type="object" class="oe_highlight"/>
+                    <button name="second_approval" string="Second Approval" type="object" states="first" class="oe_highlight"/>
+                    <button name="final_approval" type="object" states="second" string="Final Approval" class="oe_highlight"/>
+                    <button name="button_draft" states="cancel" string="Set to Draft" type="object"/>
+                    <button name="button_cancel" states="draft,first,second,final" string="Cancel" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,first,second,final" readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" required="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date" required="1"/>
+                             <field name="region"/>
+                            <field name="territory"/>
+                            <field name="area"/>
+                            <field name="route"/>
+
+                        </group>
+                         <group>
+                             <field name="division"/>
+                             <field name="district"/>
+                            <field name="upazila"/>
+                             <field name="union"/>
+                             <field name="remarks"/>
+
+                        </group>
+
+                    </group>
+                     <notebook>
+                        <page string="Discount %">
+                             <field name="discount_line_ids" attrs="{'readonly': [('state', 'in', ('final', 'cancel'))]}">
+                                <tree editable="bottom">
+                                    <field name="product_category"/>
+                                    <field name="note"/>
+                                    <field name="discount_percentage"/>
+                                    <field name="discount_id" invisible="1"/>
+                                </tree>
+                        </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record model="ir.actions.act_window" id="action_discount_update">
+        <field name="name">Sales Discount Update</field>
+        <field name="res_model">discount.update</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="action_discount_update_menu"
+        name="Sales discount Update"
+        sequence="102"
+        parent="sale.product_menu_catalog"
+        action="action_discount_update"/>
+    </data>
+</odoo>
