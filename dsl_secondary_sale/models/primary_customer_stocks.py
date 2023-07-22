@@ -151,19 +151,19 @@ class PrimaryCustomerStocks(models.Model):
 
     def preview_stock_adjustments(self):
         for rec in self:
-            if len(rec.customer_stocks) > 0:
-                return {
-                    # 'name': self.order_id,
-                    'res_model': 'stock.move.secondary.multi',
-                    'type': 'ir.actions.act_window',
-                    'context': {'default_secondary_stock_id': rec.id, 'form_view_initial_mode': 'edit',
-                                'force_detailed_view': 'true'},
-                    'view_mode': 'form',
-                    'view_id': self.env.ref("dsl_secondary_sale.view_stock_adjustment_dialog_form").id,
-                    'target': 'new'
-                }
-            else:
-                raise ValidationError(_('No product found for adjustment.'))
+            # if len(rec.customer_stocks) > 0:
+            return {
+                # 'name': self.order_id,
+                'res_model': 'stock.move.secondary.multi',
+                'type': 'ir.actions.act_window',
+                'context': {'default_secondary_stock_id': rec.id, 'form_view_initial_mode': 'edit',
+                            'force_detailed_view': 'true'},
+                'view_mode': 'form',
+                'view_id': self.env.ref("dsl_secondary_sale.view_stock_adjustment_dialog_form").id,
+                'target': 'new'
+            }
+            # else:
+            #     raise ValidationError(_('No product found for adjustment.'))
 
 
 class StockPickingInherited(models.Model):

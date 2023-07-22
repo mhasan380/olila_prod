@@ -37,8 +37,9 @@ class SecondaryCustomer(http.Controller):
             data_in_json = json.loads(data)
             order_id = data_in_json['order_id']
             products = data_in_json['products']
-
-            ss_order = request.env['sale.secondary'].sudo().search([('id', '=', order_id)])
+            employee = request.env['hr.employee'].sudo().browse(request.em_id)
+            ss_order = request.env['sale.secondary'].sudo().search(
+                [('id', '=', order_id), ('responsible_id', '=', employee.id)])
 
             result = 'Secondary sale return done successfully.'
             bol = True
@@ -62,7 +63,7 @@ class SecondaryCustomer(http.Controller):
                         result = 'Product not found. Unable to return.'
                         bol = False
             else:
-                result = 'Unable to create secondary sale return.'
+                result = 'You are not allowed to create return for this secondary sale order.'
                 bol = False
 
             # tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_01',

@@ -6,6 +6,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="create_responsible"/>
                 <field name="create_latitude" invisible="1"/>
                 <field name="create_longitude" invisible="1"/>
                 <button name="open_so_create_location" string="Location" type="object"

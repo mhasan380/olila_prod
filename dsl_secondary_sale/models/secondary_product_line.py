@@ -16,6 +16,6 @@ class SecondaryProductLine(models.Model):
     product_code = fields.Char('Code', related='product_id.default_code')
     primary_customer_stock_id = fields.Many2one('primary.customer.stocks', string='Customer Stock', required=True)
     current_stock = fields.Float('Stock (Units)')
-    sale_price = fields.Float('Unit Price')
+    sale_price = fields.Float(string='Unit Price', related='product_id.lst_price')
     enabled = fields.Boolean("Enabled", default=True)
 

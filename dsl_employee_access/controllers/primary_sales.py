@@ -93,13 +93,17 @@ class PrimarySales(http.Controller):
                                   'price_unit': line.price_unit,
                                   'delivered': line.qty_delivered,
                                   'price_subtotal': price_subtotal,
+                                  # 'category_discount': line.product_id.categ_id.discount_percentage
+                                  'category_discount': self.get_category_discount(line.product_id,order.partner_id)
                                   }
                     order_lines.append(order_line)
 
             order_details = {
                 'name': order.name,
                 'customer': order.partner_id.name,
-                'customer_discount': order.partner_id.discount,
+                'customer_id': order.partner_id.id,
+                # 'customer_discount': order.partner_id.discount,
+                'customer_discount': 0.0,
                 'responsible': order.responsible.name,
                 # 'customer_address': order.partner_id.street,
                 'customer_address': order.address,
@@ -134,7 +138,6 @@ class PrimarySales(http.Controller):
                 methods=['GET'])
     def get_my_customers(self, **kwargs):
         try:
-
             me = request.env['hr.employee'].sudo().browse(request.em_id)
             customers = request.env['res.partner'].sudo().search([('responsible', '=', me.id)])
             # customers = request.env['res.partner'].sudo().search([('responsible', '=', me.id)])
@@ -163,7 +166,8 @@ class PrimarySales(http.Controller):
                                  'secondary_contact': customer.secondary_contact_persion,
                                  'zone_id': customer.zone_id.id,
                                  'zone': customer.zone_id.name,
-                                 'discount': customer.discount,
+                                 # 'discount': customer.discount,
+                                 'discount': 0.0,
                                  'reference': reference_code,
                                  'code': customer.code}
                 records.append(customer_dict)
@@ -184,6 +188,9 @@ class PrimarySales(http.Controller):
                 methods=['GET'])
     def get_products_for_sale(self, **kwargs):
         try:
+            customer_id1 = False
+            if kwargs['customer']:
+                customer_id1 = request.env['res.partner'].sudo().search([('id','=',kwargs['customer'])])
 
             location = kwargs['location']
             products = request.env['product.product'].sudo().search(
@@ -203,13 +210,17 @@ class PrimarySales(http.Controller):
 
                     if quant_id.location_id.wh_id.id == int(location):
                         available_qty = quant_id.available_quantity
-
+                percentage_of_discount = 0.0
+                if customer_id1:
+                    percentage_of_discount = self.get_category_discount(product,customer_id1)
                 product_dict = {'id': product.id,
                                 'name': product.name,
                                 'price': product.list_price,
                                 'available': product.net_stock,
                                 'code': product.default_code,
                                 'reference': raw_code,
+                                # 'category_discount': product.categ_id.discount_percentage,
+                                'category_discount': percentage_of_discount,
                                 'warehouse_available': available_qty
                                 }
                 product_records.append(product_dict)
@@ -246,7 +257,8 @@ class PrimarySales(http.Controller):
                     'name': product.name,
                     'product_uom_qty': product_data['quantity'],
                     'price_unit': product.lst_price,
-                    'discount': customer.discount
+                    # 'discount': product.categ_id.discount_percentage
+                    'discount': self.get_category_discount(product,customer)
                 }
                 order_lines.append((0, 0, order_line_dict))
 
@@ -265,7 +277,9 @@ class PrimarySales(http.Controller):
                 'secondary_contact_persion': customer.secondary_contact_persion,
                 'zone_id': customer.zone_id.id,
                 'sale_type': 'primary_sales',
-                'responsible': request.em_id,
+                # 'responsible': request.em_id,
+                'create_responsible': request.em_id,
+                'responsible': customer.responsible.id,
                 'team_id': customer.team_id.id,
                 'require_signature': True,
                 'warehouse_id': customer.deport_warehouse_id.id,
@@ -303,7 +317,7 @@ class PrimarySales(http.Controller):
             data_in_json = json.loads(data)
             # _logger.warning(f' ----- - {data_in_json}')
             order = request.env['sale.order'].sudo().search([('id', '=', data_in_json['order_id'])])
-            if order.responsible.id == request.em_id:
+            if order.responsible.id == request.em_id or order.create_responsible.id == request.em_id:
                 order_lines = []
                 for product_data in data_in_json['products']:
                     product = request.env['product.product'].sudo().search([('id', '=', product_data['id'])])
@@ -314,7 +328,8 @@ class PrimarySales(http.Controller):
                         'name': product.name,
                         'product_uom_qty': product_data['quantity'],
                         'price_unit': product.lst_price,
-                        'discount': order.partner_id.discount,
+                        # 'discount': product.categ_id.discount_percentage,
+                        'discount': self.get_category_discount(product,order.partner_id),
                         'company_id': order.company_id.id,
                         'order_id': order.id,
                         'currency_id': order.currency_id.id
@@ -361,7 +376,7 @@ class PrimarySales(http.Controller):
     def delete_sale_order(self, **kwargs):
         try:
             order = request.env['sale.order'].sudo().search([('id', '=', kwargs['id'])])
-            if order.responsible.id == request.em_id:
+            if order.create_responsible.id == request.em_id:
 
                 if order.state == 'draft':
                     pay_records = order.mapped('sale_payment_ids')
@@ -403,16 +418,16 @@ class PrimarySales(http.Controller):
                 'state': 'waiting_for_approval'
             }
             order = request.env['sale.order'].sudo().search([('id', '=', kwargs['id'])])
-            if order.responsible.id == request.em_id:
-                if order.state == 'draft':
-                    bol = order.write(vals)
-                    value = 'Now the order is waiting for approval'
-                else:
-                    bol = False
-                    value = 'This order is not in Quotation state'
+            # if order.responsible.id == request.em_id:
+            if order.state == 'draft':
+                bol = order.write(vals)
+                value = 'Now the order is waiting for approval'
             else:
                 bol = False
-                value = 'You are not allowed to confirm this sale order'
+                value = 'This order is not in Quotation state'
+            # else:
+            #     bol = False
+            #     value = 'You are not allowed to confirm this sale order'
             tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='fun_ps_04',
                                                  trace_ref='expected_primary_sale_order_confirm', with_location=True)
             msg = json.dumps({'result': bol, 'data': value},
@@ -486,3 +501,86 @@ class PrimarySales(http.Controller):
             return customer_balance
         except Exception as e:
             return -999999
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/subordinates/my', website=True, auth='none', type='http', csrf=False, methods=['GET'])
+    def get_my_subordinates(self, **kwargs):
+        try:
+            employee = request.env['hr.employee'].sudo().browse(request.em_id)
+            my_subordinates = self.get_subordinates(employee)
+
+            subordinate_list = []
+            for sub in my_subordinates:
+                if sub.type == 'so':
+                    sub_dict = {
+                        'id': sub.id,
+                        'name': sub.name
+                    }
+                    subordinate_list.append(sub_dict)
+            msg = json.dumps(subordinate_list,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_14',
+                                                 trace_ref=str(e), with_location=False)
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    @tools.security.protected_rafiul()
+    @http.route('/web/sales/force/sale_order/so_customers', website=True, auth='none', type='http', csrf=False,
+                methods=['GET'])
+    def get_so_customers(self, **kwargs):
+        try:
+            so_id_str = kwargs["so_id"]
+            so_id = request.env['hr.employee'].sudo().browse(int(so_id_str))
+            customers = request.env['res.partner'].sudo().search([('responsible', '=', so_id.id)])
+
+            records = []
+            for customer in customers:
+                reference_code = customer.code
+                if reference_code and '/' in reference_code:
+                    x = reference_code.split('/')[1:]
+                    reference_code = x[0]
+                customer_dict = {'id': customer.id,
+                                 'name': customer.name,
+                                 'price_list_id': customer.with_context(
+                                     allowed_company_ids=[1]).property_product_pricelist.id,
+                                 'price_list': customer.with_context(
+                                     allowed_company_ids=[1]).property_product_pricelist.name,
+                                 'payment_id': customer.with_context(
+                                     allowed_company_ids=[1]).property_payment_term_id.id,
+                                 'payment': customer.with_context(
+                                     allowed_company_ids=[1]).property_payment_term_id.name,
+                                 'warehouse_id': customer.deport_warehouse_id.id,
+                                 'warehouse': customer.deport_warehouse_id.name,
+                                 'contact_no': customer.mobile,
+                                 'address': customer.street,
+                                 'balance': self.get_customer_balance(customer.id),
+                                 'secondary_contact': customer.secondary_contact_persion,
+                                 'zone_id': customer.zone_id.id,
+                                 'zone': customer.zone_id.name,
+                                 # 'discount': customer.discount,
+                                 'discount': 0.0,
+                                 'reference': reference_code,
+                                 'code': customer.code}
+                records.append(customer_dict)
+
+            msg = json.dumps(records,
+                             sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(msg, content_type='application/json;charset=utf-8', status=200)
+
+        except Exception as e:
+            err = {'error': str(e)}
+            tools.security.create_log_salesforce(http.request, access_type='protected', system_returns='exc_ps_16',
+                                                 trace_ref=str(e), with_location=False)
+            error = json.dumps(err, sort_keys=True, indent=4, cls=ResponseEncoder)
+            return Response(error, content_type='application/json;charset=utf-8', status=200)
+
+    def get_category_discount(self, product_id, partner_id):
+        discount1 = 0.0
+        for discount_line in partner_id.discount_line_ids:
+            if discount_line.product_category.id == product_id.categ_id.id:
+                return discount_line.discount_percentage
+        return discount1

@@ -16,6 +16,7 @@ class SaleOrderInherit(models.Model):
     create_latitude = fields.Char(string='Create Latitude')
     create_longitude = fields.Char(string='Create Longitude')
     create_location_url = fields.Char(string='Create Location Url', compute='_compute_create_location_url_for_map')
+    create_responsible = fields.Many2one('hr.employee', string="Create Responsible")
 
     @api.depends('create_latitude', 'create_longitude')
     def _compute_create_location_url_for_map(self):

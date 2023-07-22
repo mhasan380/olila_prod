@@ -144,7 +144,7 @@ class EmployeeTargetAchievement(http.Controller):
             # _logger.warning(f' ============== ' + str(kwargs['empl']) + ' -- ' + str(kwargs['unauthorize']))
             # employee = request.env['hr.employee'].sudo().search([('id', '=', kwargs['empl'])])
             # payment_journals = request.env['account.journal'].sudo().search([('type', 'in', ['bank', 'cash'])])
-
+            employee = request.env['hr.employee'].sudo().browse(request.em_id)
             journal_id = request.env['account.journal'].sudo().browse(int(kwargs['method_id']))
             amount = float(kwargs['amount'])
             payment_date = kwargs['payment_date']
@@ -161,7 +161,7 @@ class EmployeeTargetAchievement(http.Controller):
             # responsible = employee.id
 
             sale_id = kwargs['order_id']
-            _logger.warning(f'------------------{sale_id}')
+            # _logger.warning(f'------------------{sale_id}')
             if sale_id:
                 sale = request.env['sale.order'].sudo().browse(int(sale_id))
                 _logger.warning(f'------------------{sale.name}')
@@ -174,6 +174,7 @@ class EmployeeTargetAchievement(http.Controller):
                                 'partner_type': 'customer',
                                 'sale_id': sale.id,
                                 'responsible_id': sale.responsible and sale.responsible.id,
+                                #'responsible_id': employee and employee.id,
                                 'ref': _("Advance") + " - " + sale.name,
                                 'partner_id': sale.partner_id and sale.partner_id.id,
                                 'journal_id': journal_id and journal_id.id,
@@ -250,16 +251,16 @@ class EmployeeTargetAchievement(http.Controller):
             }
             payment_id = request.env['account.payment'].sudo().search([('id', '=', kwargs['id'])])
 
-            if payment_id.responsible_id.id == request.em_id:
-                if payment_id.state == 'draft':
-                    bol = payment_id.write(vals)
-                    value = 'Payment amount successfully updated'
-                else:
-                    bol = False
-                    value = 'This payment is not in Draft state'
+            # if payment_id.responsible_id.id == request.em_id:
+            if payment_id.state == 'draft':
+                bol = payment_id.write(vals)
+                value = 'Payment amount successfully updated'
             else:
                 bol = False
-                value = 'You are not allowed to update this payment'
+                value = 'This payment is not in Draft state'
+            # else:
+            #     bol = False
+            #     value = 'You are not allowed to update this payment'
 
             msg = json.dumps({'result': bol, 'data': value},
                              sort_keys=True, indent=4, cls=ResponseEncoder)
