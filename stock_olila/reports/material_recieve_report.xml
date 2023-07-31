@@ -37,6 +37,27 @@
                                 <br/>
                                 <b>Remarks/Note: </b>
                                 <span t-field="doc.note"/>
+                                <br/>
+                                <b>Supplier: </b>
+                                <span t-field="doc.suplier_name"/>
+                                <br/>
+                                <b>Transporter: </b>
+                                <span t-field="doc.transporter_name"/>
+                                <br/>
+                                <b>Vehicle No: </b>
+                                <span t-field="doc.vehicle_no"/>
+                                <br/>
+                                <b>Driver Name: </b>
+                                <span t-field="doc.driver_name"/>
+                                <br/>
+                                <b>Vehicle Qty: </b>
+                                <span t-field="doc.vehicle_qty"/>
+                                <br/>
+                                <b>Container Size: </b>
+                                <span t-field="doc.container_size"/>
+                                <br/>
+                                <b>Container Qty: </b>
+                                <span t-field="doc.container_qty"/>
                             </div>
                             <div style="float: left; padding-right: 5px; padding-top: 5px; ">
                                 <b>Requisition No : </b>
@@ -50,6 +71,21 @@
                                 <br/>
                                 <b>Purchase Category: </b>
                                 <span t-field="doc.purchase_id.requisition_id.requisition_id.purcahse_category"/>
+                                <br/>
+                                <b>LC/CH No: </b>
+                                <span t-field="doc.lc_no"/>
+                                <br/>
+                                <b>BE No: </b>
+                                <span t-field="doc.be_no"/>
+                                <br/>
+                                <b>PI No: </b>
+                                <span t-field="doc.pi_no"/>
+                                <br/>
+                                <b>Port of landing: </b>
+                                <span t-field="doc.landing"/>
+                                <br/>
+                                <b>CNF: </b>
+                                <span t-field="doc.cnf"/>
                             </div>
                         </div>
                         <style>.customer_info {

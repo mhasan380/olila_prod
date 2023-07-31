@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="expense_notebook_form" model="ir.ui.view">
+        <field name="name">expense.notebook.form</field>
+        <field name="model">expense.notebook</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button id="button_confirm" name="confirm_action" string="Confirm" class="btn-primary"
+                            states="draft" confirm="Are you sure to confirm" type="object"/>
+                    <button id="button_draft" name="draft_action" string="Set to Draft" class="btn-primary"
+                            states="cancel" type="object"/>
+                    <button id="button_cancel" name="cancel_action" string="Cancel" states="draft,confirm,done"
+                            confirm="Are you want to cancel" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_little">
+                        <h1>
+                            <field name="reference_no" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="transaction_type"/>
+                            <field name="particular"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="amount_word"/>
+                            <field name="amount_signed" invisible="1"/>
+                            <field name="payEE_receiver"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="expense_notebook_tree" model="ir.ui.view">
+        <field name="name">expense.notebook.tree</field>
+        <field name="model">expense.notebook</field>
+        <field name="arch" type="xml">
+            <tree multi_edit="1">
+                <field name="reference_no"/>
+                <field name="date"/>
+                <field name="transaction_type"/>
+                <field name="state"/>
+                <field name="amount"/>
+                <field name="amount_signed" sum="total"/>
+                <field name="particular" optional="hide"/>
+                <field name="payEE_receiver" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="expense_notebook_kanban" model="ir.ui.view">
+        <field name="name">expense.notebook.kanban</field>
+        <field name="model">expense.notebook</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="reference_no"/>
+                <field name="date"/>
+                <field name="transaction_type"/>
+                <field name="amount"/>
+                <field name="amount_word"/>
+                <field name="state"/>
+                <field name="amount_signed"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <ul>
+                                    <li>
+                                        Date :
+                                        <field name="date"/>
+                                    </li>
+                                    <li>
+                                        Transaction Type :
+                                        <field name="transaction_type"/>
+                                    </li>
+                                    <li>
+                                        Status :
+                                        <field name="state"/>
+                                    </li>
+                                    <li>
+                                        Balance :
+                                        <field name="amount_signed"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="notebook_action" model="ir.actions.act_window">
+        <field name="name">Expense Notebook</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">expense.notebook</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a Record!!!!
+            </p>
+        </field>
+    </record>
+    <menuitem id="notebook_root"
+              name="Notebook"
+              sequence="10"/>
+    <menuitem id="expense_notebook_root"
+              name="Expense Notebook"
+              parent="notebook_root"
+              action="notebook_action"
+              sequence="10"/>
+
+</odoo>
