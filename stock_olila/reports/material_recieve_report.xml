@@ -110,6 +110,12 @@
                                         <th class="text-right" name="th_quantity">
                                             <b>Quantity</b>
                                         </th>
+                                        <th class="text-right" name="th_rack">
+                                            <b>Rack</b>
+                                        </th>
+                                        <th class="text-right" name="th_remark">
+                                            <b>Remarks</b>
+                                        </th>
 
                                     </tr>
                                 </thead>
@@ -131,6 +137,12 @@
                                             <td name="th_quantity">
                                                 <span t-field="line.quantity_done"/>
                                             </td>
+                                            <td name="th_rack">
+                                                <span t-field="line.product_id.rack_id.name"/>
+                                            </td>
+                                            <td name="th_remarks">
+                                                <span t-field="line.remarks"/>
+                                            </td>
                                             <t t-set="i" t-value="i+1"/>
                                             <t t-set="product_qty" t-value="product_qty + line.quantity_done"/>
                                         </tr>
@@ -142,6 +154,8 @@
                                                             <td>
                                                                 <span t-esc="product_qty" t-options='{"widget": "float", "precision": 2}'/>
                                                             </td>
+                                                            <td></td>
+                                                            <td></td>
 
                                                         </tr>
                 </tbody>

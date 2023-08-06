@@ -29,6 +29,7 @@
         'views/views.xml',
         'views/templates.xml',
         'views/notebook.xml',
+        'views/notebook_cash_voucher.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

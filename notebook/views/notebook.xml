@@ -12,6 +12,7 @@
                             states="cancel" type="object"/>
                     <button id="button_cancel" name="cancel_action" string="Cancel" states="draft,confirm,done"
                             confirm="Are you want to cancel" type="object"/>
+                    <button name="print_expense_notebook" string="Notebook Cash Voucher" type="object" class="btn-primary" attrs="{'invisible':[('state', '!=', 'confirm')]}"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
                 </header>
                 <sheet>
@@ -24,6 +25,7 @@
                         <group>
                             <field name="date"/>
                             <field name="transaction_type"/>
+                            <field name="operating_unit"/>
                             <field name="particular"/>
                         </group>
                         <group>
@@ -31,6 +33,7 @@
                             <field name="amount_word"/>
                             <field name="amount_signed" invisible="1"/>
                             <field name="payEE_receiver"/>
+                            <field name="remarks"/>
                         </group>
                     </group>
                 </sheet>
@@ -49,6 +52,7 @@
             <tree multi_edit="1">
                 <field name="reference_no"/>
                 <field name="date"/>
+                <field name="operating_unit"/>
                 <field name="transaction_type"/>
                 <field name="state"/>
                 <field name="amount"/>
