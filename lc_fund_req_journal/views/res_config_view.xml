@@ -83,6 +83,12 @@
                                         <field name="interest_account"
                                            />
                                     </div>
+                                    <div class="row">
+                                        <label string="DRL Margin Account" for="interest_account"
+                                           class="col-lg-3 o_light_label"/>
+                                        <field name="drl_margin_account"
+                                           />
+                                    </div>
                                 </div>
                             </div>
                         </div>

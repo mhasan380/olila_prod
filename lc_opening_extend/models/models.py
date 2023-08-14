@@ -5,7 +5,84 @@ from odoo import models, fields, api
 class LcOpening(models.Model):
     _inherit ="lc.opening"
 
+    def _prepare_move_line1(self):
+
+        move_line_dict = []
+        bank = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_opening_bank'))
+        bank_account = self.env['account.journal'].search([('id', '=', bank)]).payment_credit_account_id.id
+        lc_margin_account = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_margin_account'))
+        move_line_dict.append({
+            'account_id': bank_account,
+            'credit': self.requisition_id.margin,
+            'name': 'LC No: ' + str(self.lc_no),
+            # 'date_maturity': self.move_date,
+            # 'date' : self.move_date,
+        })
+        move_line_dict.append({
+            'account_id': lc_margin_account or False,
+            'debit': self.requisition_id.margin,
+            'name': 'LC No: ' + str(self.lc_no),
+            # 'date_maturity' : self.move_date,
+            # 'date' : self.move_date,
+        })
+
+        return move_line_dict
+
+    def _prepare_move_line2(self):
+        move_line_dict2 = []
+        vat_account = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_vat_account'))
+        tax_account = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_fund_taxes'))
+        lc_outher_charges = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_lcfr_other_charges'))
+        lc_com_account = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_com_account'))
+        bank = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_opening_bank'))
+        bank_account = self.env['account.journal'].search([('id', '=', bank)]).payment_credit_account_id.id
+        move_line_dict2.append({
+            'account_id': bank_account or False,
+            'credit': (self.requisition_id.commission + self.requisition_id.source_tax + self.requisition_id.vat_on_commission
+                        + self.requisition_id.pt_charge + self.requisition_id.other_charges),
+            # 'date_maturity': self.move_date,
+            # 'date' : self.move_date,
+        })
+        move_line_dict2.append({
+            'account_id': lc_com_account or False,
+            'debit': self.requisition_id.commission,
+            'name': 'Comission'
+            # 'date_maturity' : self.move_date,
+            # 'date' : self.move_date,
+        })
+        move_line_dict2.append({
+            'account_id': tax_account or False,
+            'debit': self.requisition_id.source_tax,
+            'name': 'Source Tax'
+            # 'date_maturity' : self.move_date,
+            # 'date' : self.move_date,
+        })
+        move_line_dict2.append({
+            'account_id': vat_account or False,
+            'debit': self.requisition_id.vat_on_commission,
+            'name': 'VAT on Comission'
+            # 'date_maturity' : self.move_date,
+            # 'date' : self.move_date,
+        })
+        move_line_dict2.append({
+            'account_id': lc_outher_charges or False,
+            'debit': (self.requisition_id.pt_charge + self.requisition_id.other_charges),
+            'name': 'PT and Other Charges'
+            # 'date_maturity' : self.move_date,
+            # 'date' : self.move_date,
+        })
+        return move_line_dict2
+
     def button_accept(self):
+        bank = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_opening_bank'))
         for rec in self:
             lc_prayer = self.env['lc.request'].search([('requisition_id', '=', rec.requisition_id.id)])
             bills = self.env['account.move'].search([('invoice_origin', '=', rec.order_id.name)])
@@ -54,6 +131,28 @@ class LcOpening(models.Model):
             lc_register.onchange_partial()
             if rec.requisition_id:
                 rec.requisition_id.state = 'accept'
+            ##Journal Entry
+            move_lines1 = rec._prepare_move_line1()
+            vals = {
+                'move_type': 'entry',
+                'date': rec.lc_date,
+                'journal_id': self.env['account.journal'].search([('id','=', bank)], limit=1).id,
+                 'opening_id' : self.id,
+                'line_ids': [(0, 0, line_data) for line_data in move_lines1]
+            }
+            move_id1 = self.env['account.move'].create(vals)
+            move_id1.ref = 'LC Margin for ' + rec.lc_no
+
+            move_lines2 = rec._prepare_move_line2()
+            vals2 = {
+                'move_type': 'entry',
+                'date':  rec.lc_date,
+                'journal_id': self.env['account.journal'].search([('id', '=', bank)], limit=1).id,
+                'opening_id': self.id,
+                'line_ids': [(0, 0, line_data) for line_data in move_lines2]
+            }
+            move_id2 = self.env['account.move'].create(vals2)
+            move_id2.ref = 'LC Comission and Other Charges for ' + rec.lc_no
             rec.write({'state': 'accept'})
 
     state = fields.Selection(

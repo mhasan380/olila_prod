@@ -46,6 +46,7 @@
                 <xpath expr="//button[@name='button_post']" position="after">
                      <button name="print_cash_vouchar" string="Cash Vouchar" type="object" class="btn-primary" attrs="{'invisible':[ '|', ('journal_type', '=', 'bank'),('state', '!=', 'paid')] }"/>
                     <button name="print_bank_vouchar" string="Bank Vouchar" type="object" class="btn-primary" attrs="{'invisible':[ '|', ('journal_type', '=', 'cash'),('state', '!=', 'paid')] }"/>
+                    <button name="button_draft" type="object" string="Set to Draft" states="cancel"/>
                 </xpath>
             </field>
         </record>

@@ -77,10 +77,12 @@ class PurchaseLcAmmendment(models.Model):
 
     def button_paid(self):
         move_lines1 = self._prepare_move_line1()
+        bank = int(self.env['ir.config_parameter'].sudo().get_param(
+            'lc_fund_req_journal.lc_opening_bank'))
         vals = {
             'move_type': 'entry',
             'date': self.date_of_amendant,
-            'journal_id': self.env['account.journal'].search([('name', '=', 'Miscellaneous Operations')], limit=1).id,
+            'journal_id': self.env['account.journal'].search([('id', '=', bank)], limit=1).id,
             'line_ids': [(0, 0, line_data) for line_data in move_lines1]
         }
         move_id1 = self.env['account.move'].create(vals)

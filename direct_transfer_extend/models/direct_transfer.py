@@ -46,20 +46,21 @@ class LCDirectTransfer(models.Model):
     _inherit = 'lc.direct.transfer'
 
     def button_post(self):
-        move_line_dict = self._prepare_move_line()
-        vals = {
-            'move_type' : 'entry',
-            'currency_id' : self.currency_id.id or False,
-            'date' : self.date,
-            'journal_id' : self.journal_id.id or False,
-            'lc_treansfer_id' : self.id,
-            'narration' : self.note,
-            'line_ids': [(0, 0, line_data) for line_data in move_line_dict]
-        }
-        move_id = self.env['account.move'].create(vals)
-        move_id.ref = self.ref
-        self.moves_id = move_id.id
-        move_id.sudo().action_post()
+        if self.move_count == 0:
+            move_line_dict = self._prepare_move_line()
+            vals = {
+                'move_type' : 'entry',
+                'currency_id' : self.currency_id.id or False,
+                'date' : self.date,
+                'journal_id' : self.journal_id.id or False,
+                'lc_treansfer_id' : self.id,
+                'narration' : self.note,
+                'line_ids': [(0, 0, line_data) for line_data in move_line_dict]
+            }
+            move_id = self.env['account.move'].create(vals)
+            move_id.ref = self.ref
+            self.moves_id = move_id.id
+            move_id.sudo().action_post()
         self.state = 'paid'
 
 
@@ -128,7 +129,7 @@ class LCDirectTransfer(models.Model):
 
         return move_line_dict
 
-    total_amount = fields.Float('Total Amount', compute="_compute_total_amount" ,search='_search_total_amount')
+    total_amount = fields.Float('Total Amount', compute="_compute_total_amount" ,search='_search_total_amount', tracking=True)
     moves_id = fields.Many2one('account.move', 'Journal Entry')
     word_num = fields.Char(string="Amount In Words:", compute='_amount_in_word')
     payee = fields.Char('Payee/Receiver')
@@ -157,6 +158,10 @@ class LCDirectTransfer(models.Model):
         for rec in self:
             if rec.state == 'paid':
                 rec.moves_id = self.env['account.move'].search([('lc_treansfer_id', '=', rec.id)], limit=1).id
+
+    def button_draft(self):
+        if self.state == 'cancel':
+            self.state = 'draft'
 
 
     def print_cash_vouchar(self):

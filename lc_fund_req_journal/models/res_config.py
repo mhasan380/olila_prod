@@ -16,6 +16,7 @@ class Settings(models.TransientModel):
     transit_account = fields.Many2one('account.account', string="Stock Transit Account")
     bank_charges = fields.Many2one('account.account', string="Bank Charges Account")
     interest_account = fields.Many2one('account.account', string="Interest Account")
+    drl_margin_account = fields.Many2one('account.account', string="DRL Margin Account")
 
     @api.model
     def get_values(self):
@@ -43,6 +44,8 @@ class Settings(models.TransientModel):
                 'lc_fund_req_journal.bank_charges')),
             interest_account=int(self.env['ir.config_parameter'].sudo().get_param(
                 'lc_fund_req_journal.interest_account')),
+            drl_margin_account=int(self.env['ir.config_parameter'].sudo().get_param(
+                'lc_fund_req_journal.drl_margin_account')),
         )
         return res
 
@@ -61,6 +64,7 @@ class Settings(models.TransientModel):
         transit_account = self.transit_account and self.transit_account.id or False
         bank_charges = self.bank_charges and self.bank_charges.id or False
         interest_account = self.interest_account and self.interest_account.id or False
+        drl_margin_account = self.drl_margin_account and self.drl_margin_account.id or False
 
         param.set_param('lc_fund_req_journal.lc_opening_bank', lc_opening_bank)
         param.set_param('lc_fund_req_journal.lc_margin_account', lc_margin_account)
@@ -73,5 +77,6 @@ class Settings(models.TransientModel):
         param.set_param('lc_fund_req_journal.transit_account', transit_account)
         param.set_param('lc_fund_req_journal.bank_charges', bank_charges)
         param.set_param('lc_fund_req_journal.interest_account', interest_account)
+        param.set_param('lc_fund_req_journal.drl_margin_account', drl_margin_account)
 
         return res

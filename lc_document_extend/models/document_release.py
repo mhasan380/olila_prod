@@ -50,7 +50,7 @@ class DocumentLetter(models.Model):
 		ltr_account = int(self.env['ir.config_parameter'].sudo().get_param(
 			'lc_fund_req_journal.ltr_account'))
 		lc_margin_account = int(self.env['ir.config_parameter'].sudo().get_param(
-			'lc_fund_req_journal.lc_margin_account'))
+			'lc_fund_req_journal.drl_margin_account'))
 		if self.lc_open_id.total_amount != 0:
 			margin_percent = self.total_amount / self.lc_open_id.total_amount
 		else:
@@ -106,10 +106,13 @@ class DocumentLetter(models.Model):
 	def button_paid(self):
 		for rec in self:
 			move_lines1 = rec._prepare_move_line_at_sight()
+			bank = int(self.env['ir.config_parameter'].sudo().get_param(
+				'lc_fund_req_journal.lc_opening_bank'))
+			bank_account = self.env['account.journal'].search([('id', '=', bank)]).payment_credit_account_id.id
 			vals = {
 				'move_type': 'entry',
 				'date': rec.bl_date,
-				'journal_id': rec.env['account.journal'].search([('name', '=', 'Miscellaneous Operations')],
+				'journal_id': rec.env['account.journal'].search([('id', '=', bank)],
 																 limit=1).id,
 				'line_ids': [(0, 0, line_data) for line_data in move_lines1]
 			}
@@ -117,9 +120,6 @@ class DocumentLetter(models.Model):
 			move_id1.ref = 'Lc No' + rec.lc_open_id.lc_no
 			move_id1.lc_drl_id = rec.id
 			#Create LTR
-			bank = int(self.env['ir.config_parameter'].sudo().get_param(
-				'lc_fund_req_journal.lc_opening_bank'))
-			bank_account = self.env['account.journal'].search([('id', '=', bank)]).payment_credit_account_id.id
 			ltr_vals = {
 						'lc_num': rec.lc_open_id.lc_no,
 				        'lc_number': rec.lc_open_id.id,
